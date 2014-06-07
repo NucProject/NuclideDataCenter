@@ -1,0 +1,33 @@
+<div class="span12" file="tab1.phtml" widget-class="DeviceTabPane" widget-id="device-tab-pane">
+	<div class="portlet box blue tabbable">
+		<div class="portlet-title">
+			<div class="caption"><i class="icon-reorder">&nbsp;环境与安防</i></div>
+		</div>
+		<div class="portlet-body">
+			<div class="tabbable portlet-tabs">
+				<ul class="nav nav-tabs">
+                    <li><a href="#added_secrets_tab" data-toggle="tab">已发布</a></li>
+                    <li class="active"><a href="#add_secret_tab" data-toggle="tab">发布</a></li>
+				</ul>
+				<div class="tab-content">
+
+					<div class="tab-pane active" id="add_secret_tab">
+                        <div widget-class="SchoolSelector" widget-id="add-secrets-school-selector">
+
+                        </div>
+                        <div class="content" style="width:320px;height:320px;margin:10px;padding:3px;font-size:24px;font-weight:bold;border:1px dashed" contenteditable="true">
+
+                        </div>
+
+                        <a class="btn blue photo" href="javascript:">添加照片</a>
+                        <a class="btn blue publish" href="javascript:">发布</a>
+					</div>
+
+                    <div class="tab-pane active" id="added_secrets_tab">
+                    </div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

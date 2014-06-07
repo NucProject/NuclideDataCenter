@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+
+<?php $this->partial("index/style") ?>
+<!-- BEGIN BODY -->
+
+<body class="page-header-fixed">
+
+	<!-- header -->
+	<?php $this->partial("index/header") ?>
+
+	<!-- BEGIN CONTAINER -->
+	<div class="page-container">
+
+		<!-- Sidebar -->
+		<?php $this->partial("index/sidebar") ?>
+
+		<!-- BEGIN PAGE -->
+		<div class="page-content">
+			<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+			<div id="portlet-config" class="modal hide">
+				<div class="modal-header">
+					<button data-dismiss="modal" class="close" type="button"></button>
+					<h3>Widget Settings</h3>
+				</div>
+				<div class="modal-body">
+					Widget settings form goes here
+				</div>
+			</div>
+			<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+
+			<!-- BEGIN PAGE CONTAINER-->
+			<div class="container-fluid">
+				<!-- BEGIN PAGE HEADER-->
+				<div class="row-fluid">
+					<div class="span12">
+						<!-- BEGIN STYLE CUSTOMIZER -->
+						<!-- customized.phtml -->
+						<!-- END BEGIN STYLE CUSTOMIZER -->
+						<!-- BEGIN PAGE TITLE & BREADCRUMB-->
+						<h3 class="page-title">辐射环境自动监测系统&nbsp;&nbsp;<small>数据中心</small></h3>
+
+                        <div widget-class="Breadcrumb" widget-id="breadcrumb">
+                            <ul class="breadcrumb">
+                                <li class="home level1">
+                                    <i class="icon-home"></i>
+                                    <a href="#" ></a>
+                                    <i class="icon-angle-right"></i>
+                                </li>
+                                <li class="home level2">
+                                    <a href="#"></a>
+                                    <i class="icon-angle-right"></i>
+                                </li>
+                                <li class="home level3">
+                                    <a href="#"></a>
+                                    <i class="icon-angle-right"></i>
+                                </li>
+                                <li class="home level4">
+                                    <a href="#"></a>
+                                    <i class="icon-angle-right"></i>
+                                </li>
+                                <!-- 4 levels at most -->
+                                <li class="pull-right no-text-shadow">
+                                    <div id="dashboard-report-range" class="dashboard-date-range tooltips no-tooltip-on-touch-device responsive" data-tablet="" data-desktop="tooltips" data-placement="top" data-original-title="Change dashboard date range">
+                                        <i class="icon-calendar"></i>
+                                        <span></span>
+                                        <i class="icon-angle-down"></i>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+						<!-- END PAGE TITLE & BREADCRUMB-->
+					</div>
+				</div>
+				<!-- END PAGE HEADER-->
+
+				<!-- dashboard begin -->
+				<div id="dashboard">
+					<!-- BEGIN DASHBOARD STATS -->
+					<!--
+					<?php $this->partial("index/dashboard"); ?>
+					-->
+					<!-- END DASHBOARD STATS -->
+					<div class="clearfix"></div>
+
+                    <div id="devices-row">
+                        <div class="row-fluid ">
+                            <?php $this->partial("index/device_hpic_pane"); ?>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="row-fluid ">
+                            <?php $this->partial("index/device_weather_pane"); ?>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="row-fluid " >
+                            <?php $this->partial("index/device_labr_pane"); ?>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="row-fluid " >
+                            <?php $this->partial("index/device_cindstat_pane"); ?>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="row-fluid ">
+                            <?php $this->partial("index/device_cinddata_pane"); ?>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+
+                    <div class="row-fluid" id="network-row">
+                        <?php $this->partial("index/network"); ?>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <div class="row-fluid" id="station-row">
+                        <?php $this->partial("index/station"); ?>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <div class="row-fluid" id="admin-row">
+                        <?php $this->partial("index/adminman"); ?>
+                        <div class="clearfix"></div>
+                    </div>
+
+                </div>
+				<!-- dashboard end -->
+			</div>
+			<!-- END PAGE CONTAINER-->    
+		</div>
+		<!-- END PAGE -->
+	</div>
+	<!-- END CONTAINER -->
+
+	<!-- #################################### -->
+	<!-- BEGIN FOOTER -->
+	<div class="footer">
+		<div class="footer-inner">
+			2013 &copy; Metronic by keenthemes.
+		</div>
+		<div class="footer-tools">
+			<span class="go-top">
+			<i class="icon-angle-up"></i>
+			</span>
+		</div>
+	</div>
+	<!-- END FOOTER -->
+
+	<!-- scripts.phtml BEGIN -->
+	<?php $this->partial("index/scripts") ?>
+	<!-- scripts.phtml END -->
+</body>
+<!-- END BODY -->
+</html>
