@@ -22,28 +22,50 @@ $class("ListView", [kx.Weblet, kx.ActionMixin],
 
     setHeaders: function(headers) {
         this._headers = headers;
+        var thead = this._domNode.find("thead");
+
+        var cl = ["<tr>"];
+        for (var i in headers)
+        {
+            console.log(headers[i]);
+            cl.push('<td>');
+            cl.push(headers[i]['name']);
+            cl.push('</td>');
+        }
+        var html = cl.join("");
+
+        thead.append($(html));
     },
 
     dataReceived: function(data) {
-        console.log("ListView.dataReceived");
-
+        // console.log("ListView.dataReceived");
 
 
         var tbody = this._domNode.find("tbody");
 
         var results = eval("(" + data + ")")['results'];
-        var items = results['items'];
+        var items = results['items']
+
+        var headers = [];
+        for (var j in this._headers)
+        {
+            headers.push(this._headers[j]['key']);
+        }
 
 
         for (var i in items)
         {
+
             var cl = ["<tr>"];
             var item = items[i];
             for (var j in item)
             {
-                cl.push('<td>');
-                cl.push(item[j]);
-                cl.push('</td>');
+                if (headers.indexOf(j) >= 0)
+                {
+                    cl.push('<td>');
+                    cl.push(item[j]);
+                    cl.push('</td>');
+                }
             }
 
             cl.push("</tr>");

@@ -49,6 +49,7 @@
 <script src="media/widgets/ListView.js" type="text/javascript"></script>
 <script src="media/widgets/Breadcrumb.js" type="text/javascript"></script>
 <script src="media/widgets/DeviceTabPane.js" type="text/javascript"></script>
+<script src="media/widgets/DeviceSummary.js" type="text/javascript"></script>
 
 <script src="media/widgets/NetworkTabPane.js" type="text/javascript"></script>
 <script src="media/widgets/StationTabPane.js" type="text/javascript"></script>
@@ -69,7 +70,7 @@
 
         activeWeb();
 
-        var lastPane = $("#secret-row");
+        var lastPane = $("#station-row");
 
 
         $("ul.sub-menu a").click(function(){
@@ -89,8 +90,9 @@
 
 
         $('#network-row').hide();
+        $('#devices-row').hide();
         $('#station-row').hide();
-        $('#admin-man-row').hide();
+        $('#admin-row').hide();
 
     });
 </script>

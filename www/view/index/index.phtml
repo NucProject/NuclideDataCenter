@@ -82,6 +82,12 @@
 					<!-- END DASHBOARD STATS -->
 					<div class="clearfix"></div>
 
+                    <div class="row-fluid" id="station-row">
+                        <?php $this->partial("index/station"); ?>
+                        <div class="clearfix"></div>
+                    </div>
+
+
                     <div id="devices-row">
                         <div class="row-fluid ">
                             <?php $this->partial("index/device_hpic_pane"); ?>
@@ -96,13 +102,18 @@
                             <div class="clearfix"></div>
                         </div>
                         <div class="row-fluid " >
-                            <?php $this->partial("index/device_cindstat_pane"); ?>
+                            <?php $this->partial("index/device_hpge_pane"); ?>
                             <div class="clearfix"></div>
                         </div>
                         <div class="row-fluid ">
                             <?php $this->partial("index/device_cinddata_pane"); ?>
                             <div class="clearfix"></div>
                         </div>
+                        <div class="row-fluid ">
+                            <?php $this->partial("index/device_environment_pane"); ?>
+                            <div class="clearfix"></div>
+                        </div>
+
                     </div>
 
                     <div class="row-fluid" id="network-row">
@@ -110,13 +121,9 @@
                         <div class="clearfix"></div>
                     </div>
 
-                    <div class="row-fluid" id="station-row">
-                        <?php $this->partial("index/station"); ?>
-                        <div class="clearfix"></div>
-                    </div>
 
                     <div class="row-fluid" id="admin-row">
-                        <?php $this->partial("index/adminman"); ?>
+                        <?php $this->partial("index/admin"); ?>
                         <div class="clearfix"></div>
                     </div>
 

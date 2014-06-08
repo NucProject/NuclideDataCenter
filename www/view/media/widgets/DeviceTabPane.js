@@ -46,7 +46,12 @@ $class("HpicDevice", DeviceBase,
         this.__super(DeviceBase.prototype.onAttach, [domNode]);
 
 
-        this._listView.setHeaders([]);
+        this._listView.setHeaders([
+            {'key':'time', 'name':'时间'},
+            {'key':'doserate', 'name':'剂量率'},
+            {'key':'battery', 'name':'电池'},
+            {'key':'highvoltage', 'name':'电压'},
+            {'key':'temperature', 'name':'温度'}]);
 
         this.refresh();
     },
@@ -59,6 +64,18 @@ $class("HpicDevice", DeviceBase,
 });
 
 $class("WeatherDevice", DeviceBase,
+{
+    __constructor: function() {
+
+    },
+
+    onAttach: function(domNode) {
+        this.__super(DeviceBase.prototype.onAttach, [domNode]);
+
+    }
+});
+
+$class("HpgeDevice", DeviceBase,
 {
     __constructor: function() {
 
@@ -83,7 +100,7 @@ $class("LabrDevice", DeviceBase,
 });
 
 
-$class("CinderellaDataDevice", DeviceBase,
+$class("CinderellaDevice", DeviceBase,
 {
     __constructor: function() {
 
@@ -96,7 +113,7 @@ $class("CinderellaDataDevice", DeviceBase,
 });
 
 
-$class("CinderellaStatusDevice", DeviceBase,
+$class("EnvironmentDevice", DeviceBase,
 {
     __constructor: function() {
 
@@ -107,5 +124,6 @@ $class("CinderellaStatusDevice", DeviceBase,
 
     }
 });
+
 
 
