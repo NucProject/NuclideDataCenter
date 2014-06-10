@@ -30,7 +30,11 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         var listViewDomNode = this._listView.create();
 
         listViewDomNode.appendTo(domNode.find("div.list-pane"));
+    },
+
+    refresh: function() {
     }
+    
 });
 
 //////////////////////////////////////////////////////////////////////////
@@ -57,9 +61,12 @@ $class("HpicDevice", DeviceBase,
     },
 
     refresh: function() {
-        var currentStation = 128;
-        var api = "data/fetch/" + currentStation + "/hpic";
-        this._listView.refresh(api);
+        var currentStationId = g.getCurrentStationId();
+        if (currentStationId)
+        {
+            var api = "data/fetch/" + currentStationId + "/hpic";
+            this._listView.refresh(api);
+        }
     }
 });
 

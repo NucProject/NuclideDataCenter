@@ -19,28 +19,38 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
     onDetailsClicked: function()
     {
-        $("#station-row").hide();
-        $("#devices-row").show();
+        g.showRow("#devices-row");
 
-        var d = ["hpic", "weather", "labr", "environment", "hpge", "cinderella"];
+        var dt = ["hpic", "weather", "labr", "environment", "hpge", "cinderella"];
 
-        for (var i in d)
+        for (var i in dt)
         {
-            var wid = d[i] + "-tab-pane";
+            var wid = dt[i] + "-tab-pane";
 
             var w = Widget.widgetById(wid);
             if (w)
             {
-                if (d[i] != this._deviceName)
+                if (dt[i] != this._deviceType)
                 {
                     w._domNode.hide();
                 }
                 else
                 {
                     w._domNode.show();
+                    Widget.widgetById(this._deviceType + "-device").refresh();
                 }
             }
         }
+
+        var sidebar = Widget.widgetById("sidebar");
+        var breadcrumb = Widget.widgetById("breadcrumb");
+        var deviceName = g.getDeviceName(this._deviceType);
+        breadcrumb.setLevels(
+            [
+                {"url":"#network", "name":"监测网络", "type":"network"},
+                {"url":"#station" + sidebar.getCurrentStationId(), "name":sidebar.getCurrentStationName(), "type":"station"},
+                {"url":"#device-" + this._deviceType, "name": deviceName, "type":"device"}
+            ]);
         return false;
     }
 });
@@ -54,7 +64,7 @@ $class("HpicSummaryDevice", DeviceSummaryBase,
     },
 
     onAttach: function(domNode) {
-        this._deviceName = "hpic";
+        this._deviceType = "hpic";
         this.onAttached(domNode);
     }
 
@@ -67,7 +77,7 @@ $class("WeatherSummaryDevice", DeviceSummaryBase,
     },
 
     onAttach: function(domNode) {
-        this._deviceName = "weather";
+        this._deviceType = "weather";
         this.onAttached(domNode);
     }
 
@@ -81,7 +91,7 @@ $class("LabrSummaryDevice", DeviceSummaryBase,
     },
 
     onAttach: function(domNode) {
-        this._deviceName = "labr";
+        this._deviceType = "labr";
         this.onAttached(domNode);
     }
 });
@@ -93,7 +103,7 @@ $class("CinderellaSummaryDevice", DeviceSummaryBase,
     },
 
     onAttach: function(domNode) {
-        this._deviceName = "cinderella";
+        this._deviceType = "cinderella";
         this.onAttached(domNode);
     }
 
@@ -106,7 +116,7 @@ $class("EnvSummaryDevice", DeviceSummaryBase,
     },
 
     onAttach: function(domNode) {
-        this._deviceName = "environment";
+        this._deviceType = "environment";
         this.onAttached(domNode);
     }
 
@@ -119,7 +129,7 @@ $class("HpGeSummaryDevice", DeviceSummaryBase,
     },
 
     onAttach: function(domNode) {
-        this._deviceName = "hpge";
+        this._deviceType = "hpge";
         this.onAttached(domNode);
     }
 });

@@ -1,6 +1,6 @@
 <!-- First line -->
 <div class="row-fluid">
-<div class="span6" file="tab1.phtml">
+<div class="span4" file="tab1.phtml">
 	<div class="portlet box blue tabbable" widget-class="HpicSummaryDevice">
 		<div class="portlet-title">
 			<div class="caption"><i class="icon-reorder">高压电离室</i></div>
@@ -26,10 +26,36 @@
 	</div>
 </div>
 
-<div class="span6" file="tab1.phtml">
+<div class="span4" file="tab1.phtml">
     <div class="portlet box blue tabbable" widget-class="HpGeSummaryDevice">
         <div class="portlet-title">
             <div class="caption"><i class="icon-reorder">高纯锗谱仪</i></div>
+        </div>
+        <div class="portlet-body" widget-class="">
+            <div class="tabbable portlet-tabs">
+                <ul class="nav nav-tabs">
+                    <!--
+                    <li><a href="#hpic_chart" data-toggle="tab">自动站</a></li>
+                    -->
+                    <li class="active"><a href="#devices" data-toggle="tab">设备简介</a></li>
+                </ul>
+                <div class="tab-content">
+
+                    <div class="tab-pane active" id="devices">
+                        <a href="#" class="btn green details">查看数据</a>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="span4" file="tab1.phtml">
+    <div class="portlet box blue tabbable" widget-class="HpGeSummaryDevice">
+        <div class="portlet-title">
+            <div class="caption"><i class="icon-reorder">大流量</i></div>
         </div>
         <div class="portlet-body" widget-class="">
             <div class="tabbable portlet-tabs">

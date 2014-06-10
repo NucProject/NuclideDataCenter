@@ -6,6 +6,8 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 {
     _currentStationId: -1,
 
+    _currentStationName: "",
+
     __constructor: function() {
     },
 
@@ -36,13 +38,17 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     },
 
     getCurrentStationId: function() {
-        return this._currentStationId;
+        return g.getCurrentStationId();
+    },
+
+    getCurrentStationName: function() {
+        return this._currentStationName;
     },
 
     onStationClicked: function(li) {
         var currentStationId = li.attr("station_id")
-        this._currentStationId = currentStationId;
-
+        g.setCurrentStationId(currentStationId)
+        this._currentStationName = li.find("a").text();
         console.log(this.getCurrentStationId());
 
         $('#network-row').hide();
@@ -53,8 +59,9 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
         var breadcrumb = Widget.widgetById("breadcrumb");
         breadcrumb.setLevels(
-            [{"url":"#network", "name":"监测网络"},
-             {"url":"#station" + currentStationId, "name":li.find("a").text()}
+            [
+                {"url":"#network", "name":"监测网络", "type":"network"},
+                {"url":"#station" + currentStationId, "name":this._currentStationName, "type":"station" }
             ]);
 
         return false;

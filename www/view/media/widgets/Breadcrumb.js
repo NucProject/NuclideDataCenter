@@ -9,7 +9,7 @@ $class("Breadcrumb", [kx.Widget, kx.EventMixin],
 
     onAttach: function() {
 
-        this.setLevels([{"url":"#network", "name":"监测网络"}]);
+        this.setLevels([{"url": "#network", "name": "监测网络", "type": "network"}]);
     },
 
     setLevels: function(levels) {
@@ -21,7 +21,10 @@ $class("Breadcrumb", [kx.Widget, kx.EventMixin],
             l += 1;
             var level = this._domNode.find("ul li.level" + l);
             level.show();
-            level.find("a").text(levels[i]['name']).attr("href", levels[i]['url']);
+            level.find("a")
+                .text(levels[i]['name'])
+                .attr("href", levels[i]['url'])
+                .attr("type", levels[i]['type']);
 
             if (l > 1)
             {
@@ -34,9 +37,23 @@ $class("Breadcrumb", [kx.Widget, kx.EventMixin],
     },
 
     onLevelClick: function(e) {
+        var i = $(e.target);
+        var url = i.attr("href");
+        var type = i.attr("type");
 
-        var url = $(e.target).attr("href");
-        this.fireEvent("nav-changed", url);
+        if (type == "network")
+        {
+            g.showRow("#network-row");
+        }
+        else if (type == "station")
+        {
+            g.showRow("#station-row");
+        }
+        else if (type == "device")
+        {
+            g.showRow("#devices-row");
+        }
+
         return false;
     }
 
