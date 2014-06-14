@@ -32,6 +32,7 @@ class DataController extends ApiController
 
             if ($data->save() !== false)
             {
+                Cache::updateLatestTime($this->redis, $station, $device);
                 $this->checkAlertRule($station, $device, $data);
                 array_push($success, array('device' => $device, 'time' => $entry->time));
             }
@@ -46,14 +47,28 @@ class DataController extends ApiController
 
     }
 
-    public function uploadAction()
+    public function uploadAction($station, $fileType)
     {
         if (!$this->request->isPost())
         {
             return parent::error(Error::BadHttpMethod, '');
         }
 
+        if($this->request->hasFiles() == true)
+        {
+            $uploads = $this->request->getUploadedFiles();
+            $isUploaded = false;
+            #do a loop to handle each file individually
+            foreach($uploads as $upload){
 
+                $path = ".\\data\\$station\\$fileType\\" . strtolower($upload->getname());
+
+                ($upload->moveTo($path)) ? $isUploaded = true : $isUploaded = false;
+            }
+
+            return parent::result(array('upload' => $isUploaded, 'station' => $station, 'fileType' => $fileType));
+        }
+        return parent::error(Error::BadPayload, '');
     }
 
     public function fetchAction($station, $device)
@@ -85,6 +100,12 @@ class DataController extends ApiController
 
     }
 
+    public function latestAction($station, $device)
+    {
+        $time = Cache::getLatestTime($this->redis, $station, $device);
+        return parent::result(array('station' => $station, 'device' => $device, 'time' => $time));
+    }
+
     private function checkAlertRule($station, $device, $data)
     {
         // TODO:
@@ -106,4 +127,6 @@ class DataController extends ApiController
 
         return $data;
     }
-} 
+
+
+}

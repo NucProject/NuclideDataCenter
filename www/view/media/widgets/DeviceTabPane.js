@@ -34,7 +34,7 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
     refresh: function() {
     }
-    
+
 });
 
 //////////////////////////////////////////////////////////////////////////

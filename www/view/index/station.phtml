@@ -1,50 +1,27 @@
-<!-- First line -->
-<div class="row-fluid">
+<!-- Cinderella -->
 <div class="span4" file="tab1.phtml">
-	<div class="portlet box blue tabbable" widget-class="HpicSummaryDevice">
-		<div class="portlet-title">
-			<div class="caption"><i class="icon-reorder">高压电离室</i></div>
-		</div>
-        <div class="portlet-body" widget-class="">
-            <div class="tabbable portlet-tabs">
-                <ul class="nav nav-tabs">
-                    <!--
-                    <li><a href="#hpic_chart" data-toggle="tab">自动站</a></li>
-                    -->
-                    <li class="active"><a href="#devices" data-toggle="tab">设备简介</a></li>
-                </ul>
-                <div class="tab-content">
-
-                    <div class="tab-pane active" id="devices">
-                        <a href="#" class="btn green details">查看数据</a>
-                    </div>
-
-                    
-                </div>
-            </div>
-        </div>
-	</div>
-</div>
-
-<div class="span4" file="tab1.phtml">
-    <div class="portlet box blue tabbable" widget-class="HpGeSummaryDevice">
+    <div class="portlet box blue tabbable" widget-class="CinderellaSummaryDevice">
         <div class="portlet-title">
-            <div class="caption"><i class="icon-reorder">高纯锗谱仪</i></div>
+            <div class="caption"><i class="icon-reorder"></i><span class="label label-success"></span></div>
         </div>
         <div class="portlet-body" widget-class="">
             <div class="tabbable portlet-tabs">
                 <ul class="nav nav-tabs">
-                    <!--
-                    <li><a href="#hpic_chart" data-toggle="tab">自动站</a></li>
-                    -->
-                    <li class="active"><a href="#devices" data-toggle="tab">设备简介</a></li>
+
+                    <li><a href="#cinderella_settings" data-toggle="tab">设置</a></li>
+
+                    <li class="active"><a href="#cinderella_devices" data-toggle="tab">设备简介</a></li>
                 </ul>
                 <div class="tab-content">
 
-                    <div class="tab-pane active" id="devices">
+                    <div class="tab-pane active" id="cinderella_devices">
                         <a href="#" class="btn green details">查看数据</a>
-                    </div>
 
+                    </div>
+                    <div class="tab-pane" id="cinderella_settings">
+                        <a href="#" class="btn green change-alert">确定</a>
+
+                    </div>
 
                 </div>
             </div>
@@ -55,54 +32,23 @@
 <div class="span4" file="tab1.phtml">
     <div class="portlet box blue tabbable" widget-class="HpGeSummaryDevice">
         <div class="portlet-title">
-            <div class="caption"><i class="icon-reorder">大流量</i></div>
+            <div class="caption"><i class="icon-reorder"></i><span class="label label-success"></span></div>
         </div>
         <div class="portlet-body" widget-class="">
             <div class="tabbable portlet-tabs">
                 <ul class="nav nav-tabs">
-                    <!--
-                    <li><a href="#hpic_chart" data-toggle="tab">自动站</a></li>
-                    -->
-                    <li class="active"><a href="#devices" data-toggle="tab">设备简介</a></li>
+                    <li><a href="#hpge_settings" data-toggle="tab">设置</a></li>
+                    <li class="active"><a href="#hpge_devices" data-toggle="tab">设备简介</a></li>
                 </ul>
                 <div class="tab-content">
 
-                    <div class="tab-pane active" id="devices">
+                    <div class="tab-pane active" id="hpge_devices">
                         <a href="#" class="btn green details">查看数据</a>
                     </div>
 
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="clearfix"></div>
-</div>
-
-<!-- 第二行 -->
-<div class="row-fluid">
-<div class="span4" file="tab1.phtml">
-    <div class="portlet box blue tabbable" widget-class="WeatherSummaryDevice">
-        <div class="portlet-title">
-            <div class="caption"><i class="icon-reorder">气象</i></div>
-        </div>
-        <div class="portlet-body" widget-class="">
-            <div class="tabbable portlet-tabs">
-                <ul class="nav nav-tabs">
-                    <!--
-                    <li><a href="#hpic_chart" data-toggle="tab">自动站</a></li>
-                    -->
-                    <li class="active"><a href="#devices" data-toggle="tab">设备简介</a></li>
-                </ul>
-                <div class="tab-content">
-
-                    <div class="tab-pane active" id="devices">
-                        <a href="#" class="btn green details">查看数据</a>
+                    <div class="tab-pane" id="hpge_settings">
+                        <a href="#" class="btn green change-alert">确定</a>
                     </div>
-
-
                 </div>
             </div>
         </div>
@@ -112,49 +58,107 @@
 <div class="span4" file="tab1.phtml">
     <div class="portlet box blue tabbable" widget-class="LabrSummaryDevice">
         <div class="portlet-title">
-            <div class="caption"><i class="icon-reorder">Labr谱仪</i></div>
+            <div class="caption"><i class="icon-reorder"></i><span class="label label-success"></span></div>
         </div>
         <div class="portlet-body" widget-class="">
             <div class="tabbable portlet-tabs">
                 <ul class="nav nav-tabs">
-                    <!--
-                    <li><a href="#hpic_chart" data-toggle="tab">自动站</a></li>
-                    -->
-                    <li class="active"><a href="#devices" data-toggle="tab">设备简介</a></li>
+                    <li><a href="#labr_settings" data-toggle="tab">设置</a></li>
+                    <li class="active"><a href="#labr_devices" data-toggle="tab">设备简介</a></li>
                 </ul>
                 <div class="tab-content">
 
-                    <div class="tab-pane active" id="devices">
+                    <div class="tab-pane active" id="labr_devices">
                         <a href="#" class="btn green details">查看数据</a>
                     </div>
-
+                    <div class="tab-pane" id="labr_settings">
+                        <a href="#" class="btn green change-alert">确定</a>
+                    </div>
 
                 </div>
             </div>
         </div>
     </div>
 </div>
+<div class="clearfix"></div>
+<!------------------------------- Line 2 --------------------------------->
+<!-- ---高压电离室--->
+<div class="row-fluid">
+<div class="span4" file="tab1.phtml">
+	<div class="portlet box blue tabbable" widget-class="HpicSummaryDevice">
+		<div class="portlet-title">
+			<div class="caption"><i class="icon-reorder"></i><span class="label label-success"></span></div>
+		</div>
+        <div class="portlet-body" widget-class="">
+            <div class="tabbable portlet-tabs">
+                <ul class="nav nav-tabs">
+                    <li><a href="#hpic_settings" data-toggle="tab">设置</a></li>
+                    <li class="active"><a href="#hpic_devices" data-toggle="tab">设备简介</a></li>
+                </ul>
+                <div class="tab-content">
+
+                    <div class="tab-pane active" id="hpic_devices">
+                        <a href="#" class="btn green details">查看数据</a>
+                    </div>
+
+                    <div class="tab-pane setting" id="hpic_settings">
+
+
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+	</div>
+</div>
 
 <div class="span4" file="tab1.phtml">
-    <div class="portlet box blue tabbable" widget-class="EnvSummaryDevice">
+    <div class="portlet box blue tabbable" widget-class="WeatherSummaryDevice">
         <div class="portlet-title">
-            <div class="caption"><i class="icon-reorder">环境与安防监控</i></div>
+            <div class="caption"><i class="icon-reorder">气象</i><span class="label label-success"></span></div>
         </div>
         <div class="portlet-body" widget-class="">
             <div class="tabbable portlet-tabs">
                 <ul class="nav nav-tabs">
-                    <!--
-                    <li><a href="#hpic_chart" data-toggle="tab">自动站</a></li>
-                    -->
-                    <li class="active"><a href="#devices" data-toggle="tab">设备简介</a></li>
+                    <li><a href="#weather_settings" data-toggle="tab">设置</a></li>
+                    <li class="active"><a href="#weather_devices" data-toggle="tab">设备简介</a></li>
                 </ul>
                 <div class="tab-content">
 
-                    <div class="tab-pane active" id="devices">
+                    <div class="tab-pane active" id="weather_devices">
                         <a href="#" class="btn green details">查看数据</a>
                     </div>
 
+                    <div class="tab-pane" id="weather_settings">
+                        <a href="#" class="btn green change-alert">确定</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- 环境与安防监控 -->
+<div class="span4" file="tab1.phtml">
+    <div class="portlet box blue tabbable" widget-class="EnvSummaryDevice">
+        <div class="portlet-title">
+            <div class="caption"><i class="icon-reorder"></i><span class="label label-success"></span></div>
+        </div>
+        <div class="portlet-body" widget-class="">
+            <div class="tabbable portlet-tabs">
+                <ul class="nav nav-tabs">
+                    <li><a href="#environment_settings" data-toggle="tab">设置</a></li>
+                    <li class="active"><a href="#environment_devices" data-toggle="tab">设备简介</a></li>
+                </ul>
+                <div class="tab-content">
+
+                    <div class="tab-pane active" id="environment_devices">
+                        <a href="#" class="btn green details">查看数据</a>
+                    </div>
+
+                    <div class="tab-pane" id="environment_settings">
+                        <a href="#" class="btn green change-alert">确定</a>
+                    </div>
                 </div>
             </div>
         </div>

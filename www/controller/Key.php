@@ -4,7 +4,9 @@ class Key
 {
     // u:v:code:#{phone_number} => int
     // TTL
-    const StationDeviceDataList = "s:d:[]";
+    const StationDeviceData = "s:d:d";
 
+    const StationDeviceLatest = "s:d:time";
 
+    const StationDeviceFieldRule = "s:d:f:";
 }

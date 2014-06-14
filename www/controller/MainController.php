@@ -17,6 +17,11 @@ class MainController extends ApiController
         $this->view->pick("index/index");
     }
 
+    public function lockAction()
+    {
+        $this->view->pick("index/lock");
+    }
+
     public function stationsAction($userId)
     {
         $phql =

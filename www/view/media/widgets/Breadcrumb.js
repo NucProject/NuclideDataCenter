@@ -8,8 +8,15 @@ $class("Breadcrumb", [kx.Widget, kx.EventMixin],
     },
 
     onAttach: function() {
-
+        $("body").bind("dateRangeChanged", kx.bind(this, "onDateRangeChanged"));
         this.setLevels([{"url": "#network", "name": "监测网络", "type": "network"}]);
+    },
+
+    onDateRangeChanged: function(e, beginTime, endTime) {
+        g.setBeginTime(beginTime);
+        g.setEndTime(endTime);
+
+        g.showTip("时间选择变化");
     },
 
     setLevels: function(levels) {

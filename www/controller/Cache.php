@@ -3,21 +3,44 @@
 class Cache
 {
 
-    public static function addEntry($redis, $station, $device, $entry)
+    public static function addDataItem($redis, $station, $device, $item)
     {
-        $key = Key::StationDeviceDataList . $station . $device;
-        $redis->lPush($key, json_encode($entry));
+        $key = Key::StationDeviceData . "[$station][$device]";
+        $redis->lPush($key, json_encode($item));
     }
 
-    public static function getEntries($redis, $station, $device, $from = 0, $count = 20)
+    public static function getDataItems($redis, $station, $device, $from = 0, $count = 20)
     {
-        $key = Key::StationDeviceDataList . $station . $device;
-        $items = $redis->lRange($key, $from, $from + $count);
-        $entries = array();
-        foreach ($items as $item)
+        $key = Key::StationDeviceData . "[$station][$device]";
+        $array = $redis->lRange($key, $from, $from + $count);
+        $items = array();
+        foreach ($array as $item)
         {
-            array_push($entries, json_decode($item));
+            array_push($items, json_decode($item));
         }
-        return $entries;
+        return $items;
+    }
+
+    public static function updateLatestTime($redis, $station, $device)
+    {
+        $key = Key::StationDeviceLatest . "[$station][$device]";
+        $redis->Set($key, time());
+    }
+
+    public static function getLatestTime($redis, $station, $device)
+    {
+        $key = Key::StationDeviceLatest . "[$station][$device]";
+        return $redis->Get($key);
+    }
+
+
+    public static function setAlertValue($redis, $station, $device)
+    {
+
+    }
+
+    public static function getAlertValue($redis, $station, $device)
+    {
+
     }
 }

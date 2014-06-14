@@ -52,15 +52,15 @@ $class("Global", Base,
             case "hpic":
                 return "高压电离室";
             case "labr":
-                return "Labr";
+                return "溴化镧能谱仪";
             case "cinderella":
-                return "cinderella";
+                return "特征核素甄别系统";
             case "hpge":
-                return "高纯锗谱仪";
+                return "高纯锗能谱仪";
             case "weather":
-                return "气象";
+                return "气象站";
             case "environment":
-                return "环境与安防";
+                return "环境与安防监控";
         }
     },
 
@@ -70,5 +70,32 @@ $class("Global", Base,
 
     setCurrentStationId: function(stationId) {
         this._curStationId = stationId;
+    },
+
+    setBeginTime: function(beginTime) {
+        this._beginTime = beginTime;
+    },
+
+    setEndTime: function(endTime) {
+        this._endTime = endTime;
+    },
+
+    getBeginTime: function() {
+        return this._beginTime || new Date();
+    },
+    getEndTime: function() {
+        return this._endTime || new Date();
+    },
+
+    showTip: function(text, title) {
+
+        $.gritter.add({
+            'title': title || "系统消息",
+            'text': text
+        });
+    },
+
+    getUnixTime: function() {
+        return Math.round(new Date().getTime()/1000);
     }
 });

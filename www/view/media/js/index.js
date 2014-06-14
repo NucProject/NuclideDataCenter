@@ -689,14 +689,11 @@ var Index = function () {
                 App.blockUI(jQuery("#dashboard"));
                 setTimeout(function () {
                     App.unblockUI(jQuery("#dashboard"));
-                    $.gritter.add({
-                        title: 'Dashboard',
-                        text: 'Dashboard date range updated.'
-                    });
-                    App.scrollTo();
-                }, 1000);
-                $('#dashboard-report-range span').html(start.toString('MMMM d, yyyy') + ' - ' + end.toString('MMMM d, yyyy'));
 
+                    App.scrollTo();
+                }, 10);
+                $('#dashboard-report-range span').html(start.toString('MMMM d, yyyy') + ' - ' + end.toString('MMMM d, yyyy'));
+                $("body").trigger("dateRangeChanged", [start, end]);
             });
 
             $('#dashboard-report-range').show();

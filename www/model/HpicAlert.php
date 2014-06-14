@@ -6,7 +6,7 @@
  * Time: 下午8:56
  */
 
-class Alert extends \Phalcon\Mvc\Model
+class HpicAlert extends \Phalcon\Mvc\Model
 {
 
-} 
+}

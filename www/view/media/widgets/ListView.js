@@ -6,7 +6,7 @@ $class("ListView", [kx.Weblet, kx.ActionMixin],
 {
     _headers: null,
 
-    _templateString: "<table class='table table-striped table-bordered table-hover table-full-width dataTable'><thead></thead>><tbody></tbody></table>",
+    _templateString: "<table class='table table-striped table-bordered table-hover table-full-width dataTable'><thead></thead><tbody></tbody></table>",
 
     __constructor: function() {
 
@@ -21,6 +21,7 @@ $class("ListView", [kx.Weblet, kx.ActionMixin],
     },
 
     setHeaders: function(headers) {
+
         this._headers = headers;
         var thead = this._domNode.find("thead");
 
@@ -39,7 +40,6 @@ $class("ListView", [kx.Weblet, kx.ActionMixin],
 
     dataReceived: function(data) {
         // console.log("ListView.dataReceived");
-
 
         var tbody = this._domNode.find("tbody");
 

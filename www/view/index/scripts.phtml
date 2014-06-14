@@ -41,6 +41,9 @@
 <script src="media/js/index.js" type="text/javascript"></script>
 <script src="media/js/md5.js" type="text/javascript"></script>
 
+<script src="media/js/jquery.backstretch.min.js" type="text/javascript"></script>
+<script src="media/js/lock.js"></script>
+
 <script src="active-web/config.js" type="text/javascript"></script>
 <script src="active-web/classes.js" type="text/javascript"></script>
 
@@ -68,6 +71,9 @@
         Index.initMiniCharts();
         Index.initDashboardDaterange();
         Index.initIntro();
+
+        Lock.init();
+
 
         g = new Global();
         activeWeb();

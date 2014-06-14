@@ -65,5 +65,51 @@ class Config
             )
         );
 
+    public static $d = array(
+
+        'hpic' => array(
+            'doserate' => array('rule' => 0, 'level' => 2, 'name' => '剂量率'),
+            'battery' => array('rule' => 0, 'level' => 2, 'name' => '电池'),
+            'highvoltage' => array('rule' => 0, 'level' => 2, 'name' => '高压'),
+            'temperature' => array('rule' => 0, 'level' => 2, 'name' => '温度')
+        ),
+
+        /* TODO: Need parse .N42 file.*/
+        'labr' => array(
+
+        ),
+
+        'weather' => array(
+           'Temperature' => array('rule' => 0, 'level' => 2),
+           'Humidity' => array('rule' => 0, 'level' => 2),
+           'Pressure' => array('rule' => 0, 'level' => 2),
+           'Windspeed' => array('rule' => 0, 'level' => 2),
+           'Direction' => array('rule' => 0, 'level' => 2),
+           'Raingauge' => array('rule' => 0, 'level' => 2),
+           'IfRain' => array('rule' => 1, 'level' => 1)
+        ),
+
+        'environment' => array(
+            'IfMainPowerOff' => array('rule' => 1, 'level' => 1),
+            'BatteryHours' => array('rule' => 0, 'level' => 1),
+            'IfDoorOpen' => array('rule' => 1, 'level' => 1),
+            'Temperature' => array('rule' => 0, 'level' => 2),
+            'Humidity' => array('rule' => 0, 'level' => 2),
+            'IfSmoke' => array('rule' => 1, 'level' => 1),
+            'IfWater' => array('rule' => 1, 'level' => 1)
+        ),
+
+        'cinderelladata' => array(
+             'Flow' => array('rule' => 0, 'level' => 1),
+             'FlowPerHour' => array('rule' => 0, 'level' => 1),
+             'Pressure' => array('rule' => 0, 'level' => 1),
+             'PressureDiff' => array('rule' => 0, 'level' => 1),
+             'Temperature' => array('rule' => 0, 'level' => 1)
+        ),
+
+        'cinderellastatus' => array(
+
+        )
+    );
 
 } 
