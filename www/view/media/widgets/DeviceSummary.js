@@ -10,7 +10,7 @@
 
 $class("AlertSettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 {
-    _templateString: "<div><select></select></div>",
+    _templateString: "<div><select></select><div><input class='v1'/><input class='v2'/></div><a class='btn blue sure'>确定</a></div>",
 
     _device: null,
 
@@ -22,10 +22,11 @@ $class("AlertSettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 
     onCreated: function(domNode) {
 
+        domNode.find('a.sure').bind('click', kx.bind(this, "onClickModify"))
     },
 
     setAlertFields: function(alertFields) {
-
+        this._alertFields = alertFields;
         var selNode = this._domNode.find("select");
 
         var _first = "";
@@ -53,23 +54,44 @@ $class("AlertSettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         var url = "alert/get/" + g.getCurrentStationId() + "/" + this._device;
         this.ajax(url + "?f=" + field, null, function(data)
         {
-            console.log(data)
+            var d = eval('(' + data + ')');
+            if (d['errorCode'] == 0)
+            {
+                var values = d['results']['values'];
+                this._domNode.find('input.v1').val(values['v1']);
+                this._domNode.find('input.v2').val(values['v2']);
+            }
         });
     },
 
-    setValues: function(values)
+    setValues: function(v1, v2)
     {
         var field = this._domNode.find("select").val();
         var url = "alert/set/" + g.getCurrentStationId() + "/" + this._device;
         var payload = {
             'f': field,
-            'v1': values[0],
-            'v2': values[1]
+            'v1': v1,
+            'v2': v2
         };
         this.ajax(url + "?f=" + field, payload, function(data)
         {
-            console.log(data)
+            console.log(data, "Set alert value(s) success")
         });
+    },
+
+    onClickModify: function()
+    {
+        var v1 = this._domNode.find('input.v1').val();
+        var v2 = this._domNode.find('input.v2').val();
+        if (isNaN(v1))
+        {
+            return false;
+        }
+        if (v2 != "<None>" && isNaN(v2))
+        {
+            return false;
+        }
+        this.setValues(v1, v2);
     }
 
 });
@@ -167,17 +189,20 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         if ($(e.target).attr("href").indexOf("_setting") > 0)
         {
             var self = this;
-            this.ajax("alert/config/" + this._deviceType, null, function(data){
-                var fc = eval("(" + data + ")");
-                //self.onSettingPaneShow(fc['results']);
+            if (!self._alertSettingPane)
+            {
+                self.ajax("alert/config/" + self._deviceType, null, function(data){
+                    var fc = eval("(" + data + ")");
 
-                var alertSettingPane = new AlertSettingPane(this._deviceType);
-                var dn = alertSettingPane.create();
-                dn.appendTo(this._domNode.find('div.setting'));
-                alertSettingPane.setAlertFields(fc['results'])
 
-            });
+                    self._alertSettingPane = new AlertSettingPane(self._deviceType);
+                    var dn = self._alertSettingPane.create();
 
+                    dn.appendTo(self._domNode.find('div.setting'));
+                    self._alertSettingPane.setAlertFields(fc['results'])
+
+                });
+            }
         }
     }
 });

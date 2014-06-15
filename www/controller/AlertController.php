@@ -19,10 +19,10 @@ class AlertController extends ApiController
     public function setAction($station, $device)
     {
         $field = $this->request->getPost("f");
-        $rule = $this->request->getPost("r");
         $value1 = $this->request->getPost("v1");
         $value2 = $this->request->getPost("v2");
-        AlertRule::setAlertValue($this->redis, $station, $device, $field, $rule, $value1, $value2);
+        AlertRule::setAlertValue($this->redis, $station, $device, $field, $value1, $value2);
+        return parent::result(array('set' => true));
     }
 
 
