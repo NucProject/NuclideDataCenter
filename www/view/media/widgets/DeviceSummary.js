@@ -2,12 +2,6 @@
  * Created by Healer on 14-6-8.
  */
 
-/*
-* <input type="text">&nbsp;一级报警阈值</input>
- <input type="text">&nbsp;二级报警阈值</input>
- <a href="#" class="btn green change-alert">确定</a>
-* */
-
 $class("AlertSettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 {
     _templateString: "<div><select></select><div><input class='v1'/><input class='v2'/></div><a class='btn blue sure'>确定</a></div>",

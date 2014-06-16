@@ -25,7 +25,6 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     },
 
     onAttach: function(domNode) {
-        console.log(domNode)
         this._listView = new ListView();
         var listViewDomNode = this._listView.create();
 

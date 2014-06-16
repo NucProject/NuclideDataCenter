@@ -80,11 +80,9 @@
                 '<div class="ranges">' +
                   '<div class="range_inputs">' +
                     '<div>' +
-                      '<label for="daterangepicker_start">' + this.locale.fromLabel + '</label>' +
                       '<input class="m-wrap input-mini" type="text" name="daterangepicker_start" value="" disabled="disabled" />' +
                     '</div>' +
                     '<div>' +
-                      '<label for="daterangepicker_end">' + this.locale.toLabel + '</label>' +
                       '<input class="m-wrap input-mini" type="text" name="daterangepicker_end" value="" disabled="disabled" />' +
                     '</div>' +
                     '<button class="btn " disabled="disabled">' + this.locale.applyLabel + '</button>' +

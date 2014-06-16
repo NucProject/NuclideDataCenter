@@ -648,9 +648,10 @@ var Index = function () {
 
             $('#dashboard-report-range').daterangepicker({
                 ranges: {
-                    'Today': ['today', 'today'],
-                    'Yesterday': ['yesterday', 'yesterday'],
-                    'Last 7 Days': [Date.today().add({
+                    '今日': ['today', 'today'],
+                    '昨日': ['yesterday', 'yesterday'],
+                    /*
+                    '过去7日': [Date.today().add({
                             days: -6
                         }), 'today'],
                     'Last 30 Days': [Date.today().add({
@@ -661,10 +662,10 @@ var Index = function () {
                             months: -1
                         }), Date.today().moveToFirstDayOfMonth().add({
                             days: -1
-                        })]
+                        })]*/
                 },
                 opens: (App.isRTL() ? 'right' : 'left'),
-                format: 'MM/dd/yyyy',
+                format: 'yyyy-MM-dd',
                 separator: ' to ',
                 startDate: Date.today().add({
                     days: -29
@@ -673,12 +674,12 @@ var Index = function () {
                 minDate: '01/01/2012',
                 maxDate: '12/31/2014',
                 locale: {
-                    applyLabel: 'Submit',
-                    fromLabel: 'From',
-                    toLabel: 'To',
-                    customRangeLabel: 'Custom Range',
+                    applyLabel: '确定',
+                    fromLabel: '从',
+                    toLabel: '到',
+                    customRangeLabel: '自定义',
                     daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-                    monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                    monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
                     firstDay: 1
                 },
                 showWeekNumbers: true,
@@ -692,7 +693,7 @@ var Index = function () {
 
                     App.scrollTo();
                 }, 10);
-                $('#dashboard-report-range span').html(start.toString('MMMM d, yyyy') + ' - ' + end.toString('MMMM d, yyyy'));
+                $('#dashboard-report-range span').html(start.toString('yyyy-MM-dd') + ' ~ ' + end.toString('yyyy-MM-dd'));
                 $("body").trigger("dateRangeChanged", [start, end]);
             });
 
@@ -700,7 +701,7 @@ var Index = function () {
 
             $('#dashboard-report-range span').html(Date.today().add({
                 days: -29
-            }).toString('MMMM d, yyyy') + ' - ' + Date.today().toString('MMMM d, yyyy'));
+            }).toString('yyyy-MM-dd') + ' ~ ' + Date.today().toString('yyyy-MM-dd'));
         },
 
         initIntro: function () {
@@ -709,97 +710,6 @@ var Index = function () {
             }
 
             $.cookie('intro_show', 1);
-
-            setTimeout(function () {
-                var unique_id = $.gritter.add({
-                    // (string | mandatory) the heading of the notification
-                    title: 'Meet Metronic!',
-                    // (string | mandatory) the text inside the notification
-                    text: 'Metronic is a brand new Responsive Admin Dashboard Template you have always been looking for!',
-                    // (string | optional) the image to display on the left
-                    image: './assets/img/avatar1.jpg',
-                    // (bool | optional) if you want it to fade out on its own or just sit there
-                    sticky: true,
-                    // (int | optional) the time you want it to be alive for before fading out
-                    time: '',
-                    // (string | optional) the class name you want to apply to that specific message
-                    class_name: 'my-sticky-class'
-                });
-
-                // You can have it return a unique id, this can be used to manually remove it later using
-                setTimeout(function () {
-                    $.gritter.remove(unique_id, {
-                        fade: true,
-                        speed: 'slow'
-                    });
-                }, 12000);
-            }, 2000);
-
-            setTimeout(function () {
-                var unique_id = $.gritter.add({
-                    // (string | mandatory) the heading of the notification
-                    title: 'Buy Metronic!',
-                    // (string | mandatory) the text inside the notification
-                    text: 'Metronic comes with a huge collection of reusable and easy customizable UI components and plugins. Buy Metronic today!',
-                    // (string | optional) the image to display on the left
-                    image: './assets/img/avatar1.jpg',
-                    // (bool | optional) if you want it to fade out on its own or just sit there
-                    sticky: true,
-                    // (int | optional) the time you want it to be alive for before fading out
-                    time: '',
-                    // (string | optional) the class name you want to apply to that specific message
-                    class_name: 'my-sticky-class'
-                });
-
-                // You can have it return a unique id, this can be used to manually remove it later using
-                setTimeout(function () {
-                    $.gritter.remove(unique_id, {
-                        fade: true,
-                        speed: 'slow'
-                    });
-                }, 13000);
-            }, 8000);
-
-            setTimeout(function () {
-
-                $('#styler').pulsate({
-                    color: "#bb3319",
-                    repeat: 10
-                });
-
-                $.extend($.gritter.options, {
-                    position: 'top-left'
-                });
-
-                var unique_id = $.gritter.add({
-                    position: 'top-left',
-                    // (string | mandatory) the heading of the notification
-                    title: 'Customize Metronic!',
-                    // (string | mandatory) the text inside the notification
-                    text: 'Metronic allows you to easily customize the theme colors and layout settings.',
-                    // (string | optional) the image to display on the left
-                    image1: './assets/img/avatar1.png',
-                    // (bool | optional) if you want it to fade out on its own or just sit there
-                    sticky: true,
-                    // (int | optional) the time you want it to be alive for before fading out
-                    time: '',
-                    // (string | optional) the class name you want to apply to that specific message
-                    class_name: 'my-sticky-class'
-                });
-
-                $.extend($.gritter.options, {
-                    position: 'top-right'
-                });
-
-                // You can have it return a unique id, this can be used to manually remove it later using
-                setTimeout(function () {
-                    $.gritter.remove(unique_id, {
-                        fade: true,
-                        speed: 'slow'
-                    });
-                }, 15000);
-
-            }, 23000);
 
             setTimeout(function () {
 

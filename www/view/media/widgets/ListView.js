@@ -28,7 +28,7 @@ $class("ListView", [kx.Weblet, kx.ActionMixin],
         var cl = ["<tr>"];
         for (var i in headers)
         {
-            console.log(headers[i]);
+            // console.log(headers[i]);
             cl.push('<td>');
             cl.push(headers[i]['name']);
             cl.push('</td>');
