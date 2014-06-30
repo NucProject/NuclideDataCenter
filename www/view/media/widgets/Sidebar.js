@@ -13,7 +13,7 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
     onAttach: function(domNode) {
 
-        this.ajax("main/stations/1", null, function(data){
+        this.ajax("main/stations/1", null, function(data) {
 
 
             var ul = domNode.find('ul.stations');
@@ -34,6 +34,9 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                 self.onStationClicked(li);
                 return false;
             });
+
+            // select default
+            ul.find("li a:first").click();
         });
     },
 
@@ -46,10 +49,13 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     },
 
     onStationClicked: function(li) {
+
+        this._domNode.find('ul.stations li a').css('background', '');
+        li.css('background', '#575757')
+
         var currentStationId = li.attr("station_id")
         g.setCurrentStationId(currentStationId)
         this._currentStationName = li.find("a").text();
-        console.log(this.getCurrentStationId());
 
         $('#network-row').hide();
         $('#devices-row').hide();

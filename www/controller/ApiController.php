@@ -134,15 +134,8 @@ class ApiController extends \Phalcon\Mvc\Controller
 
     public function testAction()
     {
-        $phql = "SELECT A.academy_id as academy_id, A.name as name  FROM Academy AS A where A.school_id=1001";
-        $names = $this->modelsManager->executeQuery($phql);
-        //echo count($names);
-        foreach ($names as $name)
-        {
-            echo $name->name;
-            return;
-        }
-
+        $a = AlertRule::findFirst();
+        echo json_encode($a);
     }
 
     private function test()

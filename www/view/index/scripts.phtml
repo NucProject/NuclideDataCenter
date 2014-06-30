@@ -55,8 +55,8 @@
 <script src="media/widgets/DeviceTabPane.js" type="text/javascript"></script>
 <script src="media/widgets/DeviceSummary.js" type="text/javascript"></script>
 
-<script src="media/widgets/NetworkTabPane.js" type="text/javascript"></script>
 <script src="media/widgets/StationTabPane.js" type="text/javascript"></script>
+<script src="media/widgets/AdminManagerPane.js" type="text/javascript"></script>
 <!-- WIDGETS -->
 <!-- END PAGE LEVEL SCRIPTS -->  
 <script>
@@ -64,9 +64,9 @@
         App.init(); // initlayout and core plugins
         Index.init();
 
-        //Index.initJQVMAP(); // init index page's custom scripts
-        Index.initCalendar(); // init index page's custom scripts
-        Index.initCharts(); // init index page's custom scripts
+        //Index.initJQVMAP();   // init index page's custom scripts
+        Index.initCalendar();   // init index page's custom scripts
+        Index.initCharts();     // init index page's custom scripts
         Index.initChat();
         Index.initMiniCharts();
         Index.initDashboardDaterange();
@@ -80,13 +80,12 @@
 
 
         g.init();
-        g.addRow("#network-row");
         g.addRow("#station-row");
         g.addRow("#devices-row");
         g.addRow("#admin-row");
 
 
-        g.showRow("#network-row");
+        g.showRow("#station-row");
 
 
     });

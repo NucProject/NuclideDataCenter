@@ -45,6 +45,8 @@ $class("AlertSettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 
     fetchValues: function(field)
     {
+        this._domNode.find('input.v1').val('');
+        this._domNode.find('input.v2').val('');
         var url = "alert/get/" + g.getCurrentStationId() + "/" + this._device;
         this.ajax(url + "?f=" + field, null, function(data)
         {
@@ -81,7 +83,7 @@ $class("AlertSettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         {
             return false;
         }
-        if (v2 != "<None>" && isNaN(v2))
+        if (v2 != "" && isNaN(v2))
         {
             return false;
         }
@@ -161,7 +163,7 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                 else
                 {
                     w._domNode.show();
-                    Widget.widgetById(this._deviceType + "-device").refresh();
+                    Widget.widgetById(this._deviceType + "-device").onShow();
                 }
             }
         }

@@ -16,8 +16,8 @@ $class("ListView", [kx.Weblet, kx.ActionMixin],
 
     },
 
-    refresh: function(api) {
-        this.ajax(api, null, kx.bind(this, "dataReceived"));
+    refresh: function(api, payload) {
+        this.ajax(api, payload, kx.bind(this, "dataReceived"));
     },
 
     setHeaders: function(headers) {
@@ -39,7 +39,7 @@ $class("ListView", [kx.Weblet, kx.ActionMixin],
     },
 
     dataReceived: function(data) {
-        // console.log("ListView.dataReceived");
+        console.log(data)
 
         var tbody = this._domNode.find("tbody");
 

@@ -50,7 +50,7 @@ $class("Breadcrumb", [kx.Widget, kx.EventMixin],
 
         if (type == "network")
         {
-            g.showRow("#network-row");
+            // g.showRow("#network-row");
         }
         else if (type == "station")
         {

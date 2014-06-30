@@ -5,8 +5,9 @@ use Phalcon\Loader,
     Phalcon\Mvc\Application,
     Phalcon\Mvc\View;
 
-ini_set("session.save_handler", "redis");
-ini_set("session.save_path", "tcp://127.0.0.1:6379");
+//ini_set("session.save_handler", "redis");
+// ini_set("session.save_path", "tcp://127.0.0.1:6379");
+
 
 $loader = new Loader();
 

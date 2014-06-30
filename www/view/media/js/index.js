@@ -649,7 +649,7 @@ var Index = function () {
             $('#dashboard-report-range').daterangepicker({
                 ranges: {
                     '今日': ['today', 'today'],
-                    '昨日': ['yesterday', 'yesterday'],
+                    '昨日': ['yesterday', 'yesterday']
                     /*
                     '过去7日': [Date.today().add({
                             days: -6

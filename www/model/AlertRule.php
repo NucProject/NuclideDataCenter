@@ -36,7 +36,7 @@ class AlertRule extends \Phalcon\Mvc\Model
         $redis->hSet($key, $field, json_encode($alert));
     }
 
-    public static function getAlertValue($redis, $station, $device, $field = null)
+    public static function getAlertValue($redis, $station, $device, $field)
     {
         $key = Key::StationDeviceFieldRule . "[$station][$device]";
 
@@ -48,26 +48,37 @@ class AlertRule extends \Phalcon\Mvc\Model
                 return json_decode($value);
             }
         }
-        else
-        {
-            $values = $redis->hGetAll($key);
-            if ($values !== false)
-            {
-                $ret = array();
-                foreach ($values as $value)
-                {
-                    array_push($ret, json_decode($value));
-                }
-                return $ret;
-            }
-        }
+
 
         $condition = "station=$station and device='$device' and field='$field'";
         $alert = AlertRule::findFirst(array($condition));
-        if ($alert !== false)
+        return $alert;
+    }
+
+    public static function getAlertValues($redis, $station, $device)
+    {
+        $key = Key::StationDeviceFieldRule . "[$station][$device]";
+        $values = $redis->hGetAll($key);
+        $ret = array();
+        if (count($values) != 0)
         {
-            $redis->set($key, json_encode($alert));
-            return $alert;
+            foreach ($values as $value)
+            {
+                array_push($ret, json_decode($value));
+            }
+            return $ret;
+        }
+
+        $condition = "station=$station and device='$device'";
+        $alerts = AlertRule::find(array($condition));
+        if ($alerts !== false)
+        {
+            foreach ($alerts as $alert)
+            {
+                array_push($ret, $alert);
+                $redis->hSet($key, $alert->field, json_encode($alert));
+            }
+            return $ret;
         }
     }
 }

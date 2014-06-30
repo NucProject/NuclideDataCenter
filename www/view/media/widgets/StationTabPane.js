@@ -4,14 +4,15 @@
 
 $class("StationTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 {
-    templateString: "<select class='province'></select>&nbsp;&nbsp;&nbsp;<select class='schools'></select>&nbsp;&nbsp;&nbsp;<select class='academy'></select>&nbsp;&nbsp;&nbsp;<select class='grade'></select>",
+    templateString: "",
 
     __constructor: function() {
+
 
     },
 
     onAttach: function(domNode) {
-
-    },
+        domNode.find('div.caption i').text(" 北京站")
+    }
 
 });

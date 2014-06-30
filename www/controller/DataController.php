@@ -25,6 +25,7 @@ class DataController extends ApiController
 
         $success = array();
         $failure = array();
+        $alerts = array();
         foreach ($entries as $entry)
         {
             $data = self::getData($station, $entry);
@@ -33,7 +34,8 @@ class DataController extends ApiController
             if ($data->save() !== false)
             {
                 Cache::updateLatestTime($this->redis, $station, $device);
-                $this->checkAlertRule($station, $device, $data);
+                $check = $this->checkAlertRule($station, $device, $data);
+                array_push($alerts, $check);
                 array_push($success, array('device' => $device, 'time' => $entry->time));
             }
             else
@@ -43,27 +45,29 @@ class DataController extends ApiController
 
         }
 
-        return parent::result(array("success" => $success, "failure" => $failure));
+        return parent::result(array("success" => $success, "failure" => $failure, 'alert' => $alerts));
 
     }
 
-    public function uploadAction($station, $fileType)
+    public function uploadAction($station, $fileType, $folder)
     {
         if (!$this->request->isPost())
         {
             return parent::error(Error::BadHttpMethod, '');
         }
 
+
         if($this->request->hasFiles() == true)
         {
+            $path = $this->checkPath($station, $fileType, $folder);
             $uploads = $this->request->getUploadedFiles();
             $isUploaded = false;
             #do a loop to handle each file individually
-            foreach($uploads as $upload){
+            foreach($uploads as $upload)
+            {
+                $filePath = $path . strtolower($upload->getname());
 
-                $path = ".\\data\\$station\\$fileType\\" . strtolower($upload->getname());
-
-                ($upload->moveTo($path)) ? $isUploaded = true : $isUploaded = false;
+                ($upload->moveTo($filePath)) ? $isUploaded = true : $isUploaded = false;
             }
 
             return parent::result(array('upload' => $isUploaded, 'station' => $station, 'fileType' => $fileType));
@@ -85,7 +89,6 @@ class DataController extends ApiController
         $condition = "station=$station";
         $data = $device::find(array(
             $condition,
-
         ));
 
         $items = array();
@@ -100,15 +103,108 @@ class DataController extends ApiController
 
     }
 
+    private function checkPath($station, $fileType, $folder)
+    {
+        // $month = date("y-m", time());
+        $ret = ".\\data\\$station\\$fileType\\$folder\\";
+        if (!file_exists($ret))
+        {
+            $stationPath = ".\\data\\$station";
+            if (!file_exists($stationPath))
+            {
+                mkdir($stationPath);
+            }
+
+            $devicePath = "$stationPath\\$fileType";
+            if (!file_exists($devicePath))
+            {
+                mkdir($devicePath);
+            }
+
+            $monthPath = "$devicePath\\$folder";
+            if (!file_exists($monthPath))
+            {
+                mkdir($monthPath);
+            }
+
+        }
+        return $ret;
+    }
+
     public function latestAction($station, $device)
     {
         $time = Cache::getLatestTime($this->redis, $station, $device);
         return parent::result(array('station' => $station, 'device' => $device, 'time' => $time));
     }
 
+    public function alertsAction($station, $device, $all = false)
+    {
+        if ($all)
+        {
+            $condition = "station_id=$station";
+        }
+        else
+        {
+            $condition = "station_id=$station and handled=0";
+        }
+
+        $modelName = $device . 'Alert';
+
+        $alerts =  $modelName::find(array($condition));
+        $ret = array();
+        foreach ($alerts as $alert)
+        {
+            array_push($ret, $alert);
+        }
+
+        return parent::result(array('station' => $station, 'device' => $device, 'items' => $ret));
+    }
+
+
     private function checkAlertRule($station, $device, $data)
     {
-        // TODO:
+        $values = AlertRule::getAlertValues($this->redis, $station, $device);
+
+        $rules = Config::$d[$device];
+
+        $ret = array();
+        foreach ($values as $value)
+        {
+
+            $field = $value->field;
+            $rule = $rules[$field];
+
+            if ($rule->rule == 0)
+            {
+                if ($data->$field > $rule->v1)
+                {
+                    $saved = self::addAlertData($station, $device, $data, $field, $value->v1, $value->v2);
+                    array_push($ret, array($field => $saved));
+                }
+
+            }
+            else if ($rule->rule == 1)
+            {
+                // TODO:
+            }
+
+        }
+        return $ret;
+    }
+
+    private static function addAlertData($station, $device, $data, $field, $v1, $v2)
+    {
+        $modelName = $device . 'Alert';
+        $d = new $modelName();
+
+        $d->station_id = $station;
+        $d->field = $field;
+        $d->value = $data->$field;
+        $d->v1 = $v1;
+        $d->v2 = $v2;
+        $d->handled = 0;
+
+        return $d->save();
     }
 
     private static function getData($station, $entry)
