@@ -88,7 +88,7 @@ $class("HpicDevice", DeviceBase,
 
     onShow: function()
     {
-        //this.fetchData();
+        this.fetchData();
         this.fetchAlerts();
     }
 
