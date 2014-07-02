@@ -117,21 +117,6 @@ class ApiController extends \Phalcon\Mvc\Controller
         }
 	}
 
-    public function getAction($type)
-    {
-        if ($this->request->isGet())
-        {
-            if ($type == "phpinfo")
-            {
-                echo phpinfo();
-            }
-            else if ($type == "memory")
-            {
-                // TODO: Return the server memory status
-            }
-        }
-    }
-
     public function testAction()
     {
         $a = AlertRule::findFirst();
