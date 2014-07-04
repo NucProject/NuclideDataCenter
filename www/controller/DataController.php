@@ -65,14 +65,43 @@ class DataController extends ApiController
             #do a loop to handle each file individually
             foreach($uploads as $upload)
             {
-                $filePath = $path . strtolower($upload->getname());
+                $fileName = $upload->getname();
+                $filePath = $path . strtolower($fileName);
 
                 ($upload->moveTo($filePath)) ? $isUploaded = true : $isUploaded = false;
+
+                if ($fileType == 'labr')
+                {
+                    $this->recordN42File($station, $filePath, $fileName);
+                }
             }
 
             return parent::result(array('upload' => $isUploaded, 'station' => $station, 'fileType' => $fileType));
         }
         return parent::error(Error::BadPayload, '');
+    }
+
+    private function recordN42File($station, $filePath, $fileName)
+    {
+        $xml = simplexml_load_file($filePath);
+        $endTime = "";
+        $startTime = "";
+        $doserate = "";
+        $temperature = "";
+        $highvoltage = "";
+        $refnuclidefound = "";
+        $n42Path = "";
+
+        $d = new Labr();
+        $d->station_id = $station;
+        $d->time = $d->endtime = $endTime;
+        $d->starttime = $startTime;
+        $d->doserate = $doserate;
+        $d->temperature = $temperature;
+        $d->highvoltage = $highvoltage;
+        $d->refnuclidefound = $refnuclidefound;
+        $d->n42path = $n42Path;
+        $d->save();
     }
 
     public function fetchAction($station, $device)
