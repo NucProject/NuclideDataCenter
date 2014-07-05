@@ -84,22 +84,19 @@ class DataController extends ApiController
     private function recordN42File($station, $filePath, $fileName)
     {
         $xml = simplexml_load_file($filePath);
-        $endTime = "";
-        $startTime = "";
-        $doserate = "";
-        $temperature = "";
-        $highvoltage = "";
-        $refnuclidefound = "";
-        $n42Path = "";
+
+        $data = parent::getN42Data($xml);
+
+        $n42Path = "/download/labr/$station/$fileName";
 
         $d = new Labr();
         $d->station_id = $station;
-        $d->time = $d->endtime = $endTime;
-        $d->starttime = $startTime;
-        $d->doserate = $doserate;
-        $d->temperature = $temperature;
-        $d->highvoltage = $highvoltage;
-        $d->refnuclidefound = $refnuclidefound;
+        $d->time = $d->endtime = $data['endtime'];
+        $d->starttime = $data['starttime'];
+        $d->doserate = $data['doserate'];
+        $d->temperature = $data['temperature'];
+        $d->highvoltage = $data['highvoltage'];
+        $d->refnuclidefound = $data['$nuclidefound'];
         $d->n42path = $n42Path;
         $d->save();
     }
