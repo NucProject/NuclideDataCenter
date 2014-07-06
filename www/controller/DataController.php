@@ -74,11 +74,22 @@ class DataController extends ApiController
                 {
                     $this->recordN42File($station, $filePath, $fileName);
                 }
+                else if ($fileType == 'hpge')
+                {
+                    $this->recordHpGeFile($station, $filePath, $fileName);
+                }
             }
 
             return parent::result(array('upload' => $isUploaded, 'station' => $station, 'fileType' => $fileType));
         }
         return parent::error(Error::BadPayload, '');
+    }
+
+    private function recordHpGeFile($station, $filePath, $fileName)
+    {
+        $d = new Hpge();
+        $d->station_id = $station;
+        $d->save();
     }
 
     private function recordN42File($station, $filePath, $fileName)
@@ -96,8 +107,8 @@ class DataController extends ApiController
         $d->doserate = $data['doserate'];
         $d->temperature = $data['temperature'];
         $d->highvoltage = $data['highvoltage'];
-        $d->refnuclidefound = $data['$nuclidefound'];
-        $d->n42path = $n42Path;
+        $d->refnuclidefound = $data['nuclidefound'];
+        $d->N42path = $n42Path;
         $d->save();
     }
 

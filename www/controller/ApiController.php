@@ -315,8 +315,23 @@ class ApiController extends \Phalcon\Mvc\Controller
         return array(
             'doserate' => (double)$doserate, 'temperature' => (double)$t, 'highvoltage' => (double)$v,
             'nuclidefound' => (string)$nuclidefound == 'true',
-            'starttime' => (string)$startTime, 'endtime' => (string)$endTime
+            'starttime' => self::parseTime( (string)$startTime), 'endtime' => self::parseTime( (string)$endTime)
         );
+    }
+
+    public static function parseTime($time)
+    {
+        $parsed = date_parse_from_format("Y-m-d H:i:s", $time);
+        $ret = mktime(
+            $parsed['hour'],
+            $parsed['minute'],
+            $parsed['second'],
+            $parsed['month'],
+            $parsed['day'],
+            $parsed['year']
+        );
+        // echo json_encode($parsed);
+        return date('Y-m-d H:i:s', $ret + 8 * 3600);
     }
 
     private function test()
