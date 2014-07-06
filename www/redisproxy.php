@@ -20,13 +20,4 @@ class RedisProxy
         return $this->redis;
     }
 
-
-    public function lupdate()
-    {
-        $redis = $this->getRedis();
-
-    }
 }
-
-
-?>

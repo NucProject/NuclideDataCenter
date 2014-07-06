@@ -207,13 +207,14 @@ class DataController extends ApiController
         $ret = array();
         foreach ($values as $value)
         {
-
+            echo json_encode($value);
             $field = $value->field;
             $rule = $rules[$field];
+            echo json_encode($rule);
 
-            if ($rule->rule == 0)
+            if ($rule['rule'] == 0)
             {
-                if ($data->$field > $rule->v1)
+                if ($data->$field > $value->v1)
                 {
                     $saved = self::addAlertData($station, $device, $data, $field, $value->v1, $value->v2);
                     array_push($ret, array($field => $saved));

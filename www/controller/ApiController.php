@@ -117,7 +117,7 @@ class ApiController extends \Phalcon\Mvc\Controller
         }
 	}
 
-    public function testAction()
+    public function testN42Action()
     {
         $myRequest ='<?xml version="1.0" encoding="ISO-8859-1"?>
 <N42InstrumentData xmlns="http://physics.nist.gov/Divisions/Div846/Gp4/ANSIN4242/2005/ANSIN4242" xmlns:sara="http://www.technidata.com/ENVINET/SARA" xmlns:envinet="http://www.technidata.com/ENVINET">
@@ -317,6 +317,11 @@ class ApiController extends \Phalcon\Mvc\Controller
             'nuclidefound' => (string)$nuclidefound == 'true',
             'starttime' => self::parseTime( (string)$startTime), 'endtime' => self::parseTime( (string)$endTime)
         );
+    }
+
+    public function testAction()
+    {
+
     }
 
     public static function parseTime($time)
