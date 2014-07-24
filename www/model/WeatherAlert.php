@@ -6,7 +6,7 @@
  * Time: 下午8:56
  */
 
-class EnvironmentDoor extends \Phalcon\Mvc\Model
+class WeatherAlert extends \Phalcon\Mvc\Model
 {
 
-} 
+}

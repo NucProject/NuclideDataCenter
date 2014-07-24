@@ -30,7 +30,7 @@ class DataController extends ApiController
         {
             $data = self::getData($station, $entry);
             $device = $entry->device;
-
+            echo json_encode($data);
             if ($data->save() !== false)
             {
                 Cache::updateLatestTime($this->redis, $station, $device);
@@ -49,17 +49,16 @@ class DataController extends ApiController
 
     }
 
-    public function uploadAction($station, $fileType, $folder)
+    public function uploadAction($station, $fileType, $folder, $folder2)
     {
         if (!$this->request->isPost())
         {
             return parent::error(Error::BadHttpMethod, '');
         }
 
-
         if($this->request->hasFiles() == true)
         {
-            $path = $this->checkPath($station, $fileType, $folder);
+            $path = $this->checkPath($station, $fileType, $folder, $folder2);
             $uploads = $this->request->getUploadedFiles();
             $isUploaded = false;
             #do a loop to handle each file individually
@@ -68,11 +67,12 @@ class DataController extends ApiController
                 $fileName = $upload->getname();
                 $filePath = $path . strtolower($fileName);
 
+
                 ($upload->moveTo($filePath)) ? $isUploaded = true : $isUploaded = false;
 
                 if ($fileType == 'labr')
                 {
-                    $this->recordN42File($station, $filePath, $fileName);
+                    $this->recordN42File($station, $filePath, $folder, $folder2, $fileName);
                 }
                 else if ($fileType == 'hpge')
                 {
@@ -88,20 +88,20 @@ class DataController extends ApiController
     private function recordHpGeFile($station, $filePath, $fileName)
     {
         $d = new Hpge();
-        $d->station_id = $station;
+        $d->station = $station;
         $d->save();
     }
 
-    private function recordN42File($station, $filePath, $fileName)
+    private function recordN42File($station, $filePath, $month, $day, $fileName)
     {
         $xml = simplexml_load_file($filePath);
 
         $data = parent::getN42Data($xml);
 
-        $n42Path = "/download/labr/$station/$fileName";
+        $n42Path = "/download/labr/$station/$month/$day/$fileName";
 
         $d = new Labr();
-        $d->station_id = $station;
+        $d->station = $station;
         $d->time = $d->endtime = $data['endtime'];
         $d->starttime = $data['starttime'];
         $d->doserate = $data['doserate'];
@@ -114,16 +114,26 @@ class DataController extends ApiController
 
     public function fetchAction($station, $device)
     {
-        if (!$this->request->isGet())
+        if ($this->request->isPost())
         {
-            return parent::error(Error::BadHttpMethod, '');
+            $payload = $this->request->getPost();
+            $start = $payload['start'];
+            $end = $payload['end'];
+        }
+        else
+        {
+            $start = $this->request->getQuery('start');
+            $end = $this->request->getQuery('end');
         }
 
-        $from = $this->request->getQuery("from");
-
-        $to = $this->request->getQuery("to");
-
         $condition = "station=$station";
+
+        if (isset($start) && isset($end)){
+            // echo "$start";
+            $condition .= " and time >= '$start' and time < '$end'";
+        }
+
+        //echo $condition;
         $data = $device::find(array(
             $condition,
         ));
@@ -140,13 +150,21 @@ class DataController extends ApiController
 
     }
 
-    private function checkPath($station, $fileType, $folder)
+    private function checkPath($station, $fileType, $folder, $folder2)
     {
-        // $month = date("y-m", time());
-        $ret = ".\\data\\$station\\$fileType\\$folder\\";
+
+        if (isset($folder2))
+        {
+            $ret = ".\\view\\file\\$station\\$fileType\\$folder\\$folder2\\";
+        }
+        else
+        {
+            $ret = ".\\view\\file\\$station\\$fileType\\$folder\\";
+        }
+
         if (!file_exists($ret))
         {
-            $stationPath = ".\\data\\$station";
+            $stationPath = ".\\view\\file\\$station";
             if (!file_exists($stationPath))
             {
                 mkdir($stationPath);
@@ -158,10 +176,19 @@ class DataController extends ApiController
                 mkdir($devicePath);
             }
 
-            $monthPath = "$devicePath\\$folder";
-            if (!file_exists($monthPath))
+            $folderPath = "$devicePath\\$folder";
+            if (!file_exists($folderPath))
             {
-                mkdir($monthPath);
+                mkdir($folderPath);
+            }
+
+            if (isset($folder2))
+            {
+                $folderPath2 = "$folderPath\\$folder2";
+                if (!file_exists($folderPath2))
+                {
+                    mkdir($folderPath2);
+                }
             }
 
         }
@@ -235,6 +262,7 @@ class DataController extends ApiController
         $modelName = $device . 'Alert';
         $d = new $modelName();
 
+        $d->time = $data->time;
         $d->station_id = $station;
         $d->field = $field;
         $d->value = $data->$field;
@@ -248,6 +276,7 @@ class DataController extends ApiController
     private static function getData($station, $entry)
     {
         $device = $entry->device;
+
         $deviceConfig = Config::$m[$device];
 
         $data = new $device();
@@ -256,7 +285,14 @@ class DataController extends ApiController
         foreach ($deviceConfig as $key => $item)
         {
             $value = $entry->$key;
+
+            if ($value === true)
+                $value = 1;
+            if ($value === false)
+                $value = 0;
+
             $data->$item = $value;
+
         }
 
         return $data;

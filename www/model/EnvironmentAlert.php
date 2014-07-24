@@ -6,7 +6,7 @@
  * Time: 下午8:56
  */
 
-class CinderellaData extends \Phalcon\Mvc\Model
+class EnvironmentAlert extends \Phalcon\Mvc\Model
 {
 
-} 
+}

@@ -5,9 +5,6 @@ use Phalcon\Loader,
     Phalcon\Mvc\Application,
     Phalcon\Mvc\View;
 
-//ini_set("session.save_handler", "redis");
-// ini_set("session.save_path", "tcp://127.0.0.1:6379");
-
 
 $loader = new Loader();
 
@@ -17,6 +14,13 @@ $loader->registerDirs(
         './model',
     )
 )->register();
+
+
+Config::$mysqlHost = '127.0.0.1';
+if (isset($_SERVER['NDCDB_HOST']))
+{
+    //Config::$mysqlHost = $_SERVER['NDCDB_HOST'];
+}
 
 $di = new FactoryDefault();
 
@@ -29,7 +33,7 @@ $di->set('view', function() {
 
 $di->set('db', function() {
     return new Phalcon\Db\Adapter\Pdo\Mysql(array(
-        'host' => "127.0.0.1",
+        'host' => Config::$mysqlHost,
         'username' => 'root',
         'password' => 'root',
         'dbname' => 'ndcdb',

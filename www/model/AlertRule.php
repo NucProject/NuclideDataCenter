@@ -49,7 +49,6 @@ class AlertRule extends \Phalcon\Mvc\Model
             }
         }
 
-
         $condition = "station=$station and device='$device' and field='$field'";
         $alert = AlertRule::findFirst(array($condition));
         return $alert;

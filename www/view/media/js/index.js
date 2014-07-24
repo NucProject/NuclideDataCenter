@@ -648,21 +648,10 @@ var Index = function () {
 
             $('#dashboard-report-range').daterangepicker({
                 ranges: {
-                    '今日': ['today', 'today'],
-                    '昨日': ['yesterday', 'yesterday']
-                    /*
-                    '过去7日': [Date.today().add({
-                            days: -6
-                        }), 'today'],
-                    'Last 30 Days': [Date.today().add({
-                            days: -29
-                        }), 'today'],
-                    'This Month': [Date.today().moveToFirstDayOfMonth(), Date.today().moveToLastDayOfMonth()],
-                    'Last Month': [Date.today().moveToFirstDayOfMonth().add({
-                            months: -1
-                        }), Date.today().moveToFirstDayOfMonth().add({
-                            days: -1
-                        })]*/
+                    '今天': [Date.today(), Date.today().addHours(24)],
+                    '昨天': [Date.today().addHours(-24), Date.today()],
+                    '前天': [Date.today().addHours(-48), Date.today().addHours(-24)]
+
                 },
                 opens: (App.isRTL() ? 'right' : 'left'),
                 format: 'yyyy-MM-dd',
@@ -690,18 +679,36 @@ var Index = function () {
                 App.blockUI(jQuery("#dashboard"));
                 setTimeout(function () {
                     App.unblockUI(jQuery("#dashboard"));
-
-                    App.scrollTo();
+                    // App.scrollTo();
                 }, 10);
-                $('#dashboard-report-range span').html(start.toString('yyyy-MM-dd') + ' ~ ' + end.toString('yyyy-MM-dd'));
+
+
+                if (start.clone().addHours(24).toISOString() == end.toISOString())
+                {
+                    if (start.toISOString() == Date.today().toISOString())
+                    {
+                        $('#dashboard-report-range span').html('今天');
+                    }
+                    else if (start.toISOString() == Date.today().addHours(-24).toISOString())
+                    {
+                        $('#dashboard-report-range span').html('昨天');
+                    }
+                    else if (start.toISOString() == Date.today().addHours(-48).toISOString())
+                    {
+                        $('#dashboard-report-range span').html('前天');
+                    }
+                }
+                else
+                {
+                    $('#dashboard-report-range span').html(start.toString('yyyy年MM月dd日') + ' - ' + end.toString('yyyy年MM月dd日'));
+                }
+
                 $("body").trigger("dateRangeChanged", [start, end]);
             });
 
             $('#dashboard-report-range').show();
 
-            $('#dashboard-report-range span').html(Date.today().add({
-                days: -29
-            }).toString('yyyy-MM-dd') + ' ~ ' + Date.today().toString('yyyy-MM-dd'));
+            $('#dashboard-report-range span').html(Date.today().toString('yyyy年MM月dd日') + ' - ' + Date.today().addHours(24).toString('yyyy年MM月dd日'));
         },
 
         initIntro: function () {

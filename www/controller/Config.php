@@ -8,6 +8,8 @@
 
 class Config
 {
+    public static $mysqlHost;
+
     public static $m = array(
 
         'hpic' => array(
