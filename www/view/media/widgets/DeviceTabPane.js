@@ -27,9 +27,21 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     },
 
     onAttach: function(domNode) {
+        var dataPane = domNode.find("div.data-pane")
+
         this._dataListView = new ListView();
         var dataListViewDomNode = this._dataListView.create();
-        dataListViewDomNode.appendTo(domNode.find("div.data-pane"));
+        dataListViewDomNode.appendTo(dataPane);
+
+        var evnet = this.widgetId();
+
+        this._dataListView.setPageEvent(evnet);
+
+        $div = $('<div></div>').appendTo(dataPane.parent());
+
+        var pageBar = new Pagebar(24);
+        pageBar.create().appendTo($div);
+        pageBar.setPageEvent(this._dataListView, evnet);
 
         this._alertListView = new ListView();
         var alertListViewDomNode = this._alertListView.create();
@@ -56,7 +68,23 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             this_.dateRangeChanged && this_.dateRangeChanged(startTime.toString('yyyy-MM-dd'), endTime.toString('yyyy-MM-dd'));
         });
 
-        // TODO: Set Config items;
+        var self = this;
+        if (!this._noAlertData)
+        {
+            this.ajax("alert/config/" + this._deviceType, null, function(data){
+                var fc = eval("(" + data + ")");
+
+
+                self._alertSettingPane = new AlertSettingPane(self._deviceType);
+                var dn = self._alertSettingPane.create();
+
+                dn.appendTo(self._domNode.find('div.config'));
+                self._alertSettingPane.setAlertFields(fc['results'])
+
+            });
+        }
+
+
 
         this._alertListView._domNode.delegate('td a.handle', 'click', function(){
 
@@ -94,15 +122,12 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
 
     showCharts: function(domNode, p) {
-
+        //return;
         if (p.filter)
         {
             var items = this._dataListView.getShownData();
             var items = p.filter(items);
         }
-
-        console.log(items);
-        console.log(items.data);
 
         var selector = p.selector || 'div.charts';
         domNode.find(selector).highcharts({
@@ -116,7 +141,7 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                 text: p.subtitle
             },
             xAxis: {
-                categories: p.x //??
+                categories: p.x || items.x //??
             },
             yAxis: {
                 title: {
@@ -156,6 +181,64 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
     dateRangeChanged: function(startTime, endTime) {
         this.fetchData({start: startTime, end: endTime});
+    },
+
+    filterData: function(data, field) {
+        var datas = [];
+        var times = [];
+        var p = 0;
+
+        var dict = [];
+        for (var i in data) {
+            var t = data[i]['time'].split(' ')[1];
+            dict[t] = data[i][field];
+        }
+
+        console.log(dict)
+        console.log(dict['20:50:00'])
+
+        d = new Date()
+        var base = -3600 * 8 * 1000;
+        var value = null;
+        var start = false;
+        for (var i = 1000; i < 2000; i += 1) {
+
+            d.setTime(base + i * 30000)
+            s = d.toTimeString()
+            var key = s.substr(0, 8);
+
+            //.if (i % 2 != 0)
+            //    continue;
+
+            value = dict[key];
+            if (value)
+            {
+                start = true
+                datas.push(parseFloat(value));
+            }
+            else
+            {
+                if (start)
+                {
+                    datas.push(null);
+                }
+            }
+
+            if (start)
+            {
+                if (i % 100 == 0)
+                {
+                    times.push(key.substr(0, 5));
+                }
+                else
+                {
+                    times.push('');
+                }
+            }
+
+        }
+        console.log(datas)
+        return {'data': datas, 'x': times};
     }
 
 
@@ -173,7 +256,6 @@ $class("HpicDevice", DeviceBase,
         console.log(domNode)
         this.__super(DeviceBase.prototype.onAttach, [domNode]);
 
-
         this._dataListView.setHeaders([
             {'key':'time', 'name':'时间'},
             {'key':'doserate', 'name':'剂量率'},
@@ -188,21 +270,13 @@ $class("HpicDevice", DeviceBase,
         this.showCharts(this._domNode, {
             selector: "div.charts",
             title: "剂量率", ytitle: "剂量率",
-            filter: this.filter
+            filter: kx.bind(this, 'filter')
         });
 
     },
 
     filter: function(data) {
-        var a = [];
-
-
-        for (var i in data) {
-            var n = data[i]['doserate'];
-            a.push(parseFloat(n));
-        }
-        console.log(a)
-        return {'data':a};
+        return this.filterData(data, 'doserate');
     }
 
 });
@@ -229,37 +303,24 @@ $class("WeatherDevice", DeviceBase,
         this.showCharts(this._domNode, {
             selector: "div.charts",
             title: "温度", ytitle: "温度",
-            filter: this.filter1
+            filter: kx.bind(this, 'filter1')
         });
 
         this.showCharts(this._domNode, {
             selector: "div.charts2",
             title: "气压", ytitle: "气压",
-            filter: this.filter2
+            filter: kx.bind(this, 'filter2')
         });
 
     },
 
     filter1: function(data) {
-        var a = [];
+        return this.filterData(data, 'Temperature');
 
-
-        for (var i in data) {
-            var n = data[i]['Temperature'];
-            a.push(parseFloat(n));
-        }
-
-        return {'data':a};
     },
 
     filter2: function(data) {
-        var a = [];
-        for (var i in data) {
-            var n = data[i]['Pressure'];
-            a.push(parseFloat(n));
-        }
-
-        return {'data':a};
+        return this.filterData(data, 'Pressure');
     }
 });
 
@@ -312,7 +373,6 @@ $class("LabrDevice", DeviceBase,
 
     filter: function(data) {
         var a = [];
-
 
         for (var i in data) {
             var n = data[i]['doserate'];

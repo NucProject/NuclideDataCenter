@@ -7,7 +7,14 @@
 			<div class="tabbable portlet-tabs">
 				<ul class="nav nav-tabs">
                     <li><a href="#hpic_config" data-toggle="tab">设置</a></li>
-                    <li><a href="#hpic_alert" data-toggle="tab">报警</a></li>
+                    <li class="dropdown">
+
+                        <a href="#hpic_alert" data-toggle="tab" class="dropdown-toggle" style="margin-top:6px;padding-top:8px;padding-bottom:8px">
+                            <!-- <i class="icon-warning-sign"></i> -->
+                            <span>报警&nbsp;</span>
+                            <span class="badge" style="position: relative;top:0px;right:5px;-webkit-border-radius: 12px !important;background: red">0</span>
+                        </a>
+                    </li>
                     <li><a href="#hpic_chart" data-toggle="tab">曲线</a></li>
                     <li class="active"><a href="#hpic_data" data-toggle="tab">数据</a></li>
 				</ul>
@@ -24,7 +31,7 @@
 
                         </div>
                     </div>
-                    <div class="tab-pane" id="hpic_config">
+                    <div class="tab-pane config" id="hpic_config">
                     </div>
                     <div class="tab-pane" id="hpic_alert">
                         <div class="alert-pane">

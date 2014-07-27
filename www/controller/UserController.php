@@ -7,17 +7,33 @@ class UserController extends ApiController
 		$this->view->disable();
     }
 
+    public function testAction()
+    {
+        if (!$this->request->isGet())
+        {
+            return parent::error(Error::BadHttpMethod, '');
+        }
+        session_start();
+        if (isset($_SESSION['uid']))
+        {
+            return parent::result(array());
+        }
+        else
+        {
+            return parent::error(Error::BadSession, '');
+        }
+    }
 
     public function registerAction()
     {
     	if (!$this->request->isPost())
         {
-            return;
+            return parent::error(Error::BadHttpMethod, '');
         }
 
         $payload = $this->request->getPost();
         $username = $payload['username'];
-        $password = $payload['password'];
+        $password = $payload['password_md5'];
 
 
         if (isset($username) && isset($password))
@@ -27,8 +43,8 @@ class UserController extends ApiController
             {
                 $user = new User();
                 $user->username = $username;
-                $user->passwd_hash = self::hashPassword($password);
-
+                $user->password = $password;
+                $user->role = 1;
 
                 if ($user->save() != false)
                 {
@@ -63,7 +79,7 @@ class UserController extends ApiController
     {
         if (!$this->request->isPost())
         {
-            return;
+            return parent::error(Error::BadHttpMethod, '');
         }
 
         $payload = $this->request->getPost();
@@ -72,24 +88,13 @@ class UserController extends ApiController
 
         if (isset($username) && isset($password))
         {
-            $passwdHash = self::hashPassword($password);
-            $users = User::find(array("username='$username' AND passwd_hash='$passwdHash'"));
+            $users = User::find(array("username='$username' AND password='$password'"));
             if (count($users) > 0)
             {
                 $user = $users[0];
                 session_start();
                 $userId = $user->user_id;
                 $_SESSION['uid'] = $userId;
-
-
-                $debug = $payload['_debug'];
-                if (isset($debug))
-                {
-                    if ($debug == "1")
-                    {
-                        $_SESSION['debug'] = "1";
-                    }
-                }
 
                 return parent::result(array(
                     "user_id" => $userId,

@@ -2,7 +2,7 @@
  * Created by Healer on 14-6-5.
  */
 
-$class("ListView", [kx.Weblet, kx.ActionMixin],
+$class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 {
     _headers: null,
 
@@ -10,12 +10,28 @@ $class("ListView", [kx.Weblet, kx.ActionMixin],
 
     _data: null,
 
+    _currentPage: 1,
+
     __constructor: function() {
 
     },
 
     onCreated: function(domNode) {
 
+    },
+
+    setPageEvent: function(event) {
+        var this_ = this;
+        this._domNode.bind(event, function(e, sender, data){
+            this_.onPageChanged(data);
+        });
+    },
+
+    onPageChanged: function(data) {
+        var page = data;
+        this._currentPart = page - 1;
+
+        this.fillItems(this._items);
     },
 
     refresh: function(api, payload) {
@@ -41,19 +57,21 @@ $class("ListView", [kx.Weblet, kx.ActionMixin],
     },
 
     getShownData: function() {
-        return this._data;
+        return this._items;
     },
 
     dataReceived: function(data) {
+        var results = eval("(" + data + ")")['results'];
+        var items = results['items']
+        this._items = items;
 
+        this.fillItems(this._items);
+    },
+
+    fillItems: function(items) {
 
         var tbody = this._domNode.find("tbody");
         tbody.empty();
-
-        var results = eval("(" + data + ")")['results'];
-        var items = results['items']
-        this._data = items;
-        console.log(results)
 
         var headers = [];
         for (var j in this._headers)
@@ -64,6 +82,11 @@ $class("ListView", [kx.Weblet, kx.ActionMixin],
 
         for (var i in items)
         {
+            if (i < this._currentPart * 120)
+                continue;
+
+            if (i > (this._currentPart + 1) * 120)
+                break;
 
             var cl = ["<tr>"];
             var item = items[i];

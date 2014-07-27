@@ -20,4 +20,11 @@ class Error
 
 	const BadSession = 201;
 
+    const AuthFailed = 202;
+
+    const RegisterFailedForPhoneNumberExists = 1001;
+
+    const RegisterFailedForBadUsernameOrPassword = 1002;
+
+
 }

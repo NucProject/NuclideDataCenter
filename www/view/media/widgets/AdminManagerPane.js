@@ -9,16 +9,18 @@ $class("AdminManagerPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     },
 
     onAttach: function(domNode) {
+        console.log(111)
         domNode.find("a.add-admin").click(kx.bind(this, "addAdmin"));
     },
 
     addAdmin: function() {
+        console.log(11122)
         var payload = {
             "username": this.getUsername(),
             "password_md5": this.passwordMD5()
         };
-        this.ajax("admin/addAdmin", payload, function(){
-
+        this.ajax("user/register", payload, function(data){
+            console.log(data)
         });
     },
 

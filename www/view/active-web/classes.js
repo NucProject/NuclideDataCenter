@@ -327,6 +327,11 @@ $class("kx.Widget", Base, {
 		}
 	},
 
+    widgetId: function()
+    {
+        return this._widgetId;
+    },
+
 	attach: function(domNode)
 	{
 		this._domNode = domNode;
@@ -400,11 +405,6 @@ $class("kx.Weblet", kx.Widget, {
 	setCommon: function()
 	{
 		this._common = true;
-	},
-
-	widgetId: function()
-	{
-		return this._widgetId;
 	},
 
 	findNodes: function(sel)

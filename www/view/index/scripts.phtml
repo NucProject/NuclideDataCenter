@@ -53,6 +53,7 @@
 <script src="media/widgets/ListView.js" type="text/javascript"></script>
 <script src="media/widgets/Breadcrumb.js" type="text/javascript"></script>
 <script src="media/widgets/sidebar.js" type="text/javascript"></script>
+<script src="media/widgets/pagebar.js" type="text/javascript"></script>
 <script src="media/widgets/DeviceTabPane.js" type="text/javascript"></script>
 <script src="media/widgets/DeviceSummary.js" type="text/javascript"></script>
 
@@ -74,6 +75,36 @@
         Index.initIntro();
 
         Lock.init();
+        $.ajax({
+            type: "GET",
+            url: "user/test",
+            data: null,
+            success: function(data){
+                console.log(data)
+                var d = eval("(" + data + ")")
+                if(d.errorCode == 201){
+                    location.href = "/main/lock";
+                }
+            }
+        });
+
+
+        $('#signOut').bind('click', function(){
+            $.ajax({
+                type: "GET",
+                url: "user/signOut",
+                data: {},
+
+                success: function(data){
+                    var d = eval("(" + data + ")")
+                    if(d.errorCode == 0){
+                        location.href = "/main/lock";
+                    }
+                }
+
+            });
+        });
+
 
 
         g = new Global();
@@ -87,6 +118,34 @@
 
 
         g.showRow("#station-row");
+
+
+        setInterval(function(){
+            // header_notification_bar
+            $.ajax({
+                type: "GET",
+                url: "alert/count",
+                data: {},
+
+                success: function(data){
+                    var d = eval("(" + data + ")")
+                    if(d.errorCode == 0){
+                        g.setAlerts(d.results);
+
+                        $('#header_notification_bar span.badge').text(d.results.count)
+
+                        $('#hpic_alert span.badge').text(d.results.hpic);
+                        $('#weather_alert span.badge').text(d.results.weather);
+                        $('#labr_alert span.badge').text(d.results.labr);
+                        $('#hpge_alert span.badge').text(d.results.hpge);
+                        $('#cinderella_alert span.badge').text(d.results.cinderella);
+                        $('#environment_alert span.badge').text(d.results.environment);
+
+                    }
+                }
+
+            });
+        }, 10 * 1000);
 
 
     });

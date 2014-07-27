@@ -97,5 +97,10 @@ $class("Global", Base,
 
     getUnixTime: function() {
         return Math.round(new Date().getTime()/1000);
-    }
+    },
+
+    setAlerts: function(alerts) {
+        this._alerts = alerts;
+    },
+
 });

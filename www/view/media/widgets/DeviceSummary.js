@@ -4,7 +4,7 @@
 
 $class("AlertSettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 {
-    _templateString: "<div><select></select><div><input class='v1'/><input class='v2'/></div><a class='btn blue sure'>确定</a></div>",
+    _templateString: "<div><span>设置报警阈值</span><br><select></select><div><input class='v1'/></div><div><input class='v2'/></div><a class='btn blue sure'>确定</a></div>",
 
     _device: null,
 
@@ -20,6 +20,7 @@ $class("AlertSettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
     },
 
     setAlertFields: function(alertFields) {
+        console.log(alertFields)
         this._alertFields = alertFields;
         var selNode = this._domNode.find("select");
 
@@ -194,7 +195,7 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                     self._alertSettingPane = new AlertSettingPane(self._deviceType);
                     var dn = self._alertSettingPane.create();
 
-                    dn.appendTo(self._domNode.find('div.setting'));
+                    dn.appendTo(self._domNode.find('div.config'));
                     self._alertSettingPane.setAlertFields(fc['results'])
 
                 });
