@@ -61,41 +61,46 @@
 		<div class="page-logo">
 
 			<a class="brand" href="index.html">
-
+<!--
 			<img src="media/image/logo-big.png" alt="logo" />
-
+-->
 			</a>
 
 		</div>
 
 		<div class="page-body">
 
-			<img class="page-lock-img" src="media/image/profile.jpg" alt="">
+
 
 			<div class="page-lock-info">
 
-				<span><em>Locked</em></span>
+				<span style="font-size: 36px">登录</span>
 
 				<form class="form-search">
 					<div class="input-append">
 
 						<input id="username" type="text" class="m-wrap" placeholder="用户名">
-
-						<button type="submit" class="btn blue icn-only signin"><i class="m-icon-swapright m-icon-white"></i></button>
-
+                        <!--
+						<button class="btn blue icn-only signin"><i class="m-icon-swapright m-icon-white"></i></button>
+                        -->
 					</div>
+
+                    <div style="height: 20px"></div>
+
 					<div class="input-append">
 
 						<input id="password" type="password" class="m-wrap" placeholder="密码">
-
-						<button type="submit" class="btn blue icn-only signin"><i class="m-icon-swapright m-icon-white"></i></button>
-
-					</div>
-
-					<div class="relogin">
                         <!--
-						<a href="login.html">忘记密码</a>
+                        <button class="btn blue icn-only signin"><i class="m-icon-swapright m-icon-white"></i></button>
                         -->
+                    </div>
+
+                    <div class="relogin" style="margin-top: 40px">
+                        <!--
+                        <a href="login.html">忘记密码</a>
+                        -->
+                        <span id='error' style="font-size: 14px;color: red"></span>
+                        <a type="submit" class="btn blue signin">&nbsp;登录&nbsp;</a>
 					</div>
 
 				</form>
@@ -104,11 +109,7 @@
 
 		</div>
 
-		<div class="page-footer">
 
-			2013 &copy; Metronic. Admin Dashboard Template.
-
-		</div>
 
 	</div>
 
@@ -162,7 +163,7 @@
             Lock.init();
 
 
-            $('button.signin').bind('click', function(){
+            $('a.signin').bind('click', function(){
 
                 var username = $('#username').val();
                 var password = hex_md5($('#password').val());
@@ -176,6 +177,9 @@
                         var d = eval("(" + data + ")")
                         if(d.errorCode == 0){
                             location.href = "/main";
+                        } else
+                        {
+                            $('#error').text('用户名或密码错误');
                         }
                     }
 

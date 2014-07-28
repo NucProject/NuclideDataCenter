@@ -23,7 +23,15 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
     _alertListView: null,
 
+    _items: null,
+
+    PageCount: 100,
+
     __constructor: function() {
+    },
+
+    getPageEvent: function() {
+        return this.widgetId() + "-pageer";
     },
 
     onAttach: function(domNode) {
@@ -33,15 +41,7 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         var dataListViewDomNode = this._dataListView.create();
         dataListViewDomNode.appendTo(dataPane);
 
-        var evnet = this.widgetId();
-
-        this._dataListView.setPageEvent(evnet);
-
-        $div = $('<div></div>').appendTo(dataPane.parent());
-
-        var pageBar = new Pagebar(24);
-        pageBar.create().appendTo($div);
-        pageBar.setPageEvent(this._dataListView, evnet);
+        $('<div class="pagebar"></div>').appendTo(dataPane.parent());
 
         this._alertListView = new ListView();
         var alertListViewDomNode = this._alertListView.create();
@@ -57,6 +57,7 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
 
         this._alertListView.setHeaders([
+            {'key':'id', 'type': 'id'},
             {'key':'time', 'name':'时间'},
             {'key':'field', 'name':'报警字段'},
             {'key':'value', 'name':'报警值'},
@@ -64,8 +65,8 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
         ]);
 
-        $('body').bind('dateRangeChanged', function(event, startTime, endTime){
-            this_.dateRangeChanged && this_.dateRangeChanged(startTime.toString('yyyy-MM-dd'), endTime.toString('yyyy-MM-dd'));
+        $('body').bind('transfer-selected-time', function(event, startTime, endTime) {
+            this_.dateRangeChanged && this_.dateRangeChanged(startTime, endTime);
         });
 
         var self = this;
@@ -74,8 +75,7 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             this.ajax("alert/config/" + this._deviceType, null, function(data){
                 var fc = eval("(" + data + ")");
 
-
-                self._alertSettingPane = new AlertSettingPane(self._deviceType);
+                self._alertSettingPane = new SettingPane(self._deviceType);
                 var dn = self._alertSettingPane.create();
 
                 dn.appendTo(self._domNode.find('div.config'));
@@ -84,28 +84,103 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             });
         }
 
-
-
         this._alertListView._domNode.delegate('td a.handle', 'click', function(){
+            var a = $(this);
+            var tr = a.parent().parent();
+            var id = tr.attr('data-id');
+            self.handleAlert(self._deviceType, id, tr, a.siblings('input').val() )
+        });
+    },
 
+    handleAlert: function(deviceType, id, tr, content) {
+        console.log(deviceType, id, content);
+        this.ajax("alert/handle", {'device': deviceType, 'id': id, 'comment': content}, function(data){
+            $r = eval("(" + data + ")");
+            if ($r.errorCode == 0) {
+                tr.find('td').css('background-color', 'yellow');
+                setTimeout(function(){
+                    tr.slideUp();
+                }, 500);
+            }
+
+        })
+    },
+
+    updatePageBar: function(items) {
+        var pageBarContainer = this._domNode.find('div.pagebar');
+        pageBarContainer.empty();
+
+        if (this._pageBar)
+        {
+            this.unbindEvent(this, this.getPageEvent());
+        }
+
+        this._pageBar = new Pagebar(Math.floor(items.length / this.PageCount) + 1);
+        this._pageBar.create().appendTo(pageBarContainer);
+        this._pageBar.setPageEvent(this, this.getPageEvent());
+        var this_ = this;
+        this.bindEvent(this, this.getPageEvent(), function(e, sender, data){
+            this_.fillList( this_._items, data - 1);
         });
     },
 
     fetchData: function(payload) {
+        var this_ = this;
         var currentStationId = g.getCurrentStationId();
+
         if (currentStationId)
         {
             var api = "data/fetch/" + currentStationId + "/" + this._deviceType;
-            this._dataListView.refresh(api, payload);
+
+            this.ajax(api, payload, function(data){
+                $r = eval("(" + data + ")");
+
+                var items = $r.results.items;
+                this_._items = items;
+                this_.makeDataDict(items);
+                // console.log("44445", this._dict['15:55:00'])
+                this_.fillList(items, 0);
+                this_.updatePageBar(items)
+            });
+        }
+    },
+
+    fillList: function(items, page) {
+        var from = page * this.PageCount;
+        var to = (page + 1) * this.PageCount;
+        d = new Date()
+        var base = -3600 * 8 * 1000;
+        var value = null;
+        var start = false;
+        var count = 0;
+        var params = this._dataListView.clearValues();
+        for (var i = 2880; i >= 0; i -= 1) {
+
+            d.setTime(base + i * 30000)
+            s = d.toTimeString()
+            var key = s.substr(0, 8);
+
+            value = this._dict[key];
+            if (value)
+            {
+                count += 1;
+                if (start)
+                {
+                    this._dataListView.addValue(value, params);
+                }
+            }
+
+            if (count > from)
+                start = true;
+            if (count > to)
+                break;
         }
     },
 
     fetchAlerts: function() {
         var currentStationId = g.getCurrentStationId();
-        console.log(33335);
         if (currentStationId)
         {
-            console.log(333);
             var api = "data/alerts/" + currentStationId + "/" + this._deviceType;
             this._alertListView.refresh(api);
         }
@@ -113,7 +188,13 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
     onShow: function()
     {
-        this.fetchData();
+        console.log("On Show !!");
+        var payload = {
+            start: g.getBeginTime().toString('yyyy-MM-dd'),
+            end: g.getEndTime().toString('yyyy-MM-dd')
+        };
+        this.fetchData(payload);
+
         if (!this._noAlertData)
         {
             this.fetchAlerts();
@@ -125,8 +206,7 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         //return;
         if (p.filter)
         {
-            var items = this._dataListView.getShownData();
-            var items = p.filter(items);
+            var items = p.filter(this._items);
         }
 
         var selector = p.selector || 'div.charts';
@@ -179,11 +259,24 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
     },
 
-    dateRangeChanged: function(startTime, endTime) {
-        this.fetchData({start: startTime, end: endTime});
+    dateRangeChanged: function(range) {
+
+        this.fetchData({start: range.start, end: range.end});
+    },
+
+    makeDataDict: function(items) {
+        var dict = [];
+        for (var i in items) {
+            var item = items[i];
+            var t = item['time'].split(' ')[1];
+            dict[t] = item;
+        }
+        this._dict = dict;
+        return this._dict;
     },
 
     filterData: function(data, field) {
+
         var datas = [];
         var times = [];
         var p = 0;
@@ -194,14 +287,12 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             dict[t] = data[i][field];
         }
 
-        console.log(dict)
-        console.log(dict['20:50:00'])
 
         d = new Date()
         var base = -3600 * 8 * 1000;
         var value = null;
         var start = false;
-        for (var i = 1000; i < 2000; i += 1) {
+        for (var i = 0; i < 2880; i += 1) {
 
             d.setTime(base + i * 30000)
             s = d.toTimeString()

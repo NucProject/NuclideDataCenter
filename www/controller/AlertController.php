@@ -31,6 +31,31 @@ class AlertController extends ApiController
         return parent::result(Config::$d[$device]);
     }
 
+    public function handleAction()
+    {
+        $device = $this->request->getPost("device");
+        $id = $this->request->getPost("id");
+        $comment = $this->request->getPost("comment");
+
+        if (isset($device) && isset($id) && isset($comment))
+        {
+            $alert = $device . 'Alert';
+            $d = $alert::findFirst($id);
+            if ($d)
+            {
+                $d->handled = 1;
+                $d->comment = $comment;
+                if ($d->save())
+                {
+                    return parent::result(array('handled' => 1));
+                }
+                return parent::error(Error::BadRecord, '');
+            }
+            return parent::error(Error::BadRecord, '');
+        }
+        return parent::error(Error::BadPayload, '');
+    }
+
     public function countAction()
     {
         $c1 = HpicAlert::count('handled = 0');

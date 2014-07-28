@@ -6,16 +6,22 @@
 		<div class="portlet-body">
 			<div class="tabbable portlet-tabs">
 				<ul class="nav nav-tabs">
-					<li><a href="#add_admin_tab" data-toggle="tab" tab="add">用户管理</a></li>
+					<li class="active"><a href="#add_admin_tab" data-toggle="tab" tab="add">用户管理</a></li>
+                    <!--
                     <li class="active"><a href="#man_admin_tab" data-toggle="tab" tab="man">自动站管理</a></li>
+                    -->
 				</ul>
 				<div class="tab-content">
-					<div class="tab-pane active" id="man_admin_tab">
+					<div class="tab-pane" id="man_admin_tab">
 						<div class="admin-list"></div>
 					</div>
-					<div class="tab-pane" id="add_admin_tab">
+					<div class="tab-pane active" id="add_admin_tab">
+                        <span style="font-weight: bold">管理用户</span>
+                        <div class="users" style="max-width: 400px"></div>
 
-                        <table>
+                        <span style="font-weight: bold">添加新用户</span>
+
+                        <table style="margin-top: 10px">
                             <tr>
                                 <td>用户名</td><td><input class="username" type="text"/></td>
                             </tr>

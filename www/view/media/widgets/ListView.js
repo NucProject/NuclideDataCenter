@@ -22,16 +22,6 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 
     setPageEvent: function(event) {
         var this_ = this;
-        this._domNode.bind(event, function(e, sender, data){
-            this_.onPageChanged(data);
-        });
-    },
-
-    onPageChanged: function(data) {
-        var page = data;
-        this._currentPart = page - 1;
-
-        this.fillItems(this._items);
     },
 
     refresh: function(api, payload) {
@@ -46,7 +36,9 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         var cl = ["<tr>"];
         for (var i in headers)
         {
-            // console.log(headers[i]);
+            if (headers[i]['type'] == 'id')
+                continue;
+
             cl.push('<td>');
             cl.push(headers[i]['name']);
             cl.push('</td>');
@@ -56,16 +48,126 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         thead.append($(html));
     },
 
-    getShownData: function() {
-        return this._items;
-    },
-
     dataReceived: function(data) {
         var results = eval("(" + data + ")")['results'];
         var items = results['items']
         this._items = items;
 
         this.fillItems(this._items);
+    },
+
+    clearValues: function() {
+        var tbody = this._domNode.find("tbody");
+        tbody.empty();
+
+
+        var headers = [];
+        for (var j in this._headers)
+        {
+            headers.push(this._headers[j]['key']);
+        }
+
+        return {
+            tbody: tbody,
+            headers: headers };
+    },
+
+    addValue: function(item, params) {
+        var tbody = params.tbody;
+        var headers = params.headers;
+
+        var cl = ["<tr>"];
+
+        var id = null;
+        for (var j in headers)
+        {
+            var key = headers[j];
+
+            if (this._headers[j]['type'] == 'id')
+            {
+                id = item[key];
+                continue;
+            }
+            cl.push('<td>');
+
+            if (key == 'handle')
+            {
+                cl.push(item['handle']);
+            }
+            else if (this._headers[j]['type'] == 'url')
+            {
+                cl.push("<a href=" + item[key] + ">链接</a>");
+            }
+            else
+            {
+                cl.push(item[key]);
+            }
+            cl.push('</td>');
+
+        }
+
+        cl.push("</tr>");
+
+        var html = cl.join("");
+
+        var tr = $(html);
+        if (id)
+        {
+            tr.attr('data-id', id);
+        }
+        tbody.append(tr);
+
+    },
+
+    addEntry: function(item) {
+        var tbody = this._domNode.find("tbody");
+
+        var headers = [];
+        for (var j in this._headers)
+        {
+            headers.push(this._headers[j]['key']);
+        }
+
+        var cl = ["<tr>"];
+
+        var id = null;
+        for (var j in headers)
+        {
+            var key = headers[j];
+
+            if (this._headers[j]['type'] == 'id')
+            {
+                id = item[key];
+                continue;
+            }
+            cl.push('<td>');
+
+            if (key == 'handle')
+            {
+                cl.push(item['handle']);
+            }
+            else if (this._headers[j]['type'] == 'url')
+            {
+                cl.push("<a href=" + item[key] + ">链接</a>");
+            }
+            else
+            {
+                cl.push(item[key]);
+            }
+            cl.push('</td>');
+
+        }
+
+        cl.push("</tr>");
+
+        var html = cl.join("");
+
+        var tr = $(html);
+        if (id)
+        {
+            tr.attr('data-id', id);
+        }
+        tbody.append(tr);
     },
 
     fillItems: function(items) {
@@ -90,9 +192,16 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 
             var cl = ["<tr>"];
             var item = items[i];
+            var id = null;
             for (var j in headers)
             {
                 var key = headers[j];
+
+                if (this._headers[j]['type'] == 'id')
+                {
+                    id = item[key];
+                    continue;
+                }
                 cl.push('<td>');
 
                 if (key == 'handle')
@@ -115,7 +224,12 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 
             var html = cl.join("");
 
-            tbody.append($(html));
+            var tr = $(html);
+            if (id)
+            {
+                tr.attr('data-id', id);
+            }
+            tbody.append(tr);
         }
     }
 });

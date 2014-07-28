@@ -84,7 +84,7 @@ $class("Global", Base,
         return this._beginTime || new Date();
     },
     getEndTime: function() {
-        return this._endTime || new Date();
+        return this._endTime || new Date().addHours(24);
     },
 
     showTip: function(text, title) {

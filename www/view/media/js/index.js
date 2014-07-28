@@ -645,7 +645,49 @@ var Index = function () {
         },
 
         initDashboardDaterange: function () {
+            $('#dashboard-report-range').daterangepicker({
+                    ranges: {
+                        '今天': ['today', 'today'],
+                        '昨天': ['yesterday', 'yesterday'],
+                        '前天': [Date.today().add({ days: -2 }), 'today']
+                    },
+                    opens: (App.isRTL() ? 'right' : 'left'),
+                    format: 'yyyy-MM-dd',
+                    separator: ' to ',
+                    startDate: Date.today().add({
+                        days: 0
+                    }),
+                    endDate: Date.today(),
+                    minDate: '01/01/2012',
+                    maxDate: '12/31/2014',
+                    locale: {
+                        applyLabel: '确定',
+                        fromLabel: 'From',
+                        toLabel: 'To',
+                        customRangeLabel: '自定义',
+                        daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
+                        monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+                        firstDay: 1
+                    },
+                    showWeekNumbers: true,
+                    buttonClasses: ['btn-danger']
+                },
 
+                function (start, end) {
+
+                    $('#dashboard-report-range').html("&nbsp;&nbsp;" + start.toString('yyyy年MM月dd日') + "&nbsp;&nbsp;");
+                    // var time={}
+                    var a = start.toString('yyyy-MM-dd');
+                    var b = start.clone().addHours(24).toString('yyyy-MM-dd');
+                    var time = {start: a , end: b};
+                    console.log(time);
+                    $('body').trigger("transfer-selected-time", time);
+                });
+
+            $('#dashboard-report-range').show();
+            $('#dashboard-report-range').html("&nbsp;&nbsp;" + Date.today().toString('yyyy年MM月dd日') + "&nbsp;&nbsp;");
+        },
+            /*
             $('#dashboard-report-range').daterangepicker({
                 ranges: {
                     '今天': [Date.today(), Date.today().addHours(24)],
@@ -710,7 +752,7 @@ var Index = function () {
 
             $('#dashboard-report-range span').html(Date.today().toString('yyyy年MM月dd日') + ' - ' + Date.today().addHours(24).toString('yyyy年MM月dd日'));
         },
-
+        */
         initIntro: function () {
             if ($.cookie('intro_show')) {
                 return;

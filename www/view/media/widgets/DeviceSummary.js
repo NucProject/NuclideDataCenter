@@ -2,9 +2,9 @@
  * Created by Healer on 14-6-8.
  */
 
-$class("AlertSettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
+$class("SettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 {
-    _templateString: "<div><span>设置报警阈值</span><br><select></select><div><input class='v1'/></div><div><input class='v2'/></div><a class='btn blue sure'>确定</a></div>",
+    _templateFile: "settingspane.html",
 
     _device: null,
 
@@ -17,6 +17,73 @@ $class("AlertSettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
     onCreated: function(domNode) {
 
         domNode.find('a.sure').bind('click', kx.bind(this, "onClickModify"))
+
+
+        /*
+        $('#dashboard-report-range2').daterangepicker({
+                ranges: {
+                    '今天': [Date.today(), Date.today().addHours(24)],
+                    '昨天': [Date.today().addHours(-24), Date.today()],
+                    '前天': [Date.today().addHours(-48), Date.today().addHours(-24)]
+
+                },
+                opens: 'left', //(App.isRTL() ? 'right' : 'left'),
+                format: 'yyyy-MM-dd',
+                separator: ' to ',
+                startDate: Date.today().add({
+                    days: -29
+                }),
+                endDate: Date.today(),
+                minDate: '01/01/2012',
+                maxDate: '12/31/2014',
+                locale: {
+                    applyLabel: '确定',
+                    fromLabel: '从',
+                    toLabel: '到',
+                    customRangeLabel: '自定义',
+                    daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+                    monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+                    firstDay: 1
+                },
+                showWeekNumbers: true,
+                buttonClasses: ['btn-danger']
+            },
+
+            function (start, end) {
+                App.blockUI(jQuery("#dashboard"));
+                setTimeout(function () {
+                    App.unblockUI(jQuery("#dashboard"));
+                    // App.scrollTo();
+                }, 10);
+
+
+                if (start.clone().addHours(24).toISOString() == end.toISOString())
+                {
+                    if (start.toISOString() == Date.today().toISOString())
+                    {
+                        $('#dashboard-report-range span').html('今天');
+                    }
+                    else if (start.toISOString() == Date.today().addHours(-24).toISOString())
+                    {
+                        $('#dashboard-report-range span').html('昨天');
+                    }
+                    else if (start.toISOString() == Date.today().addHours(-48).toISOString())
+                    {
+                        $('#dashboard-report-range span').html('前天');
+                    }
+                }
+                else
+                {
+                    $('#dashboard-report-range span').html(start.toString('yyyy年MM月dd日') + ' - ' + end.toString('yyyy年MM月dd日'));
+                }
+
+                $("body").trigger("dateRangeChanged", [start, end]);
+            });
+
+        $('#dashboard-report-range').show();
+
+        $('#dashboard-report-range span').html(Date.today().toString('yyyy年MM月dd日') + ' - ' + Date.today().addHours(24).toString('yyyy年MM月dd日'));
+        */
     },
 
     setAlertFields: function(alertFields) {

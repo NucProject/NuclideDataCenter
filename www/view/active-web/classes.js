@@ -285,6 +285,10 @@ $class('kx.EventMixin', null, {
 		obj._domNode.bind(event, handler);
 	},
 
+    unbindEvent: function(obj, event) {
+        obj._domNode.unbind(event);
+    },
+
 	fireEvent: function(event, args) {
 		this._domNode.trigger(event, [this, args]);
         return true;
@@ -502,7 +506,8 @@ $class('kx.ActionMixin', null, {
 				handler.apply(this, arguments);
 			}
 		}));
-	}
+	},
+
 });
 
 function $compare(a, b, d)

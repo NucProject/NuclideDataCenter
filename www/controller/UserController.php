@@ -24,6 +24,21 @@ class UserController extends ApiController
         }
     }
 
+    public function fetchAction()
+    {
+        if (!$this->request->isGet())
+        {
+            return parent::error(Error::BadHttpMethod, '');
+        }
+
+        $users =  User::find();
+        $ret = array();
+        foreach ($users as $user) {
+            array_push($ret, $user);
+        }
+        return parent::result($ret);
+    }
+
     public function registerAction()
     {
     	if (!$this->request->isPost())
@@ -53,6 +68,7 @@ class UserController extends ApiController
                     $_SESSION['uid'] = $userId;
 
                     return parent::result(array("user_id" => $userId,
+                                                "username" => $username,
                                                 "register" => "OK"
                                             ));
                 }
@@ -98,6 +114,7 @@ class UserController extends ApiController
 
                 return parent::result(array(
                     "user_id" => $userId,
+                    "username" => $username,
                     "sign-in" => "OK"));
             }
             else
@@ -115,6 +132,17 @@ class UserController extends ApiController
     public function clearAction()
     {
         // TODO: ... ...
+    }
+
+    public function delAction($userId)
+    {
+        $user = User::find($userId);
+        if ($user)
+        {
+            $user->delete();
+            return parent::result(array('deleted' => 1));
+        }
+        return parent::error(Error::BadRecord, '');
     }
 
     public function signOutAction()

@@ -132,14 +132,14 @@
                     if(d.errorCode == 0){
                         g.setAlerts(d.results);
 
-                        $('#header_notification_bar span.badge').text(d.results.count)
+                        // $('#header_notification_bar span.badge').text(d.results.count)
 
-                        $('#hpic_alert span.badge').text(d.results.hpic);
-                        $('#weather_alert span.badge').text(d.results.weather);
-                        $('#labr_alert span.badge').text(d.results.labr);
-                        $('#hpge_alert span.badge').text(d.results.hpge);
-                        $('#cinderella_alert span.badge').text(d.results.cinderella);
-                        $('#environment_alert span.badge').text(d.results.environment);
+                        $('#hpic_alert_a span.badge').text(d.results.hpic);
+                        $('#weather_alert_a span.badge').text(d.results.weather);
+                        $('#labr_alert_a span.badge').text(d.results.labr);
+                        $('#hpge_alert_a span.badge').text(d.results.hpge);
+                        $('#cinderella_alert_a span.badge').text(d.results.cinderella);
+                        $('#environment_alert_a span.badge').text(d.results.environment);
 
                     }
                 }

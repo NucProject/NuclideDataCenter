@@ -90,9 +90,18 @@
                 '</div>' +
               '</div>';
 
+        var DRPTemplate2 =
+            '<div class="daterangepicker dropdown-menu">' +
+                '<div class="calendar left"></div>' +
+                '<div class="ranges">' +
+                '<div class="range_inputs">' +
+                '<button class="btn " disabled="disabled">' + this.locale.applyLabel + '</button>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
         this.parentEl = (hasOptions && options.parentEl && $(options.parentEl)) || $(this.parentEl);
         //the date range picker
-        this.container = $(DRPTemplate).appendTo(this.parentEl);
+        this.container = $(DRPTemplate2).appendTo(this.parentEl);
 
         if (hasOptions) {
 
