@@ -153,7 +153,8 @@ class ApiController extends \Phalcon\Mvc\Controller
 
     public function testAction()
     {
-        $this->testN42Action();
+        $a = null;
+        echo isset($a) ===false;
     }
 
     public static function parseTime($time)

@@ -58,7 +58,16 @@ class DataController extends ApiController
 
         if($this->request->hasFiles() == true)
         {
-            $path = $this->checkPath($station, $fileType, $folder, $folder2);
+            if ($fileType == 'labr')
+            {
+                $path = $this->checkPath($station, $fileType, $folder, $folder2);
+            }
+            else if ($fileType == 'hpge')
+            {
+                $path = $this->checkPath($station, $fileType, $folder, null);
+            }
+
+            //$path = $this->checkPath($station, $fileType, $folder, $folder2);
             $uploads = $this->request->getUploadedFiles();
             $isUploaded = false;
             #do a loop to handle each file individually
@@ -76,7 +85,7 @@ class DataController extends ApiController
                 }
                 else if ($fileType == 'hpge')
                 {
-                    $this->recordHpGeFile($station, $filePath, $fileName);
+                    $this->recordHpGeFile($station, $filePath, $fileName, $folder, $folder2);
                 }
             }
 
@@ -85,10 +94,17 @@ class DataController extends ApiController
         return parent::error(Error::BadPayload, '');
     }
 
-    private function recordHpGeFile($station, $filePath, $fileName)
+    private function recordHpGeFile($station, $filePath, $fileName, $sid, $params)
     {
+        $p = explode(',', $params);
         $d = new Hpge();
+        $d->sid = $sid;
         $d->station = $station;
+        $d->path = "/download/hpge/$station/$sid/$fileName";
+        $d->time = $p[0];
+        $d->starttime = $p[1];
+        $d->endtime = $p[2];
+        $d->mode = $p[3];
         $d->save();
     }
 

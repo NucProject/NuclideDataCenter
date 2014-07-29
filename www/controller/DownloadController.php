@@ -13,7 +13,7 @@ class DownloadController extends ApiController
     {
         Header("HTTP/1.1 303 See Other");
         Header("Content-type: application/octet-stream");
-        Header("Location: /file/$station/labr/$sid/$fileName");
+        Header("Location: /file/$station/hpge/$sid/$fileName");
         exit;
     }
 
