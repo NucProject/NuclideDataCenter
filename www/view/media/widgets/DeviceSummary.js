@@ -167,9 +167,8 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     __constructor: function() {
     },
 
-    onAttached: function(domNode) {
-
-        var self = this;
+    onAttached: function(domNode)
+    {
         domNode.find("div.caption i").text(" " + g.getDeviceName(this._deviceType));
         domNode.find("a.details").bind("click", kx.bind(this, "onDetailsClicked"));
         domNode.find("a.change-alert").bind("click", kx.bind(this, "changeAlertClicked"));
@@ -177,6 +176,17 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         domNode.find("ul.nav li").bind("click", kx.bind(this, "onPaneShow"));
         setInterval(kx.bind(this, "getLatestData"), 10000);
 
+        this.updateRunState(true, "获取运行状态...");
+
+        // For each CSS.
+        var width = domNode.css('width');
+        domNode.css('min-height', (parseInt(width) * 4 / 5) + 'px');
+        domNode.removeClass('blue');
+        domNode.css('border', "#4b8df8 solid 1px");
+        domNode.find('div.panel').css('height', '80px');
+        domNode.find('.portlet-title').css('background-color', "white")
+            .css('border-bottom', '1px solid #B1A7A7')
+            .css('margin', '5px')
     },
 
 
@@ -190,24 +200,24 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             var latest = r['results']['time']
             if (g.getUnixTime() - latest > 100)
             {
-                self.updateRunState(false);
+                self.updateRunState(false, "停止");
             }
             else
             {
-                self.updateRunState(true);
+                self.updateRunState(true, "运行");
             }
         });
     },
 
-    updateRunState: function(running)
+    updateRunState: function(running, text)
     {
         if (running)
         {
-            this._domNode.find("div.caption span").addClass("label-success").removeClass("label-danger").text("运行");
+            this._domNode.find("div.tab-content span.run").addClass("label-success").removeClass("label-danger").text(text);
         }
         else
         {
-            this._domNode.find("div.caption span").addClass("label-danger").removeClass("label-success").text("停止");
+            this._domNode.find("div.tab-content span.run").addClass("label-danger").removeClass("label-success").text(text);
         }
     },
 
