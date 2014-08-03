@@ -125,6 +125,10 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     },
 
     fetchData: function(payload) {
+
+        if (this._currentShownDevice != this._deviceType)
+            return;
+
         var this_ = this;
         var currentStationId = g.getCurrentStationId();
 
@@ -134,6 +138,8 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
             this.ajax(api, payload, function(data){
                 $r = eval("(" + data + ")");
+
+                console.log($r);
 
                 var items = $r.results.items;
                 this_._items = items;
@@ -160,18 +166,22 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             s = d.toTimeString()
             var key = s.substr(0, 8);
 
+            if (count >= from) {
+                start = true;
+            }
+
             value = this._dict[key];
             if (value)
             {
                 count += 1;
                 if (start)
                 {
+                    console.log(111)
                     this._dataListView.addValue(value, params);
                 }
             }
 
-            if (count > from)
-                start = true;
+
             if (count > to)
                 break;
         }
@@ -188,7 +198,8 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
     onShow: function()
     {
-        console.log("On Show !!");
+        this._currentShownDevice = this._deviceType;
+        console.log("On Show: " + this._currentShownDevice);
         var payload = {
             start: g.getBeginTime().toString('yyyy-MM-dd'),
             end: g.getEndTime().toString('yyyy-MM-dd')
@@ -260,7 +271,7 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     },
 
     dateRangeChanged: function(range) {
-
+        console.log('data changed');
         this.fetchData({start: range.start, end: range.end});
     },
 
