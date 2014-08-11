@@ -31,7 +31,7 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     },
 
     getPageEvent: function() {
-        return this.widgetId() + "-pageer";
+        return this.widgetId() + "-pager";
     },
 
     onAttach: function(domNode) {
@@ -48,14 +48,6 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         alertListViewDomNode.appendTo(domNode.find("div.alert-pane"));
 
         var this_ = this;
-        domNode.find('ul.nav-tabs').delegate('a', 'click', function(){
-            var display = $($(this).attr('href')).find('div.charts').css('display');
-            if (display == 'block') {
-                this_.showChartsTab && this_.showChartsTab();
-            }
-        });
-
-
         this._alertListView.setHeaders([
             {'key':'id', 'type': 'id'},
             {'key':'time', 'name':'时间'},
@@ -89,6 +81,12 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             var tr = a.parent().parent();
             var id = tr.attr('data-id');
             self.handleAlert(self._deviceType, id, tr, a.siblings('input').val() )
+        });
+
+        // Tab Item Changed!
+        domNode.find('ul.nav-tabs li').delegate('a', 'click', function(){
+            var tabItem = $(this);
+            setTimeout(function(){self.postOnTabChanged(tabItem);}, 200);
         });
     },
 
@@ -160,6 +158,31 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         var start = false;
         var count = 0;
         var params = this._dataListView.clearValues();
+
+        var keys = Object.keys(this._dict);
+        keys.sort().reverse();
+        for (var i in keys) {
+
+            if (count >= from) {
+                start = true;
+            }
+
+            var key = keys[i];
+            value = this._dict[key];
+            if (value)
+            {
+                count += 1;
+                if (start)
+                {
+                    console.log(111)
+                    this._dataListView.addValue(value, params);
+                }
+            }
+
+            if (count > to)
+                break;
+        }
+
         for (var i = 2880; i >= 0; i -= 1) {
 
             d.setTime(base + i * 30000)
@@ -214,7 +237,7 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
 
     showCharts: function(domNode, p) {
-        //return;
+        console.log(111);
         if (p.filter)
         {
             var items = p.filter(this._items);
@@ -252,8 +275,19 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             },
             plotOptions: {
                 line: {
+                    lineWidth:1,
+                    fillOpacity: 0.1,
                     dataLabels: {
                         enabled: false
+                    },
+                    marker: {
+                        enabled: true,
+                        states: {
+                            hover: {
+                                enabled: false,
+                                radius: 1
+                            }
+                        }
                     },
                     enableMouseTracking: true
                 }
@@ -341,6 +375,28 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         }
         console.log(datas)
         return {'data': datas, 'x': times};
+    },
+
+    postOnTabChanged: function(tabItem) {
+
+
+        if (tabItem.hasClass('history')) {
+            this.onDataStatisitcTabShown();
+        } else if (tabItem.hasClass('charts')) {
+            this.showChartsTab && this.showChartsTab();
+        }
+
+        // Device
+        this.onTabChanged && this.onTabChanged(tabItem);
+    },
+
+    onDataStatisitcTabShown: function() {
+        if (!this._calendarPane) {
+            this._calendarPane = new HistoryPane();
+            var r = this._calendarPane.create();
+            r.appendTo(this._domNode.find("div.calendar-container"));
+
+        }
     }
 
 
@@ -379,6 +435,10 @@ $class("HpicDevice", DeviceBase,
 
     filter: function(data) {
         return this.filterData(data, 'doserate');
+    },
+
+    onTabChanged: function() {
+
     }
 
 });

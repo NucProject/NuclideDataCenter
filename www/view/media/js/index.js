@@ -98,7 +98,7 @@ var Index = function () {
                 return;
             }
 
-            var date = new Date();
+            var date = new Date().addHours(-48);
             var d = date.getDate();
             var m = date.getMonth();
             var y = date.getFullYear();
@@ -130,9 +130,14 @@ var Index = function () {
             }
 
             $('#calendar').fullCalendar('destroy'); // destroy the calendar
+
+
+
+
             $('#calendar').fullCalendar({ //re-initialize the calendar
                 disableDragging: false,
                 header: h,
+
                 editable: true,
                 events: [{
                         title: 'All Day Event',                        

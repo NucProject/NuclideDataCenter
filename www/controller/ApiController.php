@@ -120,7 +120,7 @@ class ApiController extends \Phalcon\Mvc\Controller
     public function testN42Action()
     {
 
-        $f = "D:\\Projects\\NuclideDataCenter\\www\\data\\128\\labr\\20\\sara0285_2014-07-20t15_05_00-5min.n42";
+        $f = "D:\\Projects\\NuclideDataCenter\\www\\view\\file\\128\\labr\\2014-07\\24\\sara0316_2014-07-24t23_00_00-5min.n42";
 
         $xml = simplexml_load_file($f);
 
@@ -153,8 +153,7 @@ class ApiController extends \Phalcon\Mvc\Controller
 
     public function testAction()
     {
-        $a = null;
-        echo isset($a) ===false;
+        echo $this->testN42Action();
     }
 
     public static function parseTime($time)

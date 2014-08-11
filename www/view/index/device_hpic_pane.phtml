@@ -6,6 +6,7 @@
 		<div class="portlet-body" widget-class="HpicDevice" widget-id="hpic-device">
 			<div class="tabbable portlet-tabs">
 				<ul class="nav nav-tabs">
+                    <li><a href="#hpic_history" data-toggle="tab" class="history">统计</a></li>
                     <li><a href="#hpic_config" data-toggle="tab">设置</a></li>
                     <li class="dropdown">
 
@@ -15,7 +16,7 @@
                             <span class="badge" style="position: relative;top:0px;right:5px;-webkit-border-radius: 12px !important;background: red">0</span>
                         </a>
                     </li>
-                    <li><a href="#hpic_chart" data-toggle="tab">曲线</a></li>
+                    <li><a href="#hpic_chart" class="charts" data-toggle="tab">曲线</a></li>
                     <li class="active"><a href="#hpic_data" data-toggle="tab">数据</a></li>
 				</ul>
 				<div class="tab-content">
@@ -36,6 +37,11 @@
                     <div class="tab-pane" id="hpic_alert">
                         <div class="alert-pane">
 
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="hpic_history">
+                        <div class="calendar-container" class="fc-ltr fc">
                         </div>
                     </div>
 

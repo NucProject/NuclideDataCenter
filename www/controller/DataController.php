@@ -22,20 +22,24 @@ class DataController extends ApiController
 
         $station = parent::getPayload("station");
         $entries = parent::getPayload("entry");
+        $history = parent::getPayload("history");
 
         $success = array();
         $failure = array();
         $alerts = array();
         foreach ($entries as $entry)
         {
-            $data = self::getData($station, $entry);
+            $data = self::parseData($station, $entry);
             $device = $entry->device;
             echo json_encode($data);
             if ($data->save() !== false)
             {
-                Cache::updateLatestTime($this->redis, $station, $device);
-                $check = $this->checkAlertRule($station, $device, $data);
-                array_push($alerts, $check);
+                if (!isset($history))
+                {
+                    Cache::updateLatestTime($this->redis, $station, $device);
+                    $check = AlertController::checkAlertRule($this->redis, $station, $device, $data);
+                    array_push($alerts, $check);
+                }
                 array_push($success, array('device' => $device, 'time' => $entry->time));
             }
             else
@@ -60,11 +64,11 @@ class DataController extends ApiController
         {
             if ($fileType == 'labr')
             {
-                $path = $this->checkPath($station, $fileType, $folder, $folder2);
+                $path = File::checkPath($station, $fileType, $folder, $folder2);
             }
             else if ($fileType == 'hpge')
             {
-                $path = $this->checkPath($station, $fileType, $folder, null);
+                $path = File::checkPath($station, $fileType, $folder, null);
             }
 
             //$path = $this->checkPath($station, $fileType, $folder, $folder2);
@@ -81,11 +85,11 @@ class DataController extends ApiController
 
                 if ($fileType == 'labr')
                 {
-                    $this->recordN42File($station, $filePath, $folder, $folder2, $fileName);
+                    File::recordN42File($station, $filePath, $folder, $folder2, $fileName);
                 }
                 else if ($fileType == 'hpge')
                 {
-                    $this->recordHpGeFile($station, $filePath, $fileName, $folder, $folder2);
+                    File::recordHpGeFile($station, $filePath, $fileName, $folder, $folder2);
                 }
             }
 
@@ -94,40 +98,7 @@ class DataController extends ApiController
         return parent::error(Error::BadPayload, '');
     }
 
-    private function recordHpGeFile($station, $filePath, $fileName, $sid, $params)
-    {
-        $p = explode(',', $params);
-        $d = new Hpge();
-        $d->sid = $sid;
-        $d->station = $station;
-        $d->path = "/download/hpge/$station/$sid/$fileName";
-        $d->time = $p[0];
-        $d->starttime = $p[1];
-        $d->endtime = $p[2];
-        $d->mode = $p[3];
-        $d->save();
-    }
-
-    private function recordN42File($station, $filePath, $month, $day, $fileName)
-    {
-        $xml = simplexml_load_file($filePath);
-
-        $data = parent::getN42Data($xml);
-
-        $n42Path = "/download/labr/$station/$month/$day/$fileName";
-
-        $d = new Labr();
-        $d->station = $station;
-        $d->time = $d->endtime = $data['endtime'];
-        $d->starttime = $data['starttime'];
-        $d->doserate = $data['doserate'];
-        $d->temperature = $data['temperature'];
-        $d->highvoltage = $data['highvoltage'];
-        $d->refnuclidefound = $data['nuclidefound'];
-        $d->N42path = $n42Path;
-        $d->save();
-    }
-
+    // Fetch data by { device, start, end, station }
     public function fetchAction($station, $device)
     {
         if ($this->request->isPost())
@@ -160,55 +131,7 @@ class DataController extends ApiController
             array_push($items, $item);
         }
 
-        // echo "($from, $to)";
-
         return parent::result(array("items" => $items));
-
-    }
-
-    private function checkPath($station, $fileType, $folder, $folder2)
-    {
-
-        if (isset($folder2))
-        {
-            $ret = ".\\view\\file\\$station\\$fileType\\$folder\\$folder2\\";
-        }
-        else
-        {
-            $ret = ".\\view\\file\\$station\\$fileType\\$folder\\";
-        }
-
-        if (!file_exists($ret))
-        {
-            $stationPath = ".\\view\\file\\$station";
-            if (!file_exists($stationPath))
-            {
-                mkdir($stationPath);
-            }
-
-            $devicePath = "$stationPath\\$fileType";
-            if (!file_exists($devicePath))
-            {
-                mkdir($devicePath);
-            }
-
-            $folderPath = "$devicePath\\$folder";
-            if (!file_exists($folderPath))
-            {
-                mkdir($folderPath);
-            }
-
-            if (isset($folder2))
-            {
-                $folderPath2 = "$folderPath\\$folder2";
-                if (!file_exists($folderPath2))
-                {
-                    mkdir($folderPath2);
-                }
-            }
-
-        }
-        return $ret;
     }
 
     public function latestAction($station, $device)
@@ -241,55 +164,7 @@ class DataController extends ApiController
     }
 
 
-    private function checkAlertRule($station, $device, $data)
-    {
-        $values = AlertRule::getAlertValues($this->redis, $station, $device);
-
-        $rules = Config::$d[$device];
-
-        $ret = array();
-        foreach ($values as $value)
-        {
-            echo json_encode($value);
-            $field = $value->field;
-            $rule = $rules[$field];
-            echo json_encode($rule);
-
-            if ($rule['rule'] == 0)
-            {
-                if ($data->$field > $value->v1)
-                {
-                    $saved = self::addAlertData($station, $device, $data, $field, $value->v1, $value->v2);
-                    array_push($ret, array($field => $saved));
-                }
-
-            }
-            else if ($rule->rule == 1)
-            {
-                // TODO:
-            }
-
-        }
-        return $ret;
-    }
-
-    private static function addAlertData($station, $device, $data, $field, $v1, $v2)
-    {
-        $modelName = $device . 'Alert';
-        $d = new $modelName();
-
-        $d->time = $data->time;
-        $d->station_id = $station;
-        $d->field = $field;
-        $d->value = $data->$field;
-        $d->v1 = $v1;
-        $d->v2 = $v2;
-        $d->handled = 0;
-
-        return $d->save();
-    }
-
-    private static function getData($station, $entry)
+    private static function parseData($station, $entry)
     {
         $device = $entry->device;
 
@@ -308,11 +183,14 @@ class DataController extends ApiController
                 $value = 0;
 
             $data->$item = $value;
-
         }
 
         return $data;
     }
 
+    public function countAction($station, $device)
+    {
+
+    }
 
 }
