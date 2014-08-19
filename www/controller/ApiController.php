@@ -153,7 +153,7 @@ class ApiController extends \Phalcon\Mvc\Controller
 
     public function testAction()
     {
-        echo $this->testN42Action();
+        echo HpicAlert::count();
     }
 
     public static function parseTime($time)
