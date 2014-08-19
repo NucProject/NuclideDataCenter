@@ -25,7 +25,8 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
                 header: { left: 'title', right: 'prev, next' },
                 editable: false,
                 dayClick: function(date, allDay, jsEvent, view) {
-                    this_.onDayClick(date, allDay, jsEvent, view);
+                    var sender = $(this);
+                    this_.onDayClick(sender, date, allDay, jsEvent, view);
                 },
                 events: []
             });
@@ -35,11 +36,34 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 
         }, 0);
 
+        domNode.find('a.history').bind('click', function(){
+           this_.onClickHistoryButton();
+        });
+
     },
 
-    onDayClick: function(date, allDay, jsEvent, view) {
-        console.log(view)
-        //view.css('background', 'red');
+    onDayClick: function(sender, date, allDay, jsEvent, view) {
+
+        sender.parent().parent().find('td.fc-day').css('background', '');
+        sender.css('background', 'red');
+
+        this.selectDate = Date.parse(date);
+    },
+
+    onClickHistoryButton: function() {
+        var this_ = this;
+        var start = this.selectDate.toString('yyyy-MM-dd');
+        var end = this.selectDate.addHours(24).toString('yyyy-MM-dd');
+
+        this.ajax('data/check/128/hpic', {'start':start, 'end':end, 'expect':2880}, function(data) {
+            var d = eval("(" + data + ")");
+            this_.setHistoryCommand(start, end, d['results']['times']);
+        });
+    },
+
+    setHistoryCommand: function(start, end, times)
+    {
+        console.log(times);
     }
 
 });

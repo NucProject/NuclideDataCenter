@@ -171,6 +171,21 @@ class ApiController extends \Phalcon\Mvc\Controller
         return date('Y-m-d H:i:s', $ret + 8 * 3600);
     }
 
+    public static function parseTime2($time)
+    {
+        $parsed = date_parse_from_format("Y-m-d H:i:s", $time);
+        $ret = mktime(
+            $parsed['hour'],
+            $parsed['minute'],
+            $parsed['second'],
+            $parsed['month'],
+            $parsed['day'],
+            $parsed['year']
+        );
+        // echo json_encode($parsed);
+        return $ret;
+    }
+
     private function test()
     {
         $a = array("a" => "1");
