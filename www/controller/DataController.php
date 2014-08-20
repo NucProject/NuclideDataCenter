@@ -190,7 +190,17 @@ class DataController extends ApiController
 
     public function countAction($station, $device)
     {
+        if (!$this->request->isPost())
+        {
+            return parent::error(Error::BadHttpMethod, '');
+        }
 
+        $payload = $this->request->getPost();
+        $start = $payload['start'];
+        $end = $payload['end'];
+
+        $count = $device::count(array("station=$station and time >= '$start' and time < '$end'"));
+        return parent::result(array('count' => $count));
     }
 
     public function checkAction($station, $device)

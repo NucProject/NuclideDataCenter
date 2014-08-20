@@ -41,6 +41,10 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
            this_.onClickHistoryButton();
         });
 
+        domNode.find('a.rate').bind('click', function(){
+            this_.onFetchRate();
+        });
+
     },
 
     onDayClick: function(sender, date, allDay, jsEvent, view) {
@@ -50,6 +54,61 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         sender.css('background', 'red');
 
         this.selectDate = Date.parse(date);
+        this._domNode.find('a.history').text("获取 " + this.selectDate.toString('yyyy-MM-dd') + " 数据");
+    },
+
+    onFetchRate: function() {
+        var view = this._domNode.find('div.calendar').fullCalendar('getView');
+        var start = Date.parse(view.start);
+        var end = Date.parse(view.end);
+        var endDate = end.toString('yyyy-MM-dd');
+
+
+
+        var dates = [];
+        var date = start;
+        while (true) {
+            var day = date.toString('yyyy-MM-dd');
+            if (day == endDate)
+                break;
+            dates.push(date.clone());
+            date.addHours(24);
+        }
+
+        var rates = [];
+        for (var i in dates) {
+            var startDate = dates[i];
+            var start = startDate.toString('yyyy-MM-dd');
+            var endDate = startDate.addHours(24);
+            var end = endDate.toString('yyyy-MM-dd');
+
+            this.getRate(start, end, rates);
+            console.log(start, end)
+        }
+
+        var this_ = this;
+        // TODO: modify here, if over 1sec.
+        //
+        setTimeout(function(){
+            this_._domNode.find('div.calendar').fullCalendar('addEventSource', { events: rates });
+        }, 2000);
+
+
+    },
+
+    getRate: function(start, end, rates) {
+        var payload = {'start': start, 'end': end };
+        this.ajax(
+            'data/count/' + g.getCurrentStationId() + '/' + this._deviceType,
+            payload,
+            function(data){
+                // console.log(data)
+                var d = eval("(" + data + ")");
+                var count = d['results']['count'];
+
+                var title = '获取率:' + count;
+                rates.push({'start': start, 'end': start, 'title': title})
+        });
     },
 
     onClickHistoryButton: function() {
@@ -59,7 +118,9 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         var start = this.selectDate.toString('yyyy-MM-dd');
         var end = this.selectDate.addHours(24).toString('yyyy-MM-dd');
 
-        this.ajax('data/check/128/hpic', {'start':start, 'end':end, 'expect':2880}, function(data) {
+        this.ajax(
+            'data/check/' + g.getCurrentStationId() + '/' + this._deviceType,
+            {'start':start, 'end':end, 'expect':2880}, function(data) {
             var d = eval("(" + data + ")");
             this_.setHistoryCommand(start, end, d['results']['times']);
         });
