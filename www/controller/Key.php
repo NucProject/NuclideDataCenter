@@ -9,4 +9,6 @@ class Key
     const StationDeviceLatest = "s:d:time";
 
     const StationDeviceFieldRule = "s:d:f:";
+
+    const StationCommandQueue = 's:c:q';
 }

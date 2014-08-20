@@ -39,4 +39,10 @@ class MainController extends ApiController
 
         return parent::result(array("items" => $ret));
     }
+
+    public function hasRedisAction()
+    {
+        $count = count($this->redis->keys('*'));
+        return parent::result(array('redis' => $count > 0));
+    }
 } 

@@ -7,8 +7,9 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 {
     _templateString: "<div><div><a class='btn rate'>刷新获取率</a>&nbsp;<a class='btn history'>获取历史数据</a></div><div class='calendar'></div></div>",
 
-    __constructor: function() {
-
+    __constructor: function(deviceType) {
+        this._deviceType = deviceType;
+        console.log('Enter', deviceType, 'HistoryPane');
     },
 
     onCreated: function(domNode) {
@@ -45,6 +46,7 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
     onDayClick: function(sender, date, allDay, jsEvent, view) {
 
         sender.parent().parent().find('td.fc-day').css('background', '');
+        // TODO: Change color
         sender.css('background', 'red');
 
         this.selectDate = Date.parse(date);
@@ -52,6 +54,8 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 
     onClickHistoryButton: function() {
         var this_ = this;
+        this.selectDate = this.selectDate || Date.parse('yesterday');
+
         var start = this.selectDate.toString('yyyy-MM-dd');
         var end = this.selectDate.addHours(24).toString('yyyy-MM-dd');
 
@@ -63,7 +67,17 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 
     setHistoryCommand: function(start, end, times)
     {
-        console.log(times);
+        var payload = {
+            'type': 'history',
+            'station': g.getCurrentStationId(),
+            'device': this._deviceType,
+            'content': {
+                'start': start, 'end': end, 'times': times.join(',')
+            }
+        };
+        this.ajax('command/post', payload, function(data){
+            console.log(data)
+        });
     }
 
 });

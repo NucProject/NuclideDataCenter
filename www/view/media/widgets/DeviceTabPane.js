@@ -392,7 +392,7 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
     onDataStatisitcTabShown: function() {
         if (!this._calendarPane) {
-            this._calendarPane = new HistoryPane();
+            this._calendarPane = new HistoryPane(this._deviceType);
             var r = this._calendarPane.create();
             r.appendTo(this._domNode.find("div.calendar-container"));
 

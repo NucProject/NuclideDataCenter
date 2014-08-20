@@ -72,6 +72,10 @@ $class("Global", Base,
         this._curStationId = stationId;
     },
 
+    getCurrentStationName: function() {
+        return "StationName";
+    },
+
     setBeginTime: function(beginTime) {
         this._beginTime = beginTime;
     },
@@ -101,6 +105,6 @@ $class("Global", Base,
 
     setAlerts: function(alerts) {
         this._alerts = alerts;
-    },
+    }
 
 });

@@ -13,6 +13,7 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
     onAttach: function(domNode) {
 
+        // TODO: 1 is the user id.
         this.ajax("main/stations/1", null, function(data) {
 
 
@@ -45,7 +46,7 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     },
 
     getCurrentStationName: function() {
-        return this._currentStationName;
+        return g._currentStationName;
     },
 
     onStationClicked: function(li) {
