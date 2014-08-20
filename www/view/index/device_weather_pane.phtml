@@ -6,6 +6,7 @@
 		<div class="portlet-body" widget-class="WeatherDevice" widget-id="weather-device">
 			<div class="tabbable portlet-tabs">
 				<ul class="nav nav-tabs">
+                    <li><a href="#weather_history" data-toggle="tab" class="history">统计</a></li>
                     <li><a href="#weather_config" data-toggle="tab">设置</a></li>
                     <li class="'dropdown">
                         <a id="weather_alert_a" href="#weather_alert" data-toggle="tab" class="dropdown-toggle" style="margin-top:6px;padding-top:8px;padding-bottom:8px">
@@ -39,6 +40,11 @@
                     <div class="tab-pane" id="weather_alert">
                         <div class="alert-pane">
 
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="weather_history">
+                        <div class="calendar-container" class="fc-ltr fc">
                         </div>
                     </div>
 				</div>
