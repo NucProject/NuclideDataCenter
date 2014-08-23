@@ -114,11 +114,16 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
     },
 
     onClickHistoryButton: function() {
+        if (!this.selectDate) {
+            alert('请选择要获取历史数据的日期');
+            return false;
+        }
         var this_ = this;
         this.selectDate = this.selectDate || Date.parse('yesterday');
 
-        var start = this.selectDate.toString('yyyy-MM-dd');
-        var end = this.selectDate.addHours(24).toString('yyyy-MM-dd');
+        var date = this.selectDate.clone();
+        var start = date.toString('yyyy-MM-dd');
+        var end = date.addHours(24).toString('yyyy-MM-dd');
 
         this.ajax(
             'data/check/' + g.getCurrentStationId() + '/' + this._deviceType,
@@ -139,7 +144,7 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
             }
         };
         this.ajax('command/post', payload, function(data){
-            console.log(data)
+            alert('已发送成功获取历史数据的指令');
         });
     }
 
