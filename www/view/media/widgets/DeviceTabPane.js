@@ -88,6 +88,34 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             var tabItem = $(this);
             setTimeout(function(){self.postOnTabChanged(tabItem);}, 200);
         });
+
+        this.initIntervalChange(domNode.find('div.interval'));
+    },
+
+    initIntervalChange: function(domNode) {
+        if (!domNode.hasClass('interval'))
+            return false;
+        var this_ = this;
+        domNode.delegate('a', 'click', function(){
+            var sender = $(this);
+
+            sender.siblings().removeClass('red');
+            sender.addClass('red');
+
+            this_.onIntervalChanged && this_.onIntervalChanged($(this));
+
+            this_.shiftIntervalView(sender, 0);
+        });
+    },
+
+    shiftIntervalView: function(sender, page) {
+        if (sender.hasClass('m5')) {
+            this.fillList5min(page);
+        } else if (sender.hasClass('s30')) {
+            this.fillList(page);
+        } else if (sender.hasClass('h1')) {
+            this.fillList1Hour(page);
+        }
     },
 
     handleAlert: function(deviceType, id, tr, content) {
@@ -100,11 +128,10 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                     tr.slideUp();
                 }, 500);
             }
-
         })
     },
 
-    updatePageBar: function(items) {
+    updatePageBar: function(itemsCount) {
         var pageBarContainer = this._domNode.find('div.pagebar');
         pageBarContainer.empty();
 
@@ -113,12 +140,13 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             this.unbindEvent(this, this.getPageEvent());
         }
 
-        this._pageBar = new Pagebar(Math.floor(items.length / this.PageCount) + 1);
+        this._pageBar = new Pagebar(Math.floor(itemsCount / this.PageCount) + 1);
         this._pageBar.create().appendTo(pageBarContainer);
         this._pageBar.setPageEvent(this, this.getPageEvent());
         var this_ = this;
         this.bindEvent(this, this.getPageEvent(), function(e, sender, data){
-            this_.fillList( this_._items, data - 1);
+            var sender = this_._domNode.find('div.interval a.red');
+            this_.shiftIntervalView(sender, data - 1);
         });
     },
 
@@ -143,70 +171,9 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                 this_._items = items;
                 this_.makeDataDict(items);
                 // console.log("44445", this._dict['15:55:00'])
-                this_.fillList(items, 0);
-                this_.updatePageBar(items)
+                this_.fillList(0);
+
             });
-        }
-    },
-
-    fillList: function(items, page) {
-        var from = page * this.PageCount;
-        var to = (page + 1) * this.PageCount;
-        d = new Date()
-        var base = -3600 * 8 * 1000;
-        var value = null;
-        var start = false;
-        var count = 0;
-        var params = this._dataListView.clearValues();
-
-        var keys = Object.keys(this._dict);
-        keys.sort().reverse();
-        for (var i in keys) {
-
-            if (count >= from) {
-                start = true;
-            }
-
-            var key = keys[i];
-            value = this._dict[key];
-            if (value)
-            {
-                count += 1;
-                if (start)
-                {
-                    console.log(111)
-                    this._dataListView.addValue(value, params);
-                }
-            }
-
-            if (count > to)
-                break;
-        }
-
-        for (var i = 2880; i >= 0; i -= 1) {
-
-            d.setTime(base + i * 30000)
-            s = d.toTimeString()
-            var key = s.substr(0, 8);
-
-            if (count >= from) {
-                start = true;
-            }
-
-            value = this._dict[key];
-            if (value)
-            {
-                count += 1;
-                if (start)
-                {
-                    console.log(111)
-                    this._dataListView.addValue(value, params);
-                }
-            }
-
-
-            if (count > to)
-                break;
         }
     },
 
@@ -235,15 +202,131 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         }
     },
 
+    fillList: function(page) {
+        var from = page * this.PageCount;
+        var to = (page + 1) * this.PageCount;
+        d = new Date()
+        var base = -3600 * 8 * 1000;
+        var value = null;
+        var start = false;
+        var count = 0;
+        var params = this._dataListView.clearValues();
+
+        var keys = Object.keys(this._dict);
+        keys.sort().reverse();
+        for (var i in keys) {
+
+            if (count >= from) {
+                start = true;
+            }
+
+            var key = keys[i];
+            value = this._dict[key];
+            if (value)
+            {
+                count += 1;
+                if (start)
+                {
+                    this._dataListView.addValue(value, params);
+                }
+            }
+
+            if (count > to)
+                break;
+        }
+        this.updatePageBar(keys.length)
+        return;
+    },
+
+    fillList5min: function(page) {
+        var from = page * this.PageCount;
+        var to = (page + 1) * this.PageCount;
+        d = new Date()
+
+        var value = null;
+        var start = false;
+        var count = 0;
+        var params = this._dataListView.clearValues();
+
+
+        var keys = Object.keys(this._dict);
+        keys.sort().reverse();
+        var gv = null;
+        for (var i in keys) {
+
+            if (count >= from) {
+                start = true;
+            }
+
+            if (!start)
+                continue;
+
+            var key = keys[i];
+            var m = key.substr(4, 1);
+            var s = key.substr(6, 2);
+
+            if ((m == '5' || m == '0') && s == '00') {
+                if (gv) {
+                    this._dataListView.addValue(gv.getValue(), params);
+                }
+
+                gv = new GroupValue({'time': key});
+            }
+
+            value = this._dict[key];
+            gv && gv.addValue(value);
+
+            if (count > to)
+                break;
+        }
+        this.updatePageBar(keys.length / 10)
+    },
+
+    fillList1Hour: function() {
+
+        var value = null;
+        var start = false;
+        var count = 0;
+        var params = this._dataListView.clearValues();
+
+        var keys = Object.keys(this._dict);
+        keys.sort().reverse();
+        var gv = null;
+        for (var i in keys) {
+
+
+            var key = keys[i];
+            var m = key.substr(3, 2);
+            var s = key.substr(6, 2);
+
+            if (m == '00' && s == '00') {
+                if (gv) {
+                    this._dataListView.addValue(gv.getValue(), params);
+                }
+
+                gv = new GroupValue({'time': key});
+            }
+
+            value = this._dict[key];
+            gv && gv.addValue(value);
+        }
+
+        if (gv) {
+            this._dataListView.addValue(gv.getValue(), params);
+        }
+
+        this.updatePageBar(12)
+    },
 
     showCharts: function(domNode, p) {
-        console.log(111);
+
         if (p.filter)
         {
             var items = p.filter(this._items);
         }
 
         var selector = p.selector || 'div.charts';
+        domNode.find(selector).css('width', '100%');
         domNode.find(selector).highcharts({
             chart: {
                 type: 'line'
@@ -281,7 +364,7 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                         enabled: false
                     },
                     marker: {
-                        enabled: true,
+                        enabled: false,
                         states: {
                             hover: {
                                 enabled: false,
@@ -296,10 +379,10 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                 name: p.title,
                 data: items.data
             }
-            /*, {
-                name: 'London',
-                data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
-            }*/]
+                /*, {
+                 name: 'London',
+                 data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
+                 }*/]
         });
 
     },
@@ -320,7 +403,7 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         return this._dict;
     },
 
-    filterData: function(data, field) {
+    chartFilterData: function(data, field) {
 
         var datas = [];
         var times = [];
@@ -332,7 +415,6 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             dict[t] = data[i][field];
         }
 
-
         d = new Date()
         var base = -3600 * 8 * 1000;
         var value = null;
@@ -343,8 +425,8 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             s = d.toTimeString()
             var key = s.substr(0, 8);
 
-            //.if (i % 2 != 0)
-            //    continue;
+            if (i % 2 != 0)
+                continue;
 
             value = dict[key];
             if (value)
@@ -362,7 +444,9 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
             if (start)
             {
-                if (i % 100 == 0)
+                var hm = key.substr(0, 5);
+
+                if (hm.substr(3, 5) == '00')
                 {
                     times.push(key.substr(0, 5));
                 }
@@ -402,194 +486,6 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
 });
 
-//////////////////////////////////////////////////////////////////////////
-// Devices
-$class("HpicDevice", DeviceBase,
-{
-	__constructor: function() {
-        this._deviceType = "hpic";
-	},
-
-    onAttach: function(domNode) {
-        console.log(domNode)
-        this.__super(DeviceBase.prototype.onAttach, [domNode]);
-
-        this._dataListView.setHeaders([
-            {'key':'time', 'name':'时间'},
-            {'key':'doserate', 'name':'剂量率'},
-            {'key':'battery', 'name':'电池'},
-            {'key':'highvoltage', 'name':'电压'},
-            {'key':'temperature', 'name':'温度'}]);
-
-    },
-
-    showChartsTab: function() {
-
-        this.showCharts(this._domNode, {
-            selector: "div.charts",
-            title: "剂量率", ytitle: "剂量率",
-            filter: kx.bind(this, 'filter')
-        });
-
-    },
-
-    filter: function(data) {
-        return this.filterData(data, 'doserate');
-    },
-
-    onTabChanged: function() {
-
-    }
-
-});
-
-$class("WeatherDevice", DeviceBase,
-{
-    __constructor: function() {
-        this._deviceType = "weather";
-    },
-
-    onAttach: function(domNode) {
-        this.__super(DeviceBase.prototype.onAttach, [domNode]);
-
-        this._dataListView.setHeaders([
-            {'key':'time', 'name':'时间'},
-            {'key':'Raingauge', 'name':'雨量'},
-            {'key':'Humidity', 'name':'湿度'},
-            {'key':'Pressure', 'name':'气压'},
-            {'key':'Temperature', 'name':'温度'}]);
-    },
-
-    showChartsTab: function() {
-
-        this.showCharts(this._domNode, {
-            selector: "div.charts",
-            title: "温度", ytitle: "温度",
-            filter: kx.bind(this, 'filter1')
-        });
-
-        this.showCharts(this._domNode, {
-            selector: "div.charts2",
-            title: "气压", ytitle: "气压",
-            filter: kx.bind(this, 'filter2')
-        });
-
-    },
-
-    filter1: function(data) {
-        return this.filterData(data, 'Temperature');
-
-    },
-
-    filter2: function(data) {
-        return this.filterData(data, 'Pressure');
-    }
-});
-
-$class("HpgeDevice", DeviceBase,
-{
-    __constructor: function() {
-        this._deviceType = "hpge";
-        this._noAlertData = true;
-    },
-
-    onAttach: function(domNode) {
-        this.__super(DeviceBase.prototype.onAttach, [domNode]);
-
-        this._dataListView.setHeaders([
-            {'key':'time', 'name':'时间'},
-            {'key':'sid', 'name':'采样ID'},
-            {'key':'starttime', 'name':'开始时间'},
-            {'key':'endtime', 'name':'结束时间'},
-            {'key':'path', 'name':'下载', 'type': 'url'}]);
-    }
-});
-
-$class("LabrDevice", DeviceBase,
-{
-    __constructor: function() {
-        this._deviceType = "labr";
-    },
-
-    onAttach: function(domNode) {
-        this.__super(DeviceBase.prototype.onAttach, [domNode]);
-
-        this._dataListView.setHeaders([
-            {'key':'time', 'name':'时间'},
-            {'key':'doserate', 'name':'总剂量率'},
-            {'key':'starttime', 'name':'开始时间'},
-            {'key':'endtime', 'name':'结束时间'},
-            {'key': 'refnuclidefound', 'name':"发现核素"},
-            {'key':'N42path', 'name':'链接', 'type': 'url'}]
-        );
-    },
-
-    showChartsTab: function() {
-
-        this.showCharts(this._domNode, {
-            selector: "div.charts",
-            title: "剂量率", ytitle: "剂量率",
-            filter: this.filter
-        });
-    },
-
-    filter: function(data) {
-        var a = [];
-
-        for (var i in data) {
-            var n = data[i]['doserate'];
-            a.push(parseFloat(n));
-        }
-        console.log(a)
-        return {'data':a};
-    }
-});
-
-
-$class("CinderellaDevice", DeviceBase,
-{
-    __constructor: function() {
-        this._deviceType = "cinderelladata";
-    },
-
-    onAttach: function(domNode) {
-        this.__super(DeviceBase.prototype.onAttach, [domNode]);
-
-        this._dataListView.setHeaders([
-            {'key':'time', 'name':'时间'},
-            {'key':'Sid', 'name':'采样ID'},
-            {'key':'barcode', 'name':'条 码'},
-            {'key':'BeginTime', 'name':'开始时间'},
-            {'key':'Flow', 'name':"流量"},
-            {'key':'FlowPerHour', 'name':'瞬时流量'},
-            {'key':'Pressure', 'name':'气压'}]);
-
-    }
-});
-
-
-$class("EnvironmentDevice", DeviceBase,
-{
-    __constructor: function() {
-        this._deviceType = "environment";
-    },
-
-    onAttach: function(domNode) {
-        this.__super(DeviceBase.prototype.onAttach, [domNode]);
-
-        this._dataListView.setHeaders([
-            {'key':'time', 'name':'时间'},
-            {'key':'Temperature', 'name':'温度'},
-            {'key':'Humidity', 'name':'湿度'},
-            {'key':'BatteryHours', 'name':'电池时间'},
-            {'key':'IfMainPowerOff', 'name':"电源"},
-            {'key':'IfSmoke', 'name':'烟感'},
-            {'key':'IfDoorOpen', 'name':'门禁'}]);
-
-    }
-
-
-});
 
 
 

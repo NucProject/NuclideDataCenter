@@ -2,6 +2,49 @@
  * Created by Healer on 14-6-10.
  */
 
+$class("GroupValue", null, {
+
+    _values: null,
+
+    __constructor: function(time) {
+        this._time = time;
+    },
+
+    addValue: function(value) {
+        if (this._values == null) {
+            this._values = [];
+        }
+        this._values.push(value);
+    },
+
+    getValue: function() {
+        var r = {}
+        for (var i in this._values) {
+            var v = this._values[i];
+            for (var k in v) {
+                if (k == 'time') {
+                    continue;
+                }
+                if (r[k]) {
+                    r[k] += parseFloat(v[k])
+                } else {
+                    r[k] = parseFloat(v[k])
+                }
+
+            }
+        }
+        var size = this._values.length;
+        for (var k in r) {
+            if (k != 'time')
+                r[k] = (r[k] / size).toFixed(1);
+        }
+        for (var i in this._time) {
+            r[i] = this._time[i];
+        }
+        return r;
+    }
+});
+
 
 $class("Global", Base,
 {
@@ -73,7 +116,11 @@ $class("Global", Base,
     },
 
     getCurrentStationName: function() {
-        return "StationName";
+        return this._stationName;
+    },
+
+    setCurrentStationName: function(stationName) {
+        this._stationName = stationName;
     },
 
     setBeginTime: function(beginTime) {

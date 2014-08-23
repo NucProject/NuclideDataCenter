@@ -10,5 +10,7 @@ class Key
 
     const StationDeviceFieldRule = "s:d:f:";
 
-    const StationCommandQueue = 's:c:q';
+    const StationCommandQueue = 's:c:q@';
+
+    const StationCinderellaStatus = 's:c:s@';
 }

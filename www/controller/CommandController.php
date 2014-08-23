@@ -39,4 +39,23 @@ class CommandController extends ApiController
 
         return parent::result(array('post' => true));
     }
-} 
+
+    public function cinderellaAction($station)
+    {
+        if ($this->request->isPost())
+        {
+            $status = $this->request->getRawBody();
+            $queue = Key::StationCinderellaStatus . $station;
+            $this->redis->set($queue, $status);
+            return parent::result(array('update' => true));
+        }
+        else if ($this->request->isGet())
+        {
+            $queue = Key::StationCinderellaStatus . $station;
+            $status = $this->redis->get($queue);
+            return parent::result(array('status' => $status));
+        }
+
+        return parent::error(Error::BadHttpMethod, '');
+    }
+}

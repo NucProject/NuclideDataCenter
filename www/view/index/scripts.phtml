@@ -56,6 +56,15 @@
 <script src="media/widgets/sidebar.js" type="text/javascript"></script>
 <script src="media/widgets/pagebar.js" type="text/javascript"></script>
 <script src="media/widgets/DeviceTabPane.js" type="text/javascript"></script>
+<!-- Devices -->
+<script src="media/widgets/HpicDevice.js" type="text/javascript"></script>
+<script src="media/widgets/WeatherDevice.js" type="text/javascript"></script>
+<script src="media/widgets/CinderellaDevice.js" type="text/javascript"></script>
+<script src="media/widgets/LabrDevice.js" type="text/javascript"></script>
+<script src="media/widgets/EnvDevice.js" type="text/javascript"></script>
+<script src="media/widgets/HpgeDevice.js" type="text/javascript"></script>
+
+
 <script src="media/widgets/DeviceSummary.js" type="text/javascript"></script>
 
 <script src="media/widgets/StationTabPane.js" type="text/javascript"></script>
@@ -76,6 +85,19 @@
         Index.initIntro();
 
         Lock.init();
+
+        /*
+        var gr = new GroupValue({'time': "222"});
+        gr.addValue({'a':5, 'time':"111", 'b':1.6});
+        gr.addValue({'a':3, 'b':1.8,'time':"222"});
+        gr.addValue({'a':5, 'b':2.8, 'time':"444"});
+
+        var f = gr.getValue();
+        console.log("!!!!!", f)
+        */
+
+
+
         $.ajax({
             type: "GET",
             url: "user/test",

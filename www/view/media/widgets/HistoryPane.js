@@ -25,6 +25,8 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
                 dayNamesShort:weeks,
                 header: { left: 'title', right: 'prev, next' },
                 editable: false,
+                titleFormat: 'yyyy年MM月',
+                buttonText: {'prev':"<<上个月", 'next': "下个月>>"},
                 dayClick: function(date, allDay, jsEvent, view) {
                     var sender = $(this);
                     this_.onDayClick(sender, date, allDay, jsEvent, view);

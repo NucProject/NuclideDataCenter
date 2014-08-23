@@ -20,10 +20,13 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             var ul = domNode.find('ul.stations');
             var res = eval("(" + data + ")");
             var stations = res['results']['items'];
+            var firstStationName = null;
             for (var i in stations)
             {
                 var s = stations[i];
+
                 var html = "<li><a href='#stations-row'>" + s.name + "</a></li>";
+                firstStationName = firstStationName || s.name;
                 var li = $(html);
                 li.attr("station_id", s.station_id);
                 ul.append(li)
@@ -38,6 +41,7 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
             // select default
             ul.find("li a:first").click();
+            g.setCurrentStationName(this._currentStationName);
         });
     },
 
@@ -58,6 +62,7 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         g.setCurrentStationId(currentStationId)
         this._currentStationName = li.find("a").text();
 
+
         $('#network-row').hide();
         $('#devices-row').hide();
         $('#admin-row').hide();
@@ -71,6 +76,7 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                 {"url":"#station" + currentStationId, "name":this._currentStationName, "type":"station" }
             ]);
 
+        console.log(222)
         return false;
     }
 

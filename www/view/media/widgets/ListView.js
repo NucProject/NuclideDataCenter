@@ -100,7 +100,14 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
             }
             else
             {
-                cl.push(item[key]);
+                if (this._headers[j]['type'] == 'num')
+                {
+                    cl.push(parseFloat(item[key]).toFixed(1));
+                }
+                else
+                {
+                    cl.push(item[key]);
+                }
             }
             cl.push('</td>');
 
@@ -214,7 +221,14 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
                 }
                 else
                 {
-                    cl.push(item[key]);
+                    if (this._headers[j]['type'] == 'num')
+                    {
+                        cl.push(item[key].toFixed(1));
+                    }
+                    else
+                    {
+                        cl.push(item[key]);
+                    }
                 }
                 cl.push('</td>');
 
