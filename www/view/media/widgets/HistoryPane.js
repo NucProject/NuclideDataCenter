@@ -7,8 +7,9 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 {
     _templateString: "<div><div><a class='btn rate'>刷新获取率</a>&nbsp;<a class='btn history'>获取历史数据</a></div><div class='calendar'></div></div>",
 
-    __constructor: function(deviceType) {
+    __constructor: function(deviceType, except) {
         this._deviceType = deviceType;
+        this._except = except || 2880;
         console.log('Enter', deviceType, 'HistoryPane');
     },
 
@@ -51,9 +52,9 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 
     onDayClick: function(sender, date, allDay, jsEvent, view) {
 
-        sender.parent().parent().find('td.fc-day').css('background', '');
+        sender.parent().parent().find('td.fc-day').css('background', '').removeClass('highlight');
         // TODO: Change color
-        sender.css('background', 'red');
+        sender.css('background', 'gray').addClass('highlight');
 
         this.selectDate = Date.parse(date);
         this._domNode.find('a.history').text("获取 " + this.selectDate.toString('yyyy-MM-dd') + " 数据");
@@ -100,15 +101,16 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 
     getRate: function(start, end, rates) {
         var payload = {'start': start, 'end': end };
+        var expect = this._except;
         this.ajax(
             'data/count/' + g.getCurrentStationId() + '/' + this._deviceType,
             payload,
             function(data){
                 // console.log(data)
                 var d = eval("(" + data + ")");
-                var count = d['results']['count'];
+                var count = parseInt(d['results']['count']);
 
-                var title = '获取率:' + count;
+                var title = '获取率:' + (count * 100 / expect).toFixed(1) + "%";
                 rates.push({'start': start, 'end': start, 'title': title})
         });
     },

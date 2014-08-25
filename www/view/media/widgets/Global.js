@@ -98,6 +98,8 @@ $class("Global", Base,
                 return "溴化镧能谱仪";
             case "cinderella":
                 return "特征核素甄别系统";
+            case "cinderelladata":
+                return "特征核素甄别系统";
             case "hpge":
                 return "高纯锗能谱仪";
             case "weather":

@@ -21,13 +21,19 @@ class Cache
         return $items;
     }
 
-    public static function updateLatestTime($redis, $station, $device)
+    public static function updateLatestTime($redis, $station, $device, $ttl = 200)
     {
         $key = Key::StationDeviceLatest . "[$station][$device]";
-        $redis->Set($key, time());
+        $redis->Setex($key, $ttl, time());
     }
 
-    public static function getLatestTime($redis, $station, $device)
+    public static function updateLatestStat($redis, $station, $device, $status, $ttl = 200)
+    {
+        $key = Key::StationDeviceLatest . "[$station][$device]";
+        $redis->Setex($key, $ttl, $status);
+    }
+
+    public static function getLatest($redis, $station, $device)
     {
         $key = Key::StationDeviceLatest . "[$station][$device]";
         return $redis->Get($key);

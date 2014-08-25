@@ -90,6 +90,7 @@ class DataController extends ApiController
                 else if ($fileType == 'hpge')
                 {
                     File::recordHpGeFile($station, $filePath, $fileName, $folder, $folder2);
+                    Cache::updateLatestStat($this->redis, $station, $fileType, $folder, 3600 * 8);
                 }
             }
 
@@ -136,8 +137,8 @@ class DataController extends ApiController
 
     public function latestAction($station, $device)
     {
-        $time = Cache::getLatestTime($this->redis, $station, $device);
-        return parent::result(array('station' => $station, 'device' => $device, 'time' => $time));
+        $status = Cache::getLatest($this->redis, $station, $device);
+        return parent::result(array('station' => $station, 'device' => $device, 'status' => $status));
     }
 
     public function alertsAction($station, $device, $all = false)

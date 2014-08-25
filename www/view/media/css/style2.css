@@ -17,3 +17,12 @@
     font-size: .85em;
     cursor: default;
 }
+
+.calendar-container td.highlight .fc-event
+{
+    border: 1px solid red;
+    background-color: #ffffff;
+    color: #701E1E;
+    font-size: .85em;
+    cursor: default;
+}

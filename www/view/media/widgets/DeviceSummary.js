@@ -197,14 +197,14 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         this.ajax(url, null, function(data) {
 
             var r = eval("(" + data + ")");
-            var latest = r['results']['time']
+            var latest = r['results']['status']
             if (g.getUnixTime() - latest > 100)
             {
-                self.updateRunState(false, "停止");
+                self.updateRunState(false, "运行状态: 停止");
             }
             else
             {
-                self.updateRunState(true, "运行");
+                self.updateRunState(true, "运行状态: 运行");
             }
         });
     },
@@ -357,7 +357,28 @@ $class("LabrSummaryDevice", DeviceSummaryBase,
     onAttach: function(domNode) {
         this._deviceType = "labr";
         this.onAttached(domNode);
-    }
+    },
+
+    getLatestData: function() {
+        var station = g.getCurrentStationId();
+        var url = "data/latest/" + station + "/" + this._deviceType;
+        var self = this;
+
+        this.ajax(url, null, function(data) {
+
+            console.log(data)
+            var r = eval("(" + data + ")");
+            var latest = r['results']['status']
+            if (g.getUnixTime() - latest > 610)
+            {
+                self.updateRunState(false, "运行状态: 停止");
+            }
+            else
+            {
+                self.updateRunState(true, "运行状态: 运行");
+            }
+        });
+    },
 });
 
 $class("CinderellaSummaryDevice", DeviceSummaryBase,
@@ -367,9 +388,29 @@ $class("CinderellaSummaryDevice", DeviceSummaryBase,
     },
 
     onAttach: function(domNode) {
+        // Fix BUG for Cinderella running status shown.
         this._deviceType = "cinderella";
         this.onAttached(domNode);
-    }
+    },
+
+    getLatestData: function() {
+        var station = g.getCurrentStationId();
+        var url = "data/latest/" + station + "/cinderalladata";
+        var self = this;
+        this.ajax(url, null, function(data) {
+
+            var r = eval("(" + data + ")");
+            var latest = r['results']['status']
+            if (g.getUnixTime() - latest > 100)
+            {
+                self.updateRunState(false, "运行状态: 停止");
+            }
+            else
+            {
+                self.updateRunState(true, "运行状态: 运行");
+            }
+        });
+    },
 
 });
 
@@ -395,5 +436,28 @@ $class("HpGeSummaryDevice", DeviceSummaryBase,
     onAttach: function(domNode) {
         this._deviceType = "hpge";
         this.onAttached(domNode);
-    }
+    },
+
+    getLatestData: function() {
+        var station = g.getCurrentStationId();
+        var url = "data/latest/" + station + "/" + this._deviceType;
+        var self = this;
+
+        this.ajax(url, null, function(data) {
+
+            console.log(data)
+            var r = eval("(" + data + ")");
+            var latest = r['results']['status']
+            if (!latest)
+            {
+                self.updateRunState(false, "当前SID: <未知>");
+            }
+            else
+            {
+                self.updateRunState(true, "当前SID: " + latest);
+            }
+        });
+    },
+
+
 });

@@ -20,6 +20,8 @@ class File
         $d->endtime = $p[2];
         $d->mode = $p[3];
         $d->save();
+
+        return $sid;
     }
 
     public static function recordN42File($station, $filePath, $month, $day, $fileName)

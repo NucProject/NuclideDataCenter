@@ -155,6 +155,8 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         if (this._currentShownDevice != this._deviceType)
             return;
 
+        console.log(payload)
+
         var this_ = this;
         var currentStationId = g.getCurrentStationId();
 
@@ -329,7 +331,7 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         domNode.find(selector).css('width', '100%');
         domNode.find(selector).highcharts({
             chart: {
-                type: 'line'
+                type: 'line', zoomType: 'x'
             },
             title: {
                 text: p.title
@@ -419,13 +421,14 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         var base = -3600 * 8 * 1000;
         var value = null;
         var start = false;
+
         for (var i = 0; i < 2880; i += 1) {
 
             d.setTime(base + i * 30000)
             s = d.toTimeString()
             var key = s.substr(0, 8);
 
-            if (i % 2 != 0)
+            if (i % 5 != 0)
                 continue;
 
             value = dict[key];
@@ -468,6 +471,8 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             this.onDataStatisitcTabShown();
         } else if (tabItem.hasClass('charts')) {
             this.showChartsTab && this.showChartsTab();
+        } else if (tabItem.hasClass('data')) {
+            this.onShow();
         }
 
         // Device
