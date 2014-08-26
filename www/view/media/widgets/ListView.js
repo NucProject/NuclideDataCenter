@@ -96,7 +96,9 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
             }
             else if (this._headers[j]['type'] == 'url')
             {
-                cl.push("<a href=" + item[key] + ">链接</a>");
+                var path = item[key];
+                var fileName = path.substr(path.lastIndexOf('/') + 1);
+                cl.push("<a href=" + item[key] + ">" + fileName + "</a>");
             }
             else
             {

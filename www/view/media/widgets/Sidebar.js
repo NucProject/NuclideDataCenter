@@ -76,7 +76,6 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                 {"url":"#station" + currentStationId, "name":this._currentStationName, "type":"station" }
             ]);
 
-        console.log(222)
         return false;
     }
 

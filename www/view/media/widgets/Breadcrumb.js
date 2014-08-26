@@ -13,11 +13,8 @@ $class("Breadcrumb", [kx.Widget, kx.EventMixin],
     },
 
     onDateRangeChanged: function(e, beginTime, endTime) {
-        //console.log(beginTime, endTime)
         g.setBeginTime(beginTime['start']);
         g.setEndTime(beginTime['end']);
-
-        // g.showTip("时间选择变化");
     },
 
     setLevels: function(levels) {

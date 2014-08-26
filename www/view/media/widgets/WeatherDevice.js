@@ -14,9 +14,11 @@ $class("WeatherDevice", DeviceBase,
         this._dataListView.setHeaders([
             {'key':'time', 'name':'时间'},
             {'key':'Raingauge', 'name':'雨量'},
-            {'key':'Humidity', 'name':'湿度'},
+            {'key':'Windspeed', 'name':'风速'},
+            {'key':'Direction', 'name':'风向'},
             {'key':'Pressure', 'name':'气压'},
-            {'key':'Temperature', 'name':'温度'}]);
+            {'key':'Temperature', 'name':'温度'},
+            {'key':'Humidity', 'name':'湿度'}]);
     },
 
     showChartsTab: function() {

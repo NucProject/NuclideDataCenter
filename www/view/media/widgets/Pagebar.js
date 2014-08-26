@@ -26,8 +26,8 @@ $class("Pagebar", [kx.Weblet, kx.EventMixin],
 
 		this._currentPage = $(e.delegateTarget).attr('data-lp');
         this._obj.fireEvent(this._event, this._currentPage);
-        // console.log(this._currentPage);
-	},
+
+    },
 
 	currentPage: function() {
 		return this._currentPage;

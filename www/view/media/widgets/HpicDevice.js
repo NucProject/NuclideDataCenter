@@ -8,7 +8,6 @@ $class("HpicDevice", DeviceBase,
     },
 
     onAttach: function(domNode) {
-        console.log(domNode)
         this.__super(DeviceBase.prototype.onAttach, [domNode]);
 
         this._dataListView.setHeaders([

@@ -172,7 +172,7 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                 var items = $r.results.items;
                 this_._items = items;
                 this_.makeDataDict(items);
-                // console.log("44445", this._dict['15:55:00'])
+
                 this_.fillList(0);
 
             });
@@ -267,15 +267,22 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             var m = key.substr(4, 1);
             var s = key.substr(6, 2);
 
+            value = this._dict[key];
+
             if ((m == '5' || m == '0') && s == '00') {
                 if (gv) {
                     this._dataListView.addValue(gv.getValue(), params);
                 }
 
-                gv = new GroupValue({'time': key});
+                if (value['start'] != null) {
+                    var startTime = value['starttime'];
+                    var endTime = value['endtime'];
+                    gv = new GroupValue({'time': key, 'startTime': startTime, 'endtime': endTime});
+                } else  {
+                    gv = new GroupValue({'time': key});
+                }
             }
 
-            value = this._dict[key];
             gv && gv.addValue(value);
 
             if (count > to)

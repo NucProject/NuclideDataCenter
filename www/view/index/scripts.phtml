@@ -93,7 +93,6 @@
         gr.addValue({'a':5, 'b':2.8, 'time':"444"});
 
         var f = gr.getValue();
-        console.log("!!!!!", f)
         */
 
 
@@ -103,10 +102,11 @@
             url: "user/test",
             data: null,
             success: function(data){
-                console.log(data)
                 var d = eval("(" + data + ")")
                 if(d.errorCode == 201){
                     location.href = "/main/lock";
+                } else {
+                    $('body').css('display', '')
                 }
             }
         });

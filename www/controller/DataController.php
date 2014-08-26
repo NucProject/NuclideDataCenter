@@ -78,8 +78,11 @@ class DataController extends ApiController
             foreach($uploads as $upload)
             {
                 $fileName = $upload->getname();
+                if ($fileType == 'hpge')
+                {
+                    $fileName = substr($fileName, 1);
+                }
                 $filePath = $path . strtolower($fileName);
-
 
                 ($upload->moveTo($filePath)) ? $isUploaded = true : $isUploaded = false;
 

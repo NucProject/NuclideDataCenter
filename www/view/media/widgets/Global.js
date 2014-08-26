@@ -35,8 +35,8 @@ $class("GroupValue", null, {
         }
         var size = this._values.length;
         for (var k in r) {
-            if (k != 'time')
-                r[k] = (r[k] / size).toFixed(1);
+            if (k != 'time' && k != 'starttime' && k != 'entime')
+                r[k] = (r[k] / size);
         }
         for (var i in this._time) {
             r[i] = this._time[i];

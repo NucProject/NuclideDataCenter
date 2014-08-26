@@ -10,7 +10,6 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
     __constructor: function(deviceType, except) {
         this._deviceType = deviceType;
         this._except = except || 2880;
-        console.log('Enter', deviceType, 'HistoryPane');
     },
 
     onCreated: function(domNode) {
@@ -67,7 +66,6 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         var endDate = end.toString('yyyy-MM-dd');
 
 
-
         var dates = [];
         var date = start;
         while (true) {
@@ -110,14 +108,20 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
                 var d = eval("(" + data + ")");
                 var count = parseInt(d['results']['count']);
 
-                var title = '获取率:' + (count * 100 / expect).toFixed(1) + "%";
+                var title = '';
+                if (count >= expect) {
+                    title = '获取率: ' + "100%";
+                } else {
+                    title = '获取率: ' + (count * 100 / expect).toFixed(1) + "%";
+                }
+
                 rates.push({'start': start, 'end': start, 'title': title})
         });
     },
 
     onClickHistoryButton: function() {
         if (!this.selectDate) {
-            alert('请选择要获取历史数据的日期');
+            g.showTip('请选择要获取历史数据的日期');
             return false;
         }
         var this_ = this;
@@ -146,7 +150,7 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
             }
         };
         this.ajax('command/post', payload, function(data){
-            alert('已发送成功获取历史数据的指令');
+            g.showTip('已发送成功获取历史数据的指令');
         });
     }
 

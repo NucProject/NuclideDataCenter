@@ -14,10 +14,12 @@ $class("LabrDevice", DeviceBase,
 
         this._dataListView.setHeaders([
             {'key':'time', 'name':'时间'},
-            {'key':'doserate', 'name':'总剂量率', type: 'num'},
+            {'key':'doserate', 'name':'总剂量率（nSv/h）', type: 'num'},
+            {'key':'temperature', 'name':'探头温度（℃）', type: 'num'},
+            {'key':'highvoltage', 'name':'探头高压（V）', type: 'num'},
             {'key':'starttime', 'name':'开始时间'},
             {'key':'endtime', 'name':'结束时间'},
-            {'key': 'refnuclidefound', 'name':"发现核素", 'type': 'bool'},
+            {'key': 'refnuclidefound', 'name':"找到参考核素", 'type': 'bool'},
             {'key':'N42path', 'name':'链接', 'type': 'url'}]
         );
     },

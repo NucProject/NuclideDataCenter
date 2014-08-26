@@ -11,7 +11,6 @@ $class("SettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
     __constructor: function(device)
     {
         this._device = device;
-        console.log(device)
     },
 
     onCreated: function(domNode) {
@@ -87,8 +86,8 @@ $class("SettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
     },
 
     setAlertFields: function(alertFields) {
-        console.log(alertFields)
-        this._alertFields = alertFields;
+
+        this._alertFields = alertFields;    //???
         var selNode = this._domNode.find("select");
 
         var _first = "";
@@ -395,7 +394,7 @@ $class("CinderellaSummaryDevice", DeviceSummaryBase,
 
     getLatestData: function() {
         var station = g.getCurrentStationId();
-        var url = "data/latest/" + station + "/cinderalladata";
+        var url = "data/latest/" + station + "/cinderelladata";
         var self = this;
         this.ajax(url, null, function(data) {
 
@@ -445,7 +444,6 @@ $class("HpGeSummaryDevice", DeviceSummaryBase,
 
         this.ajax(url, null, function(data) {
 
-            console.log(data)
             var r = eval("(" + data + ")");
             var latest = r['results']['status']
             if (!latest)

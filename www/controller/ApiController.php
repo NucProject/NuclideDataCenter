@@ -120,7 +120,7 @@ class ApiController extends \Phalcon\Mvc\Controller
     public function testN42Action()
     {
 
-        $f = "D:\\Projects\\NuclideDataCenter\\www\\view\\file\\128\\labr\\2014-07\\24\\sara0316_2014-07-24t23_00_00-5min.n42";
+        $f = "sara0316_2014-07-24t23_00_00-5min.n42";
 
         $xml = simplexml_load_file($f);
 
@@ -138,7 +138,7 @@ class ApiController extends \Phalcon\Mvc\Controller
         $specs = $m->children($namespaces[$prefix[0]])->Spectrum->children($namespaces[$prefix[0]]);
         $saras = $m->children($namespaces[$prefix[0]])->Spectrum->children($namespaces[$prefix[1]]);
 
-        $doserate = $m->children($namespaces[$prefix[0]])->CountDoseData->DoseRate;
+        $doserate = $m->children($namespaces[$prefix[0]])->CountDoseData[1]->DoseRate;
         $nuclidefound = $m->AnalysisResults->NuclideAnalysis->children($namespaces[$prefix[1]])->CalibrationNuclideFound;
         $t = $saras->Temperature;
         $v = $saras->HighVoltage;

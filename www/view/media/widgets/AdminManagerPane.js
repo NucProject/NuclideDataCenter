@@ -11,7 +11,7 @@ $class("AdminManagerPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     },
 
     onAttach: function(domNode) {
-        console.log(111)
+
         domNode.find("a.add-admin").click(kx.bind(this, "addAdmin"));
 
         this._userListView = new ListView();
@@ -69,7 +69,6 @@ $class("AdminManagerPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     },
 
     addAdmin: function() {
-        console.log(11122)
         var payload = {
             "username": this.getUsername(),
             "password_md5": this.passwordMD5()
@@ -79,7 +78,6 @@ $class("AdminManagerPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             var d = eval("(" + data + ")");
             if (d.errorCode == 0) {
                 var user = d.results;
-                console.log(user)
                 this_._userListView.addEntry({
                     id: user.user_id,
                     username: user.username,
