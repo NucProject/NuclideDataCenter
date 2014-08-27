@@ -42,6 +42,10 @@ $class("LabrDevice", DeviceBase,
         }
 
         return {'data':a};
+    },
+
+    fillListDefault: function(page) {
+        this.fillList(page)
     }
 });
 

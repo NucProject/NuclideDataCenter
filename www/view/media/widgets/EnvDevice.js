@@ -19,7 +19,9 @@ $class("EnvironmentDevice", DeviceBase,
             {'key':'IfSmoke', 'name':'烟感'},
             {'key':'IfDoorOpen', 'name':'门禁'}]);
 
+    },
+
+    fillListDefault: function(page) {
+        this.fillList(page)
     }
-
-
 });

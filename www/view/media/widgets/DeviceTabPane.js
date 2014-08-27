@@ -115,6 +115,8 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             this.fillList(page);
         } else if (sender.hasClass('h1')) {
             this.fillList1Hour(page);
+        } else {
+            this.fillListDefault(page);
         }
     },
 
@@ -145,6 +147,7 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         this._pageBar.setPageEvent(this, this.getPageEvent());
         var this_ = this;
         this.bindEvent(this, this.getPageEvent(), function(e, sender, data){
+            console.log(1)
             var sender = this_._domNode.find('div.interval a.red');
             this_.shiftIntervalView(sender, data - 1);
         });
@@ -204,6 +207,19 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         }
     },
 
+    fixValue: function(v) {
+        for (var i in v) {
+            if (i == 'time' || i == 'starttime' || i == 'endtime') {
+                continue;
+            }
+            var f = parseFloat(v[i]);
+            if (!isNaN(f))
+                v[i] = f.toFixed(1);
+
+        }
+        return v;
+    },
+
     fillList: function(page) {
         var from = page * this.PageCount;
         var to = (page + 1) * this.PageCount;
@@ -229,6 +245,7 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                 count += 1;
                 if (start)
                 {
+                    value = this.fixValue(value)
                     this._dataListView.addValue(value, params);
                 }
             }

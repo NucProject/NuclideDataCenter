@@ -18,5 +18,9 @@ $class("HpgeDevice", DeviceBase,
             {'key':'starttime', 'name':'开始时间'},
             {'key':'endtime', 'name':'结束时间'},
             {'key':'path', 'name':'下载', 'type': 'url'}]);
+    },
+
+    fillListDefault: function(page) {
+        this.fillList(page)
     }
 });

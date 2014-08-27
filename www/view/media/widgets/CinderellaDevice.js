@@ -21,5 +21,9 @@ $class("CinderellaDevice", DeviceBase,
             {'key':'FlowPerHour', 'name':'瞬时流量'},
             {'key':'Pressure', 'name':'气压'}]);
 
+    },
+
+    fillListDefault: function(page) {
+        this.fillList(page)
     }
 });
