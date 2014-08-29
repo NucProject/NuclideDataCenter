@@ -101,7 +101,7 @@
                 '</div>';
         this.parentEl = (hasOptions && options.parentEl && $(options.parentEl)) || $(this.parentEl);
         //the date range picker
-        this.container = $(DRPTemplate2).appendTo(this.parentEl);
+        this.container = $(DRPTemplate).appendTo(this.parentEl);
 
         if (hasOptions) {
 

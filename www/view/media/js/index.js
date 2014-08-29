@@ -652,9 +652,9 @@ var Index = function () {
         initDashboardDaterange: function () {
             $('#dashboard-report-range').daterangepicker({
                     ranges: {
-                        '今天': ['today', 'today'],
-                        '昨天': ['yesterday', 'yesterday'],
-                        '前天': [Date.today().add({ days: -2 }), 'today']
+                        '今天': ['today', Date.parse('today').addHours(24)],
+                        '昨天': ['yesterday', 'today'],
+                        '前天': [Date.today().add({ days: -2 }), 'yesterday']
                     },
                     opens: (App.isRTL() ? 'right' : 'left'),
                     format: 'yyyy-MM-dd',
@@ -679,11 +679,15 @@ var Index = function () {
                 },
 
                 function (start, end) {
-
-                    $('#dashboard-report-range').html("&nbsp;&nbsp;" + start.toString('yyyy年MM月dd日') + "&nbsp;&nbsp;");
+                    var diff = end.getTime() - start.getTime();
+                    if (diff <= 86400000) {
+                        $('#dashboard-report-range').html("&nbsp;&nbsp;" + start.toString('yyyy年MM月dd日') + "&nbsp;&nbsp;");
+                    } else {
+                        $('#dashboard-report-range').html("&nbsp;&nbsp;" + start.toString('yyyy年MM月dd日') + " - " + end.toString('yyyy年MM月dd日'));
+                    }
                     // var time={}
                     var a = start.toString('yyyy-MM-dd');
-                    var b = start.clone().addHours(24).toString('yyyy-MM-dd');
+                    var b = end.toString('yyyy-MM-dd');
                     var time = {start: a , end: b};
                     console.log(time);
                     $('body').trigger("transfer-selected-time", time);
