@@ -20,17 +20,18 @@ $class("HpicDevice", DeviceBase,
     },
 
     showChartsTab: function() {
+        // TODO: If charts render, maybe NOT need update.
+        this.updateCharts();
+    },
 
-        var this_ = this;
-        setTimeout(function(){
-            this_.showCharts(this_._domNode, {
+    updateCharts: function() {
+        this.showCharts(this._domNode,
+            {
                 selector: "div.charts",
                 title: "剂量率", ytitle: "剂量率",
-                filter: kx.bind(this_, 'filter')
-            });
-        }, 500);
-
-
+                filter: kx.bind(this, 'filter')
+            }
+        );
     },
 
     filter: function(data) {

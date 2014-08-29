@@ -13,8 +13,8 @@ $class("DeviceTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         kx.activeWeb(domNode);
 
 	}
-
 });
+
 //////////////////////////////////////////////////////////////////////////
 // Devices Base
 $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
@@ -122,7 +122,7 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
     handleAlert: function(deviceType, id, tr, content) {
         console.log(deviceType, id, content);
-        this.ajax("alert/handle", {'device': deviceType, 'id': id, 'comment': content}, function(data){
+        this.ajax("alert/handle", {'device': deviceType, 'id': id, 'comment': content}, function(data) {
             $r = eval("(" + data + ")");
             if ($r.errorCode == 0) {
                 tr.find('td').css('background-color', 'yellow');
@@ -147,18 +147,25 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         this._pageBar.setPageEvent(this, this.getPageEvent());
         var this_ = this;
         this.bindEvent(this, this.getPageEvent(), function(e, sender, data){
-            console.log(1)
+
             var sender = this_._domNode.find('div.interval a.red');
             this_.shiftIntervalView(sender, data - 1);
         });
     },
 
-    fetchData: function(payload) {
+    fetchAlerts: function() {
+        var currentStationId = g.getCurrentStationId();
+        if (currentStationId)
+        {
+            var api = "data/alerts/" + currentStationId + "/" + this._deviceType;
+            this._alertListView.refresh(api);
+        }
+    },
 
+    fetchData: function(payload)
+    {
         if (this._currentShownDevice != this._deviceType)
             return;
-
-        console.log(payload)
 
         var this_ = this;
         var currentStationId = g.getCurrentStationId();
@@ -176,35 +183,39 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                 this_._items = items;
                 this_.makeDataDict(items);
 
-                this_.fillList(0);
+                this_.renderData();
 
             });
         }
     },
 
-    fetchAlerts: function() {
-        var currentStationId = g.getCurrentStationId();
-        if (currentStationId)
+    renderData: function()
+    {
+        if (this._onChartsPage)
         {
-            var api = "data/alerts/" + currentStationId + "/" + this._deviceType;
-            this._alertListView.refresh(api);
+            this.updateCharts();
+        }
+        else
+        {
+            this.fillList(0);
         }
     },
 
+    onHide: function() {
+
+    },
+
+    // ---------------------------------------------------------
+    // Widget.widgetById(this._deviceType + "-device").onShow();
     onShow: function()
     {
         this._currentShownDevice = this._deviceType;
         console.log("On Show: " + this._currentShownDevice);
         var payload = {
-            start: g.getBeginTime().toString('yyyy-MM-dd'),
-            end: g.getEndTime().toString('yyyy-MM-dd')
+            start: g.getBeginTime('yyyy-MM-dd'),
+            end: g.getEndTime('yyyy-MM-dd')
         };
         this.fetchData(payload);
-
-        if (!this._noAlertData)
-        {
-            this.fetchAlerts();
-        }
     },
 
     fixValue: function(v) {
@@ -224,7 +235,7 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         var from = page * this.PageCount;
         var to = (page + 1) * this.PageCount;
         d = new Date()
-        var base = -3600 * 8 * 1000;
+
         var value = null;
         var start = false;
         var count = 0;
@@ -414,15 +425,17 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     },
 
     dateRangeChanged: function(range) {
-        console.log('data changed');
-        this.fetchData({start: range.start, end: range.end});
+        var payload = {
+            start: range.start.toString('yyyy-MM-dd'),
+            end: range.end.toString('yyyy-MM-dd') };
+        this.fetchData(payload);
     },
 
     makeDataDict: function(items) {
         var dict = [];
         for (var i in items) {
             var item = items[i];
-            var t = item['time'].split(' ')[1];
+            var t = item['time'];
             dict[t] = item;
         }
         this._dict = dict;
@@ -436,26 +449,39 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         var p = 0;
 
         var dict = [];
-        for (var i in data) {
-            var t = data[i]['time'].split(' ')[1];
-            dict[t] = data[i][field];
+
+        var endTime = g.getEndTime().getTime();
+        var beginTime = g.getBeginTime().getTime();
+
+        var diff = endTime - beginTime;
+        var multiDays = false;
+        if (diff > 86400000) {
+            multiDays = true;
+            console.log(1111)
         }
 
-        d = new Date()
-        var base = -3600 * 8 * 1000;
+        // Store in a dict~
+        var item = null;
+        for (var i in data) {
+            item = data[i];
+            var t = Date.parse(item['time']).getTime();
+            dict[t] = item[field];
+        }
+
+        var d = new Date()
         var value = null;
         var start = false;
 
-        for (var i = 0; i < 2880; i += 1) {
+        var interval = 30000;
+        var counter = 0;
+        for (var i = beginTime; i < endTime; i += interval, counter += 1)
+        {
 
-            d.setTime(base + i * 30000)
-            s = d.toTimeString()
-            var key = s.substr(0, 8);
-
-            if (i % 5 != 0)
+            if (counter % 5 != 0) {
                 continue;
+            }
 
-            value = dict[key];
+            value = dict[i];
             if (value)
             {
                 start = true
@@ -471,17 +497,22 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
             if (start)
             {
+                times.push('');
+            }
+                /*
                 var hm = key.substr(0, 5);
 
                 if (hm.substr(3, 5) == '00')
                 {
-                    times.push(key.substr(0, 5));
+                    times.push("a<br/>b");
+                    // times.push(key.substr(0, 5));
                 }
                 else
                 {
                     times.push('');
                 }
             }
+            */
 
         }
         console.log(datas)
@@ -489,18 +520,29 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     },
 
     postOnTabChanged: function(tabItem) {
-
+        this._onChartsPage = false;
 
         if (tabItem.hasClass('history')) {
             this.onDataStatisitcTabShown();
         } else if (tabItem.hasClass('charts')) {
+            this._onChartsPage = true;
             this.showChartsTab && this.showChartsTab();
         } else if (tabItem.hasClass('data')) {
             this.onShow();
+        } else if (tabItem.hasClass('alerts')) {
+            this.onAlertPageShow();
         }
 
         // Device
         this.onTabChanged && this.onTabChanged(tabItem);
+    },
+
+    onAlertPageShow: function() {
+        console.log("onAlertPageShow")
+        if (!this._noAlertData)
+        {
+            this.fetchAlerts();
+        }
     },
 
     onDataStatisitcTabShown: function() {

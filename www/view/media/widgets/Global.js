@@ -133,11 +133,23 @@ $class("Global", Base,
         this._endTime = endTime;
     },
 
-    getBeginTime: function() {
-        return this._beginTime || new Date();
+    getBeginTime: function(format) {
+        var ret = this._beginTime || new Date();
+        if (format)
+        {
+            return ret.toString(format);
+        }
+        return ret;
     },
-    getEndTime: function() {
-        return this._endTime || new Date().addHours(24);
+
+    getEndTime: function(format) {
+        var ret = this._endTime || new Date().addHours(24);
+        if (format)
+        {
+            return ret.toString(format);
+        }
+        return ret;
+
     },
 
     showTip: function(text, title) {

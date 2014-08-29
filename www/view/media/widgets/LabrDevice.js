@@ -25,12 +25,7 @@ $class("LabrDevice", DeviceBase,
     },
 
     showChartsTab: function() {
-
-        this.showCharts(this._domNode, {
-            selector: "div.charts",
-            title: "剂量率", ytitle: "剂量率",
-            filter: this.filter
-        });
+        this.updateCharts();
     },
 
     filter: function(data) {
@@ -46,6 +41,14 @@ $class("LabrDevice", DeviceBase,
 
     fillListDefault: function(page) {
         this.fillList(page)
+    },
+
+    updateCharts: function() {
+        this.showCharts(this._domNode, {
+            selector: "div.charts",
+            title: "剂量率", ytitle: "剂量率",
+            filter: this.filter
+        });
     }
 });
 

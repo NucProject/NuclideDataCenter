@@ -22,7 +22,12 @@ $class("WeatherDevice", DeviceBase,
     },
 
     showChartsTab: function() {
+        this.updateCharts();
 
+
+    },
+
+    updateCharts: function() {
         this.showCharts(this._domNode, {
             selector: "div.charts",
             title: "温度", ytitle: "温度",
@@ -34,7 +39,6 @@ $class("WeatherDevice", DeviceBase,
             title: "气压", ytitle: "气压",
             filter: kx.bind(this, 'filter2')
         });
-
     },
 
     filter1: function(data) {

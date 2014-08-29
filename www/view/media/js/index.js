@@ -680,16 +680,15 @@ var Index = function () {
 
                 function (start, end) {
                     var diff = end.getTime() - start.getTime();
+                    var f = 'yyyy年MM月dd日';
                     if (diff <= 86400000) {
-                        $('#dashboard-report-range').html("&nbsp;&nbsp;" + start.toString('yyyy年MM月dd日') + "&nbsp;&nbsp;");
+                        $('#dashboard-report-range').html("&nbsp;&nbsp;" + start.toString(f) + "&nbsp;&nbsp;");
                     } else {
-                        $('#dashboard-report-range').html("&nbsp;&nbsp;" + start.toString('yyyy年MM月dd日') + " - " + end.toString('yyyy年MM月dd日'));
+                        $('#dashboard-report-range').html("&nbsp;&nbsp;" + start.toString(f) + " - " + end.toString(f) + "&nbsp;&nbsp;");
                     }
-                    // var time={}
-                    var a = start.toString('yyyy-MM-dd');
-                    var b = end.toString('yyyy-MM-dd');
-                    var time = {start: a , end: b};
-                    console.log(time);
+
+                    var time = {'start': start.clone() , 'end': end.clone() };
+                    // console.log(time);
                     $('body').trigger("transfer-selected-time", time);
                 });
 

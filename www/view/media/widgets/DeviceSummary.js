@@ -236,6 +236,11 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                 if (dt[i] != this._deviceType)
                 {
                     w._domNode.hide();
+                    var d = Widget.widgetById(dt[i] + "-device");
+                    if (d)
+                    {
+                        d.onHide();
+                    }
                 }
                 else
                 {
