@@ -129,7 +129,7 @@ class ApiController extends \Phalcon\Mvc\Controller
         echo json_encode($data);
     }
 
-    public function getN42Data($xml)
+    public static function getN42Data($xml)
     {
         $namespaces = $xml->getNameSpaces(true);
         $prefix     = array_keys($namespaces);

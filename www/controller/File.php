@@ -28,7 +28,7 @@ class File
     {
         $xml = simplexml_load_file($filePath);
 
-        $data = parent::getN42Data($xml);
+        $data = ApiController::getN42Data($xml);
 
         $n42Path = "/download/labr/$station/$month/$day/$fileName";
 
