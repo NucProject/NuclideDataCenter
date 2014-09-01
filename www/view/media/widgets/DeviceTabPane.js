@@ -17,7 +17,7 @@ $class("DeviceTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
 //////////////////////////////////////////////////////////////////////////
 // Devices Base
-$class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
+$class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 {
     _dataListView: null,
 
@@ -166,6 +166,8 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     {
         if (this._currentShownDevice != this._deviceType)
             return;
+
+        console.log(payload)
 
         var this_ = this;
         var currentStationId = g.getCurrentStationId();
@@ -355,75 +357,6 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         this.updatePageBar(12)
     },
 
-    showCharts: function(domNode, p) {
-
-        if (p.filter)
-        {
-            var items = p.filter(this._items);
-        }
-
-        var selector = p.selector || 'div.charts';
-        domNode.find(selector).css('width', '100%');
-        domNode.find(selector).highcharts({
-            chart: {
-                type: 'line', zoomType: 'x'
-            },
-            title: {
-                text: p.title
-            },
-            subtitle: {
-                text: p.subtitle
-            },
-            xAxis: {
-                categories: p.x || items.x //??
-            },
-            yAxis: {
-                title: {
-                    text: p.ytitle
-                }
-            },
-            tooltip: {
-                enabled: true,
-                formatter: function() {
-
-                    if (p.tooltips)
-                    {
-                        return p.tooltips(this.x, this.y);
-                    }
-                    return '<b>'+ this.series.name +'</b><br>'+this.x +': '+ this.y;
-                }
-            },
-            plotOptions: {
-                line: {
-                    lineWidth:1,
-                    fillOpacity: 0.1,
-                    dataLabels: {
-                        enabled: false
-                    },
-                    marker: {
-                        enabled: false,
-                        states: {
-                            hover: {
-                                enabled: false,
-                                radius: 1
-                            }
-                        }
-                    },
-                    enableMouseTracking: true
-                }
-            },
-            series: [{
-                name: p.title,
-                data: items.data
-            }
-                /*, {
-                 name: 'London',
-                 data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
-                 }*/]
-        });
-
-    },
-
     dateRangeChanged: function(range) {
         var payload = {
             start: range.start.toString('yyyy-MM-dd'),
@@ -455,12 +388,16 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
         var diff = endTime - beginTime;
         var multiDays = false;
-        if (diff > 86400000) {
+        var multiWeeks = false;
+        var count = 10;
+        if (diff > 86400000 * 7) {
+            multiWeeks = true;
+        } else if (diff > 86400000) {
             multiDays = true;
-            console.log(1111)
+            //count = 10;
         }
 
-        // Store in a dict~
+        // Store data in a dict
         var item = null;
         for (var i in data) {
             item = data[i];
@@ -474,49 +411,27 @@ $class("DeviceBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
         var interval = 30000;
         var counter = 0;
-        for (var i = beginTime; i < endTime; i += interval, counter += 1)
+        var gv = new AverageValue();
+        for (var i = beginTime; i <= endTime; i += interval)
         {
+            //
+            if (counter == count) {
+                counter = 0;
 
-            if (counter % 5 != 0) {
-                continue;
+                datas.push( gv.getValue() );
+                gv.clearValues();
             }
 
-            value = dict[i];
-            if (value)
-            {
-                start = true
-                datas.push(parseFloat(value));
-            }
-            else
-            {
-                if (start)
-                {
-                    datas.push(null);
-                }
-            }
-
-            if (start)
-            {
-                times.push('');
-            }
-                /*
-                var hm = key.substr(0, 5);
-
-                if (hm.substr(3, 5) == '00')
-                {
-                    times.push("a<br/>b");
-                    // times.push(key.substr(0, 5));
-                }
-                else
-                {
-                    times.push('');
-                }
-            }
-            */
-
+            counter += 1;
+            gv.addValue(dict[i]);
         }
-        console.log(datas)
-        return {'data': datas, 'x': times};
+
+        /*
+        for (var i in datas)
+            if (!isNaN(datas[i]))
+                console.log(datas[i])
+        */
+        return {'data': datas};
     },
 
     postOnTabChanged: function(tabItem) {

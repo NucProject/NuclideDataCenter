@@ -2,22 +2,72 @@
  * Created by Healer on 14-6-10.
  */
 
+$class("AverageValue", null, {
+
+    _values: null,
+
+    __constructor: function()
+    {
+    },
+
+    addValue: function(value)
+    {
+        if (this._values == null)
+        {
+            this._values = [];
+        }
+
+        if (value)
+        {
+            this._values.push(parseFloat(value));
+        }
+    },
+
+    getValue: function() {
+        var size = this._values.length;
+        if (size > 1) {
+            var s = .0;
+            for (var i in this._values) {
+                s += this._values[i];
+            }
+            return (s / size);
+        } else if (size == 1) {
+            var v = this._values[0];
+            if (v)
+                return parseFloat(v);
+        }
+
+        return null;
+    },
+
+    clearValues: function() {
+        this._values = [];
+    }
+});
+
 $class("GroupValue", null, {
 
     _values: null,
 
     __constructor: function(time) {
-        this._time = time;
+        this._time = time || {};
     },
 
     addValue: function(value) {
-        if (this._values == null) {
+        if (this._values == null)
+        {
             this._values = [];
         }
-        this._values.push(value);
+
+        if (value)
+        {
+            this._values.push(value);
+        }
     },
 
     getValue: function() {
+        var size = this._values.length;
+
         var r = {}
         for (var i in this._values) {
             var v = this._values[i];
@@ -33,7 +83,7 @@ $class("GroupValue", null, {
 
             }
         }
-        var size = this._values.length;
+
         for (var k in r) {
             if (k != 'time' && k != 'starttime' && k != 'entime')
                 r[k] = (r[k] / size).toFixed(1);
@@ -42,6 +92,10 @@ $class("GroupValue", null, {
             r[i] = this._time[i];
         }
         return r;
+    },
+
+    clearValues: function() {
+        this._values = [];
     }
 });
 
@@ -160,8 +214,9 @@ $class("Global", Base,
         });
     },
 
+    // Get PHP Unix time equals time()
     getUnixTime: function() {
-        return Math.round(new Date().getTime()/1000);
+        return Math.round(new Date().getTime() / 1000);
     },
 
     setAlerts: function(alerts) {

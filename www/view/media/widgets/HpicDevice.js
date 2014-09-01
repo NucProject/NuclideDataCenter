@@ -21,14 +21,26 @@ $class("HpicDevice", DeviceBase,
 
     showChartsTab: function() {
         // TODO: If charts render, maybe NOT need update.
-        this.updateCharts();
+        var this_ = this;
+        setTimeout(function(){
+            this_.updateCharts();
+        }, 0);
+        //this.updateCharts();
     },
 
     updateCharts: function() {
+        var start = g.getBeginTime().getTime();
+        var end = g.getEndTime().getTime();
+
+        var interval = 1000 * 30;
         this.showCharts(this._domNode,
             {
                 selector: "div.charts",
-                title: "剂量率", ytitle: "剂量率",
+                title: "剂量率",
+                ytitle: "剂量率",
+                start: start,
+                end: end,
+                interval: interval * 10,
                 filter: kx.bind(this, 'filter')
             }
         );

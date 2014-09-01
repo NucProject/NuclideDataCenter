@@ -652,9 +652,9 @@ var Index = function () {
         initDashboardDaterange: function () {
             $('#dashboard-report-range').daterangepicker({
                     ranges: {
-                        '今天': ['today', Date.parse('today').addHours(24)],
-                        '昨天': ['yesterday', 'today'],
-                        '前天': [Date.today().add({ days: -2 }), 'yesterday']
+                        '今天': ['today', 'today'],
+                        '昨天': ['yesterday', 'yesterday'],
+                        '前天': [Date.today().add({ days: -2 }), Date.today().add({ days: -2 })]
                     },
                     opens: (App.isRTL() ? 'right' : 'left'),
                     format: 'yyyy-MM-dd',
@@ -663,8 +663,8 @@ var Index = function () {
                         days: 0
                     }),
                     endDate: Date.today(),
-                    minDate: '01/01/2012',
-                    maxDate: '12/31/2014',
+                    minDate: '01/01/2014',
+                    maxDate: '12/31/2016',
                     locale: {
                         applyLabel: '确定',
                         fromLabel: 'From',
@@ -674,13 +674,21 @@ var Index = function () {
                         monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
                         firstDay: 1
                     },
-                    showWeekNumbers: true,
+                    showWeekNumbers: false,
                     buttonClasses: ['btn-danger']
                 },
 
                 function (start, end) {
+                    var end = end.clone().addHours(24);
                     var diff = end.getTime() - start.getTime();
                     var f = 'yyyy年MM月dd日';
+
+                    if (diff > 86400000 * 30)
+                    {
+
+                        return false;
+                    }
+
                     if (diff <= 86400000) {
                         $('#dashboard-report-range').html("&nbsp;&nbsp;" + start.toString(f) + "&nbsp;&nbsp;");
                     } else {
