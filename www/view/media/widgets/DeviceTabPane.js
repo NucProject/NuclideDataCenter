@@ -389,7 +389,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         var diff = endTime - beginTime;
         var multiDays = false;
         var multiWeeks = false;
-        var count = 10;
+        var count = 1;
         if (diff > 86400000 * 7) {
             multiWeeks = true;
         } else if (diff > 86400000) {

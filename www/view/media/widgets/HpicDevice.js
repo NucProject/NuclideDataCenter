@@ -40,7 +40,7 @@ $class("HpicDevice", DeviceBase,
                 ytitle: "剂量率",
                 start: start,
                 end: end,
-                interval: interval * 10,
+                interval: interval,
                 filter: kx.bind(this, 'filter')
             }
         );
