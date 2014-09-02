@@ -34,6 +34,15 @@ class DataController extends ApiController
             echo json_encode($data);
             if ($data->save() !== false)
             {
+                if ($device == 'cinderelladata')
+                {
+                    $sid = Cache::getLatest($this->redis, $station, 'cinderelladata');
+                    if ($sid != $data->Sid)
+                    {
+                        self::summaryCinderellaData($station, $sid);
+                    }
+                }
+
                 if (!isset($history))
                 {
                     Cache::updateLatestTime($this->redis, $station, $device);
@@ -239,6 +248,22 @@ class DataController extends ApiController
 
             return parent::result(array('times' => array_values(array_diff($array2, $array)), 'count' => count($array)));
         }
+
+    }
+
+
+    private static function summaryCinderellaData($station, $sid)
+    {
+        $data = CinderellaData::find(array("station=$station and sid=$sid"));
+        $f = $data[0];
+        $begin = $end = $f->time;
+        foreach ($data as $item)
+        {
+
+        }
+
+        $s = new CinderellaSum();
+        $s->save();
 
     }
 }

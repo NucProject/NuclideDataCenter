@@ -8,6 +8,8 @@ $class("AverageValue", null, {
 
     __constructor: function()
     {
+        return this._max = 0.0;
+        return this._min = null;
     },
 
     addValue: function(value)
@@ -19,14 +21,26 @@ $class("AverageValue", null, {
 
         if (value)
         {
-            this._values.push(parseFloat(value));
+            var v = parseFloat(value)
+            if (v > this._max)
+                this._max = v;
+            if (this._min)
+            {
+                if (v < this._min)
+                    this._min = v;
+            }
+            else
+            {
+                this._min = v;
+            }
+            this._values.push(v);
         }
     },
 
     getValue: function() {
         var size = this._values.length;
         if (size > 1) {
-            var s = .0;
+            var s = 0.0;
             for (var i in this._values) {
                 s += this._values[i];
             }
@@ -35,16 +49,23 @@ $class("AverageValue", null, {
             var v = this._values[0];
             if (v)
             {
-
                 var f =  parseFloat(v);
                 if (!isNaN(f))
                     return f;
             }
 
-                return null;
+            return null;
         }
 
         return null;
+    },
+
+    getMax: function() {
+        return this._max;
+    },
+
+    getMin: function() {
+        return this._min;
     },
 
     clearValues: function() {
