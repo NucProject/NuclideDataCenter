@@ -446,6 +446,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             this.onShow();
         } else if (tabItem.hasClass('alerts')) {
             this.onAlertPageShow();
+        } else if (tabItem.hasClass('summary')) {
+            this.onSummaryShow();
         }
 
         // Device
