@@ -36,9 +36,17 @@ $class("CinderellaDevice", DeviceBase,
         var dataListViewDomNode = this._sumListView.create();
         dataListViewDomNode.appendTo(sumContainer);
 
+        var this_ = this;
+
+        sumContainer.delegate('a', 'click', function(){
+
+            this_.onSidClicked($(this));
+            return false;
+        });
+
         this._sumListView.setHeaders([
             {'key':'id', 'type': 'id'},
-            {'key':'sid', 'name': '采样ID'},
+            {'key':'sid', 'name': '采样ID', 'type': 'link'},
             {'key':'begintime', 'name':'开始时间'},
             {'key':'endtime', 'name':'结束时间'},
             {'key':'barcode', 'name':'条码'},
@@ -63,5 +71,11 @@ $class("CinderellaDevice", DeviceBase,
             var item = items[i];
             this._sumListView.addValue(item, params);
         }
+    },
+
+    onSidClicked: function(sender) {
+        var sid = sender.text();
+        DeviceSummaryBase.showDevice('hpge', sid);
+
     }
 });

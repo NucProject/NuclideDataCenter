@@ -224,6 +224,9 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     {
         g.showRow("#devices-row");
 
+        DeviceSummaryBase.showDevice(this._deviceType);
+        return false;
+
         var dt = ["hpic", "weather", "labr", "environment", "hpge", "cinderella"];
 
         for (var i in dt)
@@ -284,6 +287,45 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         }
     }
 });
+
+DeviceSummaryBase.showDevice = function(deviceType, params)
+{
+    var dt = ["hpic", "weather", "labr", "environment", "hpge", "cinderella"];
+
+    for (var i in dt)
+    {
+        var wid = dt[i] + "-tab-pane";
+
+        var w = Widget.widgetById(wid);
+        if (w)
+        {
+            if (dt[i] != deviceType)
+            {
+                w._domNode.hide();
+                var d = Widget.widgetById(dt[i] + "-device");
+                if (d)
+                {
+                    d.onHide();
+                }
+            }
+            else
+            {
+                w._domNode.show();
+                Widget.widgetById(deviceType + "-device").onShow(params);
+            }
+        }
+    }
+
+    var sidebar = Widget.widgetById("sidebar");
+    var breadcrumb = Widget.widgetById("breadcrumb");
+    var deviceName = g.getDeviceName(deviceType);
+    breadcrumb.setLevels(
+        [
+            {"url":"#network", "name":"监测网络", "type":"network"},
+            {"url":"#station" + sidebar.getCurrentStationId(), "name":sidebar.getCurrentStationName(), "type":"station"},
+            {"url":"#device-" + deviceType, "name": deviceName, "type":"device"}
+        ]);
+};
 
 //////////////////////////////////////////////////////////////////////////
 // Devices

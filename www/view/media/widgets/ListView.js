@@ -100,6 +100,11 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
                 var fileName = path.substr(path.lastIndexOf('/') + 1);
                 cl.push("<a href=" + item[key] + ">" + fileName + "</a>");
             }
+            else if (this._headers[j]['type'] == 'link')
+            {
+                var v = item[key];
+                cl.push("<a href=" + item[key] + ">" + v + "</a>");
+            }
             else
             {
                 if (this._headers[j]['type'] == 'num')

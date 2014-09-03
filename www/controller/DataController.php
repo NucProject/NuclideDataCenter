@@ -147,6 +147,40 @@ class DataController extends ApiController
         return parent::result(array("items" => $items));
     }
 
+    public function fetchHpgeAction($station)
+    {
+        if ($this->request->isPost())
+        {
+            $payload = $this->request->getPost();
+            $start = $payload['start'];
+            $end = $payload['end'];
+            $sid = $payload['sid'];
+        }
+
+        $condition = "station=$station";
+
+
+        if (isset($sid))
+        {
+            $condition .= " and sid='$sid'";
+        }
+        else
+        {
+            $condition .= " and time >= '$start' and time < '$end'";
+        }
+
+        //echo $condition;
+        $data = Hpge::find(array($condition));
+
+        $items = array();
+        foreach ($data as $item)
+        {
+            array_push($items, $item);
+        }
+
+        return parent::result(array("items" => $items));
+    }
+
     public function latestAction($station, $device)
     {
         $status = Cache::getLatest($this->redis, $station, $device);

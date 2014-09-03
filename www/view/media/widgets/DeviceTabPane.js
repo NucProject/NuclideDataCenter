@@ -241,7 +241,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         var value = null;
         var start = false;
         var count = 0;
-        var params = this._dataListView.clearValues();
+        var params = this._dataListView.clearValues();33
 
         var keys = Object.keys(this._dict);
         keys.sort().reverse();
