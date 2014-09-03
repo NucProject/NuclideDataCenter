@@ -57,21 +57,21 @@ $class("Charts", null, {
                 enabled: false
             },
             title: {
-                text: 'Historical USD to EUR Exchange Rate'
+                text: p.title
             },
             subtitle: {
-                text: 'Select an area by dragging across the lower chart'
+                text: ''
             },
             xAxis: {
                 type: 'datetime'
             },
             yAxis: {
                 title: {
-                    text: null
+                    text: p.ytitle
                 },
                 maxZoom: 0.1,
-                max: 150,
-                min: 60
+                max: p.max,
+                min: p.min
             },
             tooltip: {
                 formatter: function() {
@@ -102,7 +102,7 @@ $class("Charts", null, {
             },
             series: [{
                 name: '',
-                pointStart: this_.UTC(p.start),
+                pointStart: p.start,
                 pointInterval: p.interval,
                 data: detailData
             }],
@@ -134,21 +134,21 @@ $class("Charts", null, {
                     // extremes of the detail chart
                     selection: function(event) {
                         var extremesObject = event.xAxis[0],
-                            min = this_.GMT(extremesObject.min),
-                            max = this_.GMT(extremesObject.max),
+                            min = extremesObject.min,
+                            max = extremesObject.max,
                             detailData = [],
                             xAxis = this.xAxis[0];
 
-                        console.log(this.series[0].data.length)
+                        // console.log(this.series[0].data.length)
 
                         jQuery.each(this.series[0].data, function(i, point) {
 
-
-                            if (point.x > min && point.x < max) {
-                                // x1 = x1 || new Date( point.x);
+                            if (point.x > min && point.x < max)
+                            {
                                 if (!isNaN(point.y))
-
+                                {
                                     detailData.push({ x: point.x, y: point.y });
+                                }
                             }
                         });
 
@@ -156,7 +156,7 @@ $class("Charts", null, {
                         xAxis.removePlotBand('mask-before');
                         xAxis.addPlotBand({
                             id: 'mask-before',
-                            from: this_.UTC(p.start),
+                            from: p.start,
                             to: min,
                             color: 'rgba(0, 0, 0, 0.2)'
                         });
@@ -165,11 +165,11 @@ $class("Charts", null, {
                         xAxis.addPlotBand({
                             id: 'mask-after',
                             from: max,
-                            to: this_.UTC(p.end),
+                            to: p.end,
                             color: 'rgba(0, 0, 0, 0.2)'
                         });
 
-                        this_.detailsChart.series[0].setData([]);
+                        //this_.detailsChart.series[0].setData([]);
 
                         this_.detailsChart.series[0].setData(detailData);
 
@@ -186,8 +186,8 @@ $class("Charts", null, {
                 maxZoom: 1 * 24 * 3600000, // 7 days
                 plotBands: [{
                     id: 'mask-before',
-                    from: this_.UTC(p.start),
-                    to: this_.UTC(p.end),
+                    from: p.start,
+                    to: p.end,
                     color: 'rgba(0, 0, 0, 0.2)'
                 }],
                 title: {
@@ -243,9 +243,9 @@ $class("Charts", null, {
 
             series: [{
                 type: 'area',
-                name: 'USD to EUR',
+                name: '',
                 pointInterval: p.interval,
-                pointStart: this_.UTC(p.start),
+                pointStart: p.start,
 
                 data: this_.chartsData
             }],
@@ -256,17 +256,7 @@ $class("Charts", null, {
 
         }, function(masterChart) {
             this_.createDetail(domNode, this_.params, masterChart)
-        }).highcharts(); // return chart instance
-    },
-
-    UTC: function(t) {
-        return t ;//+ 8 * 3600000;
-    },
-
-    GMT: function(t) {
-        return t;// - 8 * 3600000;
+        }).highcharts();
     }
-
-
 
 });

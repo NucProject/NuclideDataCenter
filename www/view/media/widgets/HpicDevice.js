@@ -20,8 +20,8 @@ $class("HpicDevice", DeviceBase,
     },
 
     showChartsTab: function() {
-        // TODO: If charts render, maybe NOT need update.
         var this_ = this;
+        this._chartInterval = 30 * 10000;
         setTimeout(function(){
             this_.updateCharts();
         }, 0);
@@ -32,7 +32,7 @@ $class("HpicDevice", DeviceBase,
         var start = g.getBeginTime().getTime();
         var end = g.getEndTime().getTime();
 
-        var interval = 1000 * 30;
+        var interval =  this._chartInterval || 30 * 10000;
         this.showCharts(this._domNode,
             {
                 selector: "div.charts",
@@ -40,6 +40,7 @@ $class("HpicDevice", DeviceBase,
                 ytitle: "剂量率",
                 start: start,
                 end: end,
+                max:150, min:40,
                 interval: interval,
                 filter: kx.bind(this, 'filter')
             }
@@ -47,7 +48,8 @@ $class("HpicDevice", DeviceBase,
     },
 
     filter: function(data) {
-        return this.chartFilterData(data, 'doserate');
+        var currentField = 'doserate';
+        return this.chartFilterData(data, currentField, this._chartInterval);
     },
 
     onTabChanged: function() {
@@ -64,7 +66,25 @@ $class("HpicDevice", DeviceBase,
             this.fillList1Hour(this._items, 0);
         }
         */
+    },
+
+    onChartIntervalChanged: function(sender) {
+        if (sender.hasClass('m5')) {
+            this._chartInterval = 30 * 10000;
+        } else if (sender.hasClass('s30')) {
+            this._chartInterval = 30 * 1000;
+        } else if (sender.hasClass('h1')) {
+            this._chartInterval = 3600 * 1000;
+        } else {
+            // 5min as default;
+            this._chartInterval = 30 * 10000;
+        }
+
+        this.updateCharts();
+
     }
+
+
 
 });
 

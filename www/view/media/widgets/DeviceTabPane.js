@@ -90,6 +90,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         });
 
         this.initIntervalChange(domNode.find('div.interval'));
+        this.initChartIntervalChange(domNode.find('div.chart-interval'));
     },
 
     initIntervalChange: function(domNode) {
@@ -105,6 +106,20 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             this_.onIntervalChanged && this_.onIntervalChanged($(this));
 
             this_.shiftIntervalView(sender, 0);
+        });
+    },
+
+    initChartIntervalChange: function(domNode) {
+        if (!domNode.hasClass('chart-interval'))
+            return false;
+        var this_ = this;
+        domNode.delegate('a', 'click', function(){
+            var sender = $(this);
+
+            sender.siblings().removeClass('red');
+            sender.addClass('red');
+
+            this_.onChartIntervalChanged && this_.onChartIntervalChanged($(this));
         });
     },
 
@@ -241,7 +256,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         var value = null;
         var start = false;
         var count = 0;
-        var params = this._dataListView.clearValues();33
+        var params = this._dataListView.clearValues();
 
         var keys = Object.keys(this._dict);
         keys.sort().reverse();
@@ -280,7 +295,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         var count = 0;
         var params = this._dataListView.clearValues();
 
-
         var keys = Object.keys(this._dict);
         keys.sort().reverse();
         var gv = null;
@@ -294,8 +308,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                 continue;
 
             var key = keys[i];
-            var m = key.substr(4, 1);
-            var s = key.substr(6, 2);
+            var m = key.substr(15, 1);
+            var s = key.substr(17, 2);
 
             value = this._dict[key];
 
@@ -335,8 +349,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
 
             var key = keys[i];
-            var m = key.substr(3, 2);
-            var s = key.substr(6, 2);
+            var m = key.substr(14, 2);
+            var s = key.substr(17, 2);
 
             if (m == '00' && s == '00') {
                 if (gv) {
@@ -375,65 +389,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         return this._dict;
     },
 
-    chartFilterData: function(data, field) {
-
-        var datas = [];
-        var times = [];
-        var p = 0;
-
-        var dict = [];
-
-        var endTime = g.getEndTime().getTime();
-        var beginTime = g.getBeginTime().getTime();
-
-        var diff = endTime - beginTime;
-        var multiDays = false;
-        var multiWeeks = false;
-        var count = 1;
-        if (diff > 86400000 * 7) {
-            multiWeeks = true;
-        } else if (diff > 86400000) {
-            multiDays = true;
-            //count = 10;
-        }
-
-        // Store data in a dict
-        var item = null;
-        for (var i in data) {
-            item = data[i];
-            var t = Date.parse(item['time']).getTime();
-            dict[t] = item[field];
-        }
-
-        var d = new Date()
-        var value = null;
-        var start = false;
-
-        var interval = 30000;
-        var counter = 0;
-        var gv = new AverageValue();
-        for (var i = beginTime; i <= endTime; i += interval)
-        {
-            //
-            if (counter == count) {
-                counter = 0;
-
-                datas.push( gv.getValue() );
-                gv.clearValues();
-            }
-
-            counter += 1;
-            gv.addValue(dict[i]);
-        }
-
-        /*
-        for (var i in datas)
-            if (!isNaN(datas[i]))
-                console.log(datas[i])
-        */
-        return {'data': datas};
-    },
-
     postOnTabChanged: function(tabItem) {
         this._onChartsPage = false;
 
@@ -452,6 +407,66 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
         // Device
         this.onTabChanged && this.onTabChanged(tabItem);
+    },
+
+    chartFilterData: function(data, field, interval, step) {
+
+        var datas = [];
+        var times = [];
+        var p = 0;
+
+        var dict = [];
+
+        step = step || 30 * 1000;
+
+        var endTime = g.getEndTime().getTime();
+        var beginTime = g.getBeginTime().getTime();
+
+        var diff = endTime - beginTime;
+        var multiDays = false;
+        var multiWeeks = false;
+        var count = 1;
+        if (interval == 30 * 10000) {
+            count = 10;
+        } else if (interval == 3600 * 1000) {
+            count = 120;
+        }
+
+
+        // Store data in a dict
+        var item = null;
+        for (var i in data) {
+            item = data[i];
+            var t = Date.parse(item['time']).getTime();
+            dict[t] = item[field];
+        }
+
+        var d = new Date()
+        var value = null;
+        var start = false;
+
+        var counter = 0;
+        var gv = new AverageValue();
+        for (var i = beginTime; i <= endTime; i += step)
+        {
+            //
+            if (counter == count) {
+                counter = 0;
+
+                datas.push( gv.getValue() );
+                gv.clearValues();
+            }
+
+            counter += 1;
+            gv.addValue(dict[i]);
+        }
+
+        /*
+         for (var i in datas)
+         if (!isNaN(datas[i]))
+         console.log(datas[i])
+         */
+        return {'data': datas};
     },
 
     onAlertPageShow: function() {

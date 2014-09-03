@@ -28,25 +28,45 @@ $class("WeatherDevice", DeviceBase,
     },
 
     updateCharts: function() {
-        this.showCharts(this._domNode, {
+        var start = g.getBeginTime().getTime();
+        var end = g.getEndTime().getTime();
+
+        var fieldItem = this._domNode.find('select.chart-field');
+        var title = fieldItem.text();
+        var field = fieldItem.val();
+
+        var interval = 1000 * 30;
+
+        this.showCharts(this._domNode,
+        {
             selector: "div.charts",
-            title: "温度", ytitle: "温度",
+            title: title,
+            ytitle: title,
+            start: start,
+            end: end,
+            max:150, min:40,
+            interval: interval,
             filter: kx.bind(this, 'filter1')
         });
 
+        /*
         this.showCharts(this._domNode, {
             selector: "div.charts2",
             title: "气压", ytitle: "气压",
             filter: kx.bind(this, 'filter2')
         });
+        */
     },
 
     filter1: function(data) {
-        return this.chartFilterData(data, 'Temperature');
+        var currentField = this._domNode.find('select.chart-field').val();
+        return this.chartFilterData(data, currentField);
 
-    },
+    }
 
+    /*
     filter2: function(data) {
         return this.chartFilterData(data, 'Pressure');
     }
+    */
 });
