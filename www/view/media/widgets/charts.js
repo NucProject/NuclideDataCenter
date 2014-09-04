@@ -202,8 +202,8 @@ $class("Charts", null, {
                 title: {
                     text: null
                 },
-                max: 100.0,
-                min: 60.0,
+                max: p.max,
+                min: p.min,
                 showFirstLabel: true
             },
             tooltip: {

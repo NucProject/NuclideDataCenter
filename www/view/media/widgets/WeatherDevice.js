@@ -19,12 +19,15 @@ $class("WeatherDevice", DeviceBase,
             {'key':'Pressure', 'name':'气压'},
             {'key':'Temperature', 'name':'温度'},
             {'key':'Humidity', 'name':'湿度'}]);
+
+        domNode.find('select.chart-field').change(kx.bind(this, function(){
+            this.onFieldChanged();
+        }));
+
     },
 
     showChartsTab: function() {
         this.updateCharts();
-
-
     },
 
     updateCharts: function() {
@@ -34,8 +37,10 @@ $class("WeatherDevice", DeviceBase,
         var fieldItem = this._domNode.find('select.chart-field');
         var title = fieldItem.text();
         var field = fieldItem.val();
+        var min = fieldItem.attr('min');
+        var max = fieldItem.attr('max');
 
-        var interval = 1000 * 30;
+        var interval =  this._chartInterval || 30 * 10000;
 
         this.showCharts(this._domNode,
         {
@@ -44,7 +49,8 @@ $class("WeatherDevice", DeviceBase,
             ytitle: title,
             start: start,
             end: end,
-            max:150, min:40,
+            max:max,
+            min:min,
             interval: interval,
             filter: kx.bind(this, 'filter1')
         });
@@ -60,8 +66,28 @@ $class("WeatherDevice", DeviceBase,
 
     filter1: function(data) {
         var currentField = this._domNode.find('select.chart-field').val();
-        return this.chartFilterData(data, currentField);
+        return this.chartFilterData(data, currentField, this._chartInterval);
 
+    },
+
+    onChartIntervalChanged: function(sender) {
+        if (sender.hasClass('m5')) {
+            this._chartInterval = 30 * 10000;
+        } else if (sender.hasClass('s30')) {
+            this._chartInterval = 30 * 1000;
+        } else if (sender.hasClass('h1')) {
+            this._chartInterval = 3600 * 1000;
+        } else {
+            // 5min as default;
+            this._chartInterval = 30 * 10000;
+        }
+
+        this.updateCharts();
+
+    },
+
+    onFieldChanged: function() {
+        this.updateCharts();
     }
 
     /*
