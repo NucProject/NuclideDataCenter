@@ -27,6 +27,7 @@ $class("WeatherDevice", DeviceBase,
     },
 
     showChartsTab: function() {
+        this._chartInterval = 30 * 10000;
         this.updateCharts();
     },
 
@@ -35,6 +36,7 @@ $class("WeatherDevice", DeviceBase,
         var end = g.getEndTime().getTime();
 
         var fieldItem = this._domNode.find('select.chart-field');
+        console.log(fieldItem);
         var title = fieldItem.text();
         var field = fieldItem.val();
         var min = fieldItem.attr('min');
