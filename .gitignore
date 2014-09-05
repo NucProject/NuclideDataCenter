@@ -1,2 +1,4 @@
 /cache/
 /config/development/
+www/view/file/*
+.idea/*
