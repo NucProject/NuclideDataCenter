@@ -1,0 +1,32 @@
+<div class="span12" file="tab1.phtml" widget-class="StationTabPane" widget-id="station-tab-pane">
+	<div class="portlet box blue tabbable">
+		<div class="portlet-title">
+			<div class="caption"><i class="icon-reorder station"></i></div>
+		</div>
+        <div class="portlet-body" >
+            <div class="tabbable portlet-tabs">
+                <ul class="nav nav-tabs">
+
+                    <li class="active"><a href="#station_container" data-toggle="tab">简介</a></li>
+                </ul>
+                <div class="tab-content">
+
+                    <div class="tab-pane active" id="station_container">
+                        <div style="float: left" class="span8">
+                            <?php $this->partial("index/devices103"); ?>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div style="float: left">
+                            <span></span>
+                            <img src="/media/image/background.png"  style="height: 280px;float:right"/>
+
+                        </div>
+                    </div>
+
+                    
+                </div>
+            </div>
+        </div>
+	</div>
+</div>

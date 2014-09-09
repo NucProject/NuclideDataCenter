@@ -55,19 +55,41 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
     onStationClicked: function(li) {
 
-        this._domNode.find('ul.stations li a').css('background', '');
+        this._domNode.find('ul.stations li').css('background', '');
         li.css('background', '#575757')
 
         var currentStationId = li.attr("station_id")
         g.setCurrentStationId(currentStationId)
         this._currentStationName = li.find("a").text();
 
-
+        //
         $('#network-row').hide();
         $('#devices-row').hide();
         $('#admin-row').hide();
 
-        $('#station-row').show();
+        // TODO: different device for each station!
+        if (currentStationId == 101)
+        {
+            $('#station-102-row').hide();
+            $('#station-103-row').hide();
+            $('#station-101-row').show();
+        }
+        else if (currentStationId == 102)
+        {
+            $('#station-101-row').hide();
+            $('#station-103-row').hide();
+            $('#station-102-row').show();
+        }
+        else if (currentStationId == 103)
+        {
+            $('#station-102-row').hide();
+            $('#station-101-row').hide();
+            $('#station-103-row').show();
+        }
+        else
+        {
+            alert("Unknown station id => " + currentStationId);
+        }
 
         var breadcrumb = Widget.widgetById("breadcrumb");
         breadcrumb.setLevels(
