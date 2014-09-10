@@ -153,7 +153,8 @@ class ApiController extends \Phalcon\Mvc\Controller
 
     public function testAction()
     {
-        echo HpicAlert::count();
+        $ObjectFactory = new COM ( "CrystalReports115.ObjectFactory.1" ) or die ( "Error on load" );
+            echo "AA";
     }
 
     public static function parseTime($time)
