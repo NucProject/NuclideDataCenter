@@ -188,19 +188,18 @@ $class("Global", Base,
                 return "气象站";
             case "environment":
                 return "环境与安防监控";
-            case "aer":
+            case "bai9850":
                 return "气溶胶总放与碘自动监测系统";
             case "gama":
                 return "便携式γ辐射测量仪";
-            case "a":
+            case "mds":
                 return "大体积放射源搜索系统";
-            case "b":
+            case "radeye":
                 return "便携式核素甄别仪";
-            case "w":
-                return "水样采集系统";
-            case "ww":
-                return "饮用水放射性连续监测系统";
-
+            case "bai9125":
+                return "水质放射性监测系统";
+            case "bai9850":
+                return "";
         }
     },
 

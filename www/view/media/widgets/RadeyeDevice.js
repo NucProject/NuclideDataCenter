@@ -1,17 +1,17 @@
 /**
- * Created by Healer on 14-9-9.
- *
- *
+* Created by Healer on 14-9-9.
+*
+*
 */
 
-$class("WaterSummaryDevice", DeviceSummaryBase,
+$class("RadeyeSummaryDevice", DeviceSummaryBase,
 {
     __constructor: function() {
 
     },
 
     onAttach: function(domNode) {
-        this._deviceType = "bai9125";
+        this._deviceType = "radeye";
         this.onAttached(domNode);
     },
 
@@ -26,7 +26,7 @@ $class("WaterSummaryDevice", DeviceSummaryBase,
 
     changeAlertClicked: function()
     {
-        var url = "alert/set/" + g.getCurrentStationId() + "/hpic";
+        var url = "alert/set/" + g.getCurrentStationId() + "/radeye";
         var payload = { "f": "doserate", "v1": 100, "v2": 150, "r": 1};
         this.ajax(url, payload, function(data){
             console.log(data)
@@ -37,10 +37,10 @@ $class("WaterSummaryDevice", DeviceSummaryBase,
 });
 
 
-$class("WaterDevice", DeviceBase,
+$class("RadeyeDevice", DeviceBase,
 {
     __constructor: function() {
-        this._deviceType = "bai9125";
+        this._deviceType = "radeye";
         this._noAlertData = true;
     },
 
@@ -53,7 +53,7 @@ $class("WaterDevice", DeviceBase,
          `emissionlong` varchar(32) DEFAULT NULL,
          `emissioncps` varchar(32) DEFAULT NULL,
          `betacps` varchar(32) DEFAULT NULL,
-        */
+         */
         this._dataListView.setHeaders([
             {'key':'time', 'name':'时间'},
             {'key':'gammalong', 'name':'gammalong'},

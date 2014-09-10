@@ -290,8 +290,9 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
 DeviceSummaryBase.showDevice = function(deviceType, params)
 {
-    var dt = ["hpic", "weather", "labr", "environment", "hpge", "cinderella"];
+    var dt = ["hpic", "weather", "bai9125", "bai9850", "radeye", "mds", "gama"];
 
+    console.log(deviceType);
     for (var i in dt)
     {
         var wid = dt[i] + "-tab-pane";

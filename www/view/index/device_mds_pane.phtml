@@ -1,0 +1,60 @@
+<div class="span12" file="tab1.phtml" widget-class="DeviceTabPane" widget-id="mds-tab-pane">
+	<div class="portlet box blue tabbable">
+		<div class="portlet-title">
+			<div class="caption"><i class="icon-reorder">&nbsp;大体积放射源搜索系统</i></div>
+		</div>
+		<div class="portlet-body" widget-class="MdsDevice" widget-id="mds-device">
+			<div class="tabbable portlet-tabs">
+				<ul class="nav nav-tabs">
+                    <li><a href="#bai9125_history" data-toggle="tab" class="history">获取率</a></li>
+                    <li><a href="#bai9125_config" data-toggle="tab">设置</a></li>
+                    <li class="'dropdown">
+                        <a id="bai9125_alert_a" href="#bai9125_alert" data-toggle="tab" class="dropdown-toggle alerts" style="margin-top:6px;padding-top:8px;padding-bottom:8px">
+                            <!-- <i class="icon-warning-sign"></i> -->
+                            <span>报警&nbsp;</span>
+                            <span class="badge" style="position: relative;top:0px;right:5px;-webkit-border-radius: 12px !important;background: red">0</span>
+                        </a>
+                    </li>
+                    <li class=""><a href="#bai9125_chart" class="charts" data-toggle="tab">曲线</a></li>
+                    <li class="active"><a href="#bai9125_data" data-toggle="tab">数据</a></li>
+
+				</ul>
+				<div class="tab-content">
+
+                    <div class="tab-pane active" id="bai9125_data">
+                        <div class="data-pane">
+
+                        </div>
+                    </div>
+
+
+                    <div class="tab-pane" id="bai9125_chart">
+                        <div class="chart-interval">
+                            <a class="btn  s30">30秒</a><a class="btn red m5">5分钟</a><a class="btn h1">1小时</a>
+                        </div>
+                        <div class="charts">
+
+                        </div>
+                        <div class="charts-bar" style="height: 80px">
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="bai9125_alert">
+                        <div class="alert-pane">
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane config" id="bai9125_config">
+                    </div>
+
+                    <div class="tab-pane" id="bai9125_history">
+                        <div class="calendar-container" class="fc-ltr fc">
+                        </div>
+                    </div>
+                </div>
+			</div>
+		</div>
+	</div>
+</div>

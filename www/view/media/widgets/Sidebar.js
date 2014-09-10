@@ -61,6 +61,7 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         var currentStationId = li.attr("station_id")
         g.setCurrentStationId(currentStationId)
         this._currentStationName = li.find("a").text();
+        g.setCurrentStationName(this._currentStationName);
 
         //
         $('#network-row').hide();
