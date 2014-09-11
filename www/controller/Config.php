@@ -64,8 +64,26 @@ class Config
         'cinderellastatus' => array(
             '01' => 'StateBits',
             'time' => 'time'
+            ),
+
+        'bai9125' => array(
+            'time' => 'time',
+            '01000201' => 'gammalong',
+            '01000202' => 'gamamacps',
+            '01000203' => 'emissionlong',
+            '01000204' => 'emissioncps',
+            '01000205' => 'betacps',
+            '01000206' => 'status',
+            '01000207' => 'valve1',
+            '01000208' => 'valve2',
+            '01000209' => 'valve3'
+            ),
+        'bai9850' => array(
+            'time' => 'time',
+
             )
-        );
+
+    );
 
     public static $d = array(
 

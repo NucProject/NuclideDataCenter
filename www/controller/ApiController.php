@@ -151,7 +151,7 @@ class ApiController extends \Phalcon\Mvc\Controller
         );
     }
 
-    public function testAction()
+    public function crystalAction()
     {
         $ObjectFactory = new COM ( "CrystalReports115.ObjectFactory.1" ) or die ( "Error on load" );
             echo "AA";
