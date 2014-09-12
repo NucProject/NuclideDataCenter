@@ -157,6 +157,52 @@ class ApiController extends \Phalcon\Mvc\Controller
             echo "AA";
     }
 
+    public function envAction($type, $param = null)
+    {
+        if ($type == 'time')
+        {
+            return self::result(array('time' => date('Y-m-d H:i:s', time())));
+        }
+        else if ($type == 'cache')
+        {
+            if ($this->redis)
+            {
+                if (!isset($param))
+                {
+                    $keys = $this->redis->keys('*');
+
+                    return self::result(array('cache' => $keys));
+                }
+                else
+                {
+                    $dataType = $this->redis->type($param);
+                    //echo "$dataType";
+                    if ($dataType == 1)
+                    {
+                        return self::result(array('cache' => $this->redis->get($param)));
+                    }
+                    else if ($dataType == 3)
+                    {
+                        return self::result(array('cache' => $this->redis->lRange($param, 0, -1)));
+                    }
+
+                    // TODO: Support more redis types.
+
+
+                }
+            }
+            else
+            {
+                return self::result(array('cache' => 'None'));
+            }
+        }
+        else if ($type == 'latest')
+        {
+            return self::result($param::findFirst(array('order' => 'time desc')));
+        }
+    }
+
+
     public static function parseTime($time)
     {
         $parsed = date_parse_from_format("Y-m-d H:i:s", $time);
