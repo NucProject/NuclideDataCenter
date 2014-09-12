@@ -78,10 +78,33 @@ class Config
             '01000208' => 'valve2',
             '01000209' => 'valve3'
             ),
+
         'bai9850' => array(
             'time' => 'time',
+            '99900001'=>"alphaactivity",
+            '99900002'=>"alpha",
+            '99900003'=>"betaactivity",
+            '99900004'=>"beta",
+            '99900005'=>"i131activity",
+            '99900006'=>"i131",
+            '99900007'=>"doserate"
+            ),
+        
+        'mds' => array(
+            'time' => 'time',
+            '01000301'=>"doserate",
+            '01000302'=>"lat",
+            '01000303'=>"lon",
+            '01000304'=>"speed",
+            '01000305'=>"height",
+            '01000306'=>"map",
+            '01000307'=>"doserateex",
+            '01000308'=>"ifatificial"
+        ),
 
-            )
+        'radeye' => array(
+            'time' => 'time', '01000401' => "doserate"
+        )
 
     );
 
