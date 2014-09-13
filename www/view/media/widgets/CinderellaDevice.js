@@ -44,6 +44,7 @@ $class("CinderellaDevice", DeviceBase,
             return false;
         });
 
+        // Summary
         this._sumListView.setHeaders([
             {'key':'id', 'type': 'id'},
             {'key':'sid', 'name': '采样ID', 'type': 'link'},

@@ -113,7 +113,8 @@ $class("GroupValue", null, {
         }
 
         for (var k in r) {
-            if (k != 'time' && k != 'starttime' && k != 'entime')
+
+            if (k != 'time' && k != 'starttime' && k != 'endtime' &&  k != 'BeginTime')
                 r[k] = (r[k] / size).toFixed(1);
         }
         for (var i in this._time) {

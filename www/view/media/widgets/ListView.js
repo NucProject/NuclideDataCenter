@@ -90,26 +90,34 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
             }
             cl.push('<td>');
 
+            var itemType = this._headers[j]['type'];
+
             if (key == 'handle')
             {
                 cl.push(item['handle']);
             }
-            else if (this._headers[j]['type'] == 'url')
+            else if (itemType == 'url')
             {
                 var path = item[key];
                 var fileName = path.substr(path.lastIndexOf('/') + 1);
                 cl.push("<a href=" + item[key] + ">" + fileName + "</a>");
             }
-            else if (this._headers[j]['type'] == 'link')
+            else if (itemType == 'link')
             {
                 var v = item[key];
                 cl.push("<a href=" + item[key] + ">" + v + "</a>");
             }
+            else if (itemType == 'function')
+            {
+                var func = this._headers[j]['function'];
+                cl.push(func.apply(null, item[key]));
+            }
             else
             {
-                if (this._headers[j]['type'] == 'num')
+                if (itemType == 'num')
                 {
-                    cl.push(parseFloat(item[key]).toFixed(1));
+                    var accuracy = this._headers[j]['accuracy'] || 2;
+                    cl.push(parseFloat(item[key]).toFixed(accuracy));
                 }
                 else
                 {

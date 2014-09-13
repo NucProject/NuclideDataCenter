@@ -14,7 +14,7 @@ $class("LabrDevice", DeviceBase,
 
         this._dataListView.setHeaders([
             {'key':'time', 'name':'时间'},
-            {'key':'doserate', 'name':'总剂量率（nSv/h）', type: 'num'},
+            {'key':'doserate', 'name':'总剂量率（nSv/h）', type: 'num', accuracy: 4},
             {'key':'temperature', 'name':'探头温度（℃）', type: 'num'},
             {'key':'highvoltage', 'name':'探头高压（V）', type: 'num'},
             {'key':'starttime', 'name':'开始时间'},
