@@ -448,7 +448,11 @@ $class("CinderellaSummaryDevice", DeviceSummaryBase,
 
             var r = eval("(" + data + ")");
             var status = r['results']['status'];
-            self.updateCinderellaStatus(status);
+            // status = "0;0;0;6308668" //for test！
+            if (status)
+            {
+                self.updateCinderellaStatus(status);
+            }
 
         });
     },
