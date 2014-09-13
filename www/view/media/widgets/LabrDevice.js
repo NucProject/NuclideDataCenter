@@ -44,7 +44,7 @@ $class("LabrDevice", DeviceBase,
         var start = g.getBeginTime().getTime();
         var end = g.getEndTime().getTime();
         var max = 10;
-        var min = 0;
+        var min = -10;
         var interval =  this._chartInterval || 30 * 10000;
         var this_ = this;
         this.showCharts(this._domNode, {

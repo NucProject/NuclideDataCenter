@@ -8,7 +8,7 @@ $class("Charts", null, {
         Highcharts.setOptions({ global: {useUTC: false}});
         this.params = p;
 
-        console.log(new Date(p.start), new Date(p.end))
+        // console.log(new Date(p.start), new Date(p.end))
         if (p.filter)
         {
             var array = p.filter(this._items);
@@ -16,8 +16,9 @@ $class("Charts", null, {
             for (var i in array.data)
             {
                 var v = array.data[i];
-                if (v)
-                    this.chartsData.push(parseFloat(v));
+                var n = parseFloat(v);
+                if (!isNaN(n))
+                    this.chartsData.push(n);
                 else
                     this.chartsData.push(null);
             }

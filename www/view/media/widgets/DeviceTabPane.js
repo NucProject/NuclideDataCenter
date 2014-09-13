@@ -426,11 +426,16 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         var multiDays = false;
         var multiWeeks = false;
         var count = 1;
+        count = interval / step;
+
+        /*
         if (interval == 30 * 10000) {
             count = 10;
         } else if (interval == 3600 * 1000) {
             count = 120;
-        }
+        }*/
+
+
 
 
         // Store data in a dict

@@ -47,13 +47,12 @@ $class("AverageValue", null, {
             return (s / size);
         } else if (size == 1) {
             var v = this._values[0];
-            if (v)
-            {
-                var f =  parseFloat(v);
-                if (!isNaN(f))
-                    return f;
-            }
 
+            var f = parseFloat(v);
+            if (!isNaN(f))
+                return f;
+
+            console.log(v)
             return null;
         }
 
