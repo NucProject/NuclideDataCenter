@@ -40,6 +40,7 @@ class CommandController extends ApiController
         return parent::result(array('post' => true));
     }
 
+    // cinderella
     public function cinderellaAction($station)
     {
         if ($this->request->isPost())

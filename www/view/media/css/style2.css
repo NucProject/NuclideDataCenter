@@ -26,3 +26,8 @@
     font-size: .85em;
     cursor: default;
 }
+
+.header .navbar-inner
+{
+    height: 50px;
+}

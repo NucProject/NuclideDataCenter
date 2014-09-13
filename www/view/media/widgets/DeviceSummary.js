@@ -441,22 +441,239 @@ $class("CinderellaSummaryDevice", DeviceSummaryBase,
 
     getLatestData: function() {
         var station = g.getCurrentStationId();
-        var url = "data/latest/" + station + "/cinderelladata";
+        // Get Cinderella Device Running step;
+        var url = "command/cinderella/" + station;
         var self = this;
         this.ajax(url, null, function(data) {
 
             var r = eval("(" + data + ")");
-            var latest = r['results']['status']
-            if (g.getUnixTime() - latest > 100)
-            {
-                self.updateRunState(false, "运行状态: 停止");
-            }
-            else
-            {
-                self.updateRunState(true, "运行状态: 运行");
-            }
+            var status = r['results']['status'];
+            self.updateCinderellaStatus(status);
+
         });
     },
+
+    updateCinderellaStatus: function(status) {
+        var statusText = "";
+
+        var s = status.split(";");
+        var i = parseInt(s[3]);
+        var b = i.toString(2);
+
+        var index = 24 - b.length;
+        for (var i = 0; i < index; i += 1)
+        {
+            b = "0" + b;
+        }
+
+        b = b.split("").reverse().join("");
+        this.searchBitStatus(b, s);
+    },
+
+    updateStatus: function(statusText) {
+        this.updateRunState(true, "运行状态: " + statusText);
+    },
+
+    searchBitStatus: function(data, p)
+    {
+        // 触发后玻璃门开
+        if (data[22] == "0")
+        {
+            this.updateStatus("后侧玻璃门打开");
+        }
+        //触发后玻璃门关
+        if (data[22] == "1")
+        {
+            this.updateStatus("后侧玻璃门关闭");
+        }
+
+        //触发流量低报警
+        if (data[21] == "1")
+        {
+            this.updateStatus("流量低");
+        }
+        if (data[21] == "0")
+        {
+            this.updateStatus("流量正常");
+        }
+
+        //新滤纸夹舱空报警
+        if (data[19] == "1")
+        {
+            this.updateStatus("新滤纸夹舱空");
+        }
+        if (data[19] == "0")
+        {
+            this.updateStatus("新滤纸夹舱正常");
+        }
+
+        //切割位置未找到滤纸夹具
+        if (data[18] == "1")
+        {
+            this.updateStatus("切割位置未找到滤纸夹具");
+        }
+        if (data[18] == "0")
+        {
+            this.updateStatus("切割位置正常");
+        }
+
+        //旧滤纸夹舱满报警
+        if (data[17] == "1")
+        {
+            this.updateStatus("旧滤纸夹舱满报警");
+        }
+        if (data[17] == "0")
+        {
+            this.updateStatus("旧滤纸夹舱正常");
+        }
+
+        //滤纸方向放反了
+        if (data[10] == "1")
+        {
+            this.updateStatus("滤纸夹方向错误");
+        }
+        if (data[10] == "0")
+        {
+            this.updateStatus("滤纸夹方向正常");
+        }
+
+        //抽屉空了
+        if (data[9] == "0")
+        {
+            this.updateStatus("抽屉被抽出");
+        }
+        if (data[9] == "1")
+        {
+            this.updateStatus("抽屉正常");
+        }
+
+        //前玻璃门打开
+        if (data[8] == "0")
+        {
+            this.updateStatus("前侧玻璃门打开");
+        }
+        if (data[8] == "1")
+        {
+            this.updateStatus("前侧玻璃门关闭");
+        }
+
+        //新滤纸盒空了
+        if (data[6] == "1")
+        {
+            this.updateStatus("新滤纸盒位置空");
+        }
+        if (data[6] == "0")
+        {
+            this.updateStatus("新滤纸盒位置正常");
+        }
+
+        //旧滤纸夹具舱门打开
+        if (data[5] == "0")
+        {
+            this.updateStatus("旧滤纸夹具舱门打开");
+        }
+        if (data[5] == "1")
+        {
+            this.updateStatus("旧滤纸夹具舱门关闭");
+        }
+
+        //新滤纸夹具舱门打开
+        if (data[4] == "0")
+        {
+            this.updateStatus("新滤纸夹具舱门打开");
+        }
+        if (data[4] == "1")
+        {
+            this.updateStatus("新滤纸夹具舱门关闭");
+        }
+
+        //应急报警
+        if (data[0] == "1")
+        {
+            this.updateStatus("紧急开关报警");
+        }
+        if (data[0] == "0")
+        {
+            this.updateStatus("紧急开关正常");
+        }
+
+        // 模式, 过程
+        if (p[0] == "0")
+        {
+            this.updateStatusLabel("span.mode", "自动模式");
+        }
+        else if (p[0] == "1")
+        {
+            this.updateStatusLabel("span.mode", "手动模式");
+        }
+
+        if (p[1] == "0")
+        {
+            this.updateStatusLabel("span.loop", "24小时模式");
+        }
+        else if (p[1] == "1")
+        {
+            this.updateStatusLabel("span.loop", "8小时模式");
+        }
+        else if (p[1] == "2")
+        {
+            this.updateStatusLabel("span.loop", "6小时模式");
+        }
+        else if (p[1] == "3")
+        {
+            this.updateStatusLabel("span.loop", "1小时模式");
+        }
+
+        if (p[2] == "0")
+        {
+            this.updateStatusLabel("span.step", "初始状态/样品测量");
+        }
+        else if (p[2] == "1")
+        {
+            this.updateStatusLabel("span.step", "机械臂开始移动");
+        }
+        else if (p[2] == "2")
+        {
+            this.updateStatusLabel("span.step", "开始拖动滤纸夹");
+        }
+        else if (p[2] == "3")
+        {
+            this.updateStatusLabel("span.step", "滤纸夹就位，开始切割");
+        }
+        else if (p[2] == "4")
+        {
+            this.updateStatusLabel("span.step", "切割完毕，铅室盖打开中");
+        }
+        else if (p[2] == "5")
+        {
+            this.updateStatusLabel("span.step", "完全打开铅室盖");
+        }
+        else if (p[2] == "6")
+        {
+            this.updateStatusLabel("span.step", "开始QA测量");
+        }
+        else if (p[2] == "7")
+        {
+            this.updateStatusLabel("span.step", "QA测量结束");
+        }
+        else if (p[2] == "8")
+        {
+            this.updateStatusLabel("span.step", "QA测量完毕，铅室盖关闭中");
+        }
+        else if (p[2] == "9")
+        {
+            this.updateStatusLabel("span.step", "QA测量完毕，铅室盖完全关闭");
+        }
+
+
+        //this.UpdateCinderellaStatusPanel(this.statusPane, this.statusDict);
+        return true;
+    },
+
+    updateStatusLabel: function(clz, text)
+    {
+        this._domNode.find("div.tab-content").find(clz).text(text);
+    }
 
 });
 
