@@ -25,18 +25,15 @@ $class("LabrDevice", DeviceBase,
     },
 
     showChartsTab: function() {
+        this._chartInterval = 30 * 10000;
         this.updateCharts();
     },
 
     filter: function(data) {
-        var a = [];
-
-        for (var i in data) {
-            var n = data[i]['doserate'];
-            a.push(parseFloat(n));
-        }
-
-        return {'data':a};
+        console.log(this._chartInterval);
+        var result =  this.chartFilterData(data, 'doserate', this._chartInterval, 300000);
+        console.log(result);
+        return result;
     },
 
     fillListDefault: function(page) {
@@ -44,11 +41,41 @@ $class("LabrDevice", DeviceBase,
     },
 
     updateCharts: function() {
+        var start = g.getBeginTime().getTime();
+        var end = g.getEndTime().getTime();
+        var max = 10;
+        var min = 0;
+        var interval =  this._chartInterval || 30 * 10000;
+        var this_ = this;
         this.showCharts(this._domNode, {
             selector: "div.charts",
-            title: "剂量率", ytitle: "剂量率",
-            filter: this.filter
+            title: "剂量率",
+            ytitle: "剂量率",
+            start: start,
+            end: end,
+            max:max,
+            min:min,
+            interval: interval,
+            filter: kx.bind(this_, 'filter')
         });
-    }
+
+
+    },
+
+    onChartIntervalChanged: function(sender) {
+        if (sender.hasClass('m5')) {
+            this._chartInterval = 30 * 10000;
+        } else if (sender.hasClass('s30')) {
+            // this._chartInterval = 30 * 1000;
+        } else if (sender.hasClass('h1')) {
+            this._chartInterval = 3600 * 1000;
+        } else {
+            // 5min as default;
+            this._chartInterval = 30 * 10000;
+        }
+
+        this.updateCharts();
+
+    },
 });
 
