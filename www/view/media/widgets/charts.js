@@ -78,9 +78,9 @@ $class("Charts", null, {
                 formatter: function() {
 
                     var point = this.points[0];
-                    return '<b>'+ point.series.name +'</b><br/>'+
-                        Highcharts.dateFormat('%A %B %e %Y', this.x) + ':<br/>'+
-                        '1 USD = '+ Highcharts.numberFormat(point.y, 2) +' EUR';
+                    return '<b>' + Highcharts.numberFormat(point.y, 2) + '</b><br/>' +
+                        Highcharts.dateFormat('[%Y-%m-%d %H:%M:%S]', this.x);
+
                 },
                 shared: true
             },
