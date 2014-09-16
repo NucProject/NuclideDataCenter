@@ -23,7 +23,6 @@ namespace Uploadr
 
         private string md5Command;
 
-
         public UploadForm()
         {
             InitializeComponent();
@@ -140,6 +139,7 @@ namespace Uploadr
 
         private void syncButton_Click(object sender, EventArgs e)
         {
+            this.debugTextBox.Items.Clear();
             string fileName = Path.Combine(this.rootPathText.Text, "view/file/diff/files.md5");
 
             if (!File.Exists(fileName))
@@ -180,7 +180,7 @@ namespace Uploadr
 
         private void AppendText(string text)
         {
-            this.debugTextBox.Text += "\n" + text;
+            this.debugTextBox.Items.Add(text);
         }
     }
 }

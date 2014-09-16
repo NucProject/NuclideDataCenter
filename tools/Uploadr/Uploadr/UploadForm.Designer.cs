@@ -32,7 +32,7 @@
             this.rootPathText = new System.Windows.Forms.TextBox();
             this.filePathText = new System.Windows.Forms.TextBox();
             this.syncButton = new System.Windows.Forms.Button();
-            this.debugTextBox = new System.Windows.Forms.TextBox();
+            this.debugTextBox = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // uploadButton
@@ -62,7 +62,7 @@
             // 
             // syncButton
             // 
-            this.syncButton.Location = new System.Drawing.Point(273, 468);
+            this.syncButton.Location = new System.Drawing.Point(273, 451);
             this.syncButton.Name = "syncButton";
             this.syncButton.Size = new System.Drawing.Size(129, 23);
             this.syncButton.TabIndex = 2;
@@ -72,17 +72,18 @@
             // 
             // debugTextBox
             // 
-            this.debugTextBox.Location = new System.Drawing.Point(13, 97);
-            this.debugTextBox.Multiline = true;
+            this.debugTextBox.FormattingEnabled = true;
+            this.debugTextBox.ItemHeight = 12;
+            this.debugTextBox.Location = new System.Drawing.Point(13, 81);
             this.debugTextBox.Name = "debugTextBox";
-            this.debugTextBox.Size = new System.Drawing.Size(389, 365);
-            this.debugTextBox.TabIndex = 3;
+            this.debugTextBox.Size = new System.Drawing.Size(386, 364);
+            this.debugTextBox.TabIndex = 4;
             // 
             // UploadForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(411, 503);
+            this.ClientSize = new System.Drawing.Size(411, 491);
             this.Controls.Add(this.debugTextBox);
             this.Controls.Add(this.syncButton);
             this.Controls.Add(this.filePathText);
@@ -102,7 +103,7 @@
         private System.Windows.Forms.TextBox rootPathText;
         private System.Windows.Forms.TextBox filePathText;
         private System.Windows.Forms.Button syncButton;
-        private System.Windows.Forms.TextBox debugTextBox;
+        private System.Windows.Forms.ListBox debugTextBox;
     }
 }
 

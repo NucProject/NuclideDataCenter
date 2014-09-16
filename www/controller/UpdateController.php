@@ -27,15 +27,16 @@ class UpdateController extends ApiController
             {
                 $execDiff = false;
                 $execDeploy = false;
-                if ($upload->getName() == 'files.md5')
+                $fileName = $upload->getName();
+                if ($fileName == 'files.md5')
                 {
                     $execDiff = true;
                     $fileName = ".\\view\\file\\diff\\files.md5.dev";
                 }
                 else
                 {
-                     $fileName = ".\\view\\file\\www\\" . $filePath;
-                     $execDeploy = true;
+                    $fileName = ".\\view\\file\\update\\" . $fileName;
+                    $execDeploy = true;
                 }
 
                 if ($upload->moveTo($fileName))
