@@ -40,6 +40,11 @@ $class("LabrDevice", DeviceBase,
         this.fillList(page)
     },
 
+    fixValue: function(v) {
+        v['doserate'] = 1000 * v['doserate'];
+        return this.__super(DeviceBase.prototype.fixValue, [v]);
+    },
+
     updateCharts: function() {
         var start = g.getBeginTime().getTime();
         var end = g.getEndTime().getTime();

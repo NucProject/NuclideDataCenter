@@ -2,7 +2,6 @@
 
 class Cache
 {
-
     public static function addDataItem($redis, $station, $device, $item)
     {
         $key = Key::StationDeviceData . "[$station][$device]";
