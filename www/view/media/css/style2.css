@@ -26,3 +26,8 @@
     font-size: .85em;
     cursor: default;
 }
+
+.online{
+    font-size: 10px;
+    color: lightgray;
+}

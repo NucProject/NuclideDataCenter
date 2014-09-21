@@ -15,11 +15,16 @@ $class("StationTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     },
 
     onAttach: function(domNode) {
-        var stationNameNode = domNode.find('div.caption i.station');
+
         var this_ = this;
+        this._stationId = domNode.attr('station_id');
+        console.log(this._stationId);
+
+        var stationStatusNode = domNode.find('div.caption span.online');
         setInterval(function(){
-            stationNameNode.text(g.getCurrentStationName() + this_.getOnlineString())
-        }, 1000);
+            stationStatusNode.text(this_.getOnlineString())
+        }, 10000);
+        stationStatusNode.text(this_.getOnlineString())
 
         this._connList = new ListView();
         var listDomNode = this._connList.create();
@@ -40,27 +45,25 @@ $class("StationTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
     getOnlineString: function() {
         var this_ = this;
-        if (this._counter % 10 == 0) {
-            this.ajax('command/online/' + g.getCurrentStationId(), null, function(data){
-                console.log(data);
-                var d = eval('(' + data + ')');
-                if (d['errorCode'] == 0)
+
+        this.ajax('command/online/' + this._stationId, null, function(data){
+            console.log(data);
+            var d = eval('(' + data + ')');
+            if (d['errorCode'] == 0)
+            {
+                var diff = d['results']['diff'];
+                if (diff > 120)
                 {
-                    var diff = d['results']['diff'];
-                    if (diff > 120)
-                    {
-                        this_._onlineStr = "(在线测试...)";
-                    }
-                    else
-                    {
-                        this_._onlineStr = "(在线)";
-                    }
+                    this_._onlineStr = "(在线测试...)";
                 }
+                else
+                {
+                    this_._onlineStr = "(在线)";
+                }
+            }
 
-            });
-        }
+        });
 
-        this._counter += 1;
         return this._onlineStr || "(在线测试...)";
     },
 
