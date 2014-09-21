@@ -47,13 +47,6 @@ $class("RadeyeDevice", DeviceBase,
     onAttach: function(domNode) {
         this.__super(DeviceBase.prototype.onAttach, [domNode]);
 
-        /*
-         `gammalong` varchar(32) DEFAULT NULL,
-         `gammacps` varchar(32) DEFAULT NULL,
-         `emissionlong` varchar(32) DEFAULT NULL,
-         `emissioncps` varchar(32) DEFAULT NULL,
-         `betacps` varchar(32) DEFAULT NULL,
-         */
         this._dataListView.setHeaders([
             {'key':'time', 'name':'时间'},
             {'key':'doserate', 'name':'剂量率'}]);
@@ -64,7 +57,6 @@ $class("RadeyeDevice", DeviceBase,
     },
 
     showChartsTab: function() {
-        console.log(111)
         this._chartInterval = 30 * 10000;
         this.updateCharts();
     },

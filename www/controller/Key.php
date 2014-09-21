@@ -13,4 +13,6 @@ class Key
     const StationCommandQueue = 's:c:q@';
 
     const StationCinderellaStatus = 's:c:s@';
+
+    const KeepAlive = "keep-alive";
 }

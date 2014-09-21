@@ -8,16 +8,55 @@
 
 class CommandController extends ApiController
 {
-
-
+    // Query DC commands from client.
+    // Used for KeepAlive also
     public function queryAction($station)
     {
         $queue = Key::StationCommandQueue . $station;
 
         $command = $this->redis->lPop($queue);
 
+        $lastTime = (int)$this->redis->hGet(Key::KeepAlive, $station);
+        $now = time();
+
+        $c = ConnAlert::findFirst(array("station=$station", 'order' => 'id desc'));
+        if ($c)
+        {
+            $beginTime = $c->begintime;
+            $offlineTime = date('Y-m-d H:i:s', $now + 20);
+            $c->begintime = $offlineTime;
+            $c->endtime = $offlineTime;
+            $c->save();
+
+
+            if ($now - parent::parseTime2($beginTime) > 60)
+            {
+
+            }
+            else
+            {
+
+            }
+        }
+
+        if ($now - $lastTime > 120)
+        {
+            $a = new ConnAlert();
+            $a->begintime = date('', $now);
+            $a->save();
+        }
+
+
+        $this->redis->hSet(Key::KeepAlive, $station, $now);
+
         $command = json_decode($command);
         return parent::result($command);
+    }
+
+    public function aliveAction($station)
+    {
+        $time = (int)$this->redis->hGet(Key::KeepAlive, $station);
+        return parent::result(array('keep-alive' => (time() - $time)));
     }
 
     public function postAction()
