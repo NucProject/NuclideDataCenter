@@ -56,11 +56,7 @@ $class("RadeyeDevice", DeviceBase,
          */
         this._dataListView.setHeaders([
             {'key':'time', 'name':'时间'},
-            {'key':'gammalong', 'name':'gammalong'},
-            {'key':'gammacps', 'name':'gammacps'},
-            {'key':'emissionlong', 'name':'emissionlong'},
-            {'key':'emissioncps', 'name':'emissioncps'},
-            {'key':'betacps', 'name':'betacps'}]);
+            {'key':'doserate', 'name':'剂量率'}]);
     },
 
     fillListDefault: function(page) {
