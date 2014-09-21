@@ -16,36 +16,43 @@ class CommandController extends ApiController
 
         $command = $this->redis->lPop($queue);
 
-        $lastTime = (int)$this->redis->hGet(Key::KeepAlive, $station);
         $now = time();
+        $offlineTime = date('Y-m-d H:i:s', $now + 20);
 
         $c = ConnAlert::findFirst(array("station=$station", 'order' => 'id desc'));
         if ($c)
         {
             $beginTime = $c->begintime;
-            $offlineTime = date('Y-m-d H:i:s', $now + 20);
-            $c->begintime = $offlineTime;
-            $c->endtime = $offlineTime;
-            $c->save();
 
-
-            if ($now - parent::parseTime2($beginTime) > 60)
+            if ($now - parent::parseTime2($beginTime) > 120)
             {
+                // Connection recovered
+                $c->endtime = date('Y-m-d H:i:s', $now);
+                $c->save();
 
+                $c = new ConnAlert();
+                $c->station = $station;
+                $c->begintime = $offlineTime;
+                $c->endtime = $offlineTime;
+                $c->handled = 0;
+                $c->save();
             }
             else
             {
-
+                $c->begintime = $offlineTime;
+                $c->endtime = $offlineTime;
+                $c->save();
             }
         }
-
-        if ($now - $lastTime > 120)
+        else
         {
-            $a = new ConnAlert();
-            $a->begintime = date('', $now);
-            $a->save();
+            $c = new ConnAlert();
+            $c->station = $station;
+            $c->begintime = $offlineTime;
+            $c->endtime = $offlineTime;
+            $c->handled = 0;
+            $c->save();
         }
-
 
         $this->redis->hSet(Key::KeepAlive, $station, $now);
 
@@ -55,8 +62,13 @@ class CommandController extends ApiController
 
     public function aliveAction($station)
     {
-        $time = (int)$this->redis->hGet(Key::KeepAlive, $station);
-        return parent::result(array('keep-alive' => (time() - $time)));
+        $items = ConnAlert::find(array("station = $station", 'order' => 'id desc', 'limit' => 10));
+        $ret = array();
+        foreach ($items as $item)
+        {
+            array_push($ret, $item);
+        }
+        return parent::result(array('items' => $ret));
     }
 
     public function postAction()

@@ -6,12 +6,12 @@
         <div class="portlet-body" >
             <div class="tabbable portlet-tabs">
                 <ul class="nav nav-tabs">
-
-                    <li class="active"><a href="#station_container" data-toggle="tab">简介</a></li>
+                    <li class="active!"><a href="#station_status_container_103" data-toggle="tab">状态</a></li>
+                    <li class="active"><a href="#station_container_103" data-toggle="tab">简介</a></li>
                 </ul>
                 <div class="tab-content">
 
-                    <div class="tab-pane active" id="station_container">
+                    <div class="tab-pane active" id="station_container_103">
                         <div style="float: left" class="span8">
                             <?php $this->partial("index/devices103"); ?>
                             <div class="clearfix"></div>
@@ -24,7 +24,10 @@
                         </div>
                     </div>
 
-                    
+
+                    <div class="tab-pane" id="station_status_container_103">
+                        <div class="conn-alert-list"></div>
+                    </div>
                 </div>
             </div>
         </div>
