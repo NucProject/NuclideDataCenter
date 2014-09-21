@@ -60,6 +60,12 @@ class CommandController extends ApiController
         return parent::result($command);
     }
 
+    public function onlineAction($station)
+    {
+        $time = $this->redis->hGet(Key::KeepAlive, $station);
+        return parent::result(array('diff' => (time() - $time)));
+    }
+
     public function aliveAction($station)
     {
         $items = ConnAlert::find(array("station = $station", 'order' => 'id desc', 'limit' => 10));
