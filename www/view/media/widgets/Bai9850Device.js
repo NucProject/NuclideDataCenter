@@ -56,11 +56,13 @@ $class("Bai9850Device", DeviceBase,
              */
             this._dataListView.setHeaders([
                 {'key':'time', 'name':'时间'},
-                {'key':'gammalong', 'name':'gammalong'},
-                {'key':'gammacps', 'name':'gammacps'},
-                {'key':'emissionlong', 'name':'emissionlong'},
-                {'key':'emissioncps', 'name':'emissioncps'},
-                {'key':'betacps', 'name':'betacps'}]);
+                {'key':'alphaactivity', 'name':'alphaactivity'},
+                {'key':'alpha', 'name':'alpha'},
+                {'key':'betaactivity', 'name':'betaactivity'},
+                {'key':'beta', 'name':'beta'},
+                {'key':'i131activity', 'name':'i131activity'},
+                {'key':'i131', 'name':'i131'},
+                {'key':'doserate', 'name':'doserate'}]);
         },
 
         fillListDefault: function(page) {
