@@ -69,7 +69,7 @@ class Config
         'bai9125' => array(
             'time' => 'time',
             '01000201' => 'gammalong',
-            '01000202' => 'gamamacps',
+            '01000202' => 'gammacps',
             '01000203' => 'emissionlong',
             '01000204' => 'emissioncps',
             '01000205' => 'betacps',

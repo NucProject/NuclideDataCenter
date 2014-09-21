@@ -233,18 +233,15 @@ class ApiController extends \Phalcon\Mvc\Controller
         return $ret;
     }
 
-    private function test()
+    public function testAction()
     {
-        $a = array("a" => "1");
-        $b = array("a" => "2");
+        $u= new User();
+        $u->user_id = 3;
+        $u->username = "222";
+        $u->password = ":";
+        $u->role =4;
+        echo $u->save();
 
-        $r = array($a, $b);
-        foreach ($r as &$i)
-        {
-            $i["a"] = "34";
-        }
-
-        echo json_encode($r);
     }
 
 	public function exitScript()
