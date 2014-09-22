@@ -5,8 +5,6 @@ $class("StationTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 {
     _connList: null,
 
-    _counter: 0,
-
     _onlineStr: null,
 
     __constructor: function() {

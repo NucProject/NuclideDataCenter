@@ -91,6 +91,14 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
         this.initIntervalChange(domNode.find('div.interval'));
         this.initChartIntervalChange(domNode.find('div.chart-interval'));
+
+        domNode.find('select.chart-field').change(kx.bind(this, function(){
+            this.onFieldChanged && this.onFieldChanged();
+        }));
+    },
+
+    onFieldChanged: function() {
+        this.updateCharts && this.updateCharts();
     },
 
     initIntervalChange: function(domNode) {

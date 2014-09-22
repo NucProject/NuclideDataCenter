@@ -20,10 +20,11 @@ $class("WeatherDevice", DeviceBase,
             {'key':'Temperature', 'name':'温度'},
             {'key':'Humidity', 'name':'湿度'}]);
 
+        /*
         domNode.find('select.chart-field').change(kx.bind(this, function(){
             this.onFieldChanged();
         }));
-
+        */
     },
 
     showChartsTab: function() {
@@ -37,7 +38,7 @@ $class("WeatherDevice", DeviceBase,
 
         var fieldItem = this._domNode.find('select.chart-field');
         console.log(fieldItem);
-        var title = fieldItem.text();
+        var title = fieldItem.find(":selected").text();
         var field = fieldItem.val();
         var min = fieldItem.attr('min');
         var max = fieldItem.attr('max');
@@ -87,14 +88,4 @@ $class("WeatherDevice", DeviceBase,
         this.updateCharts();
 
     },
-
-    onFieldChanged: function() {
-        this.updateCharts();
-    }
-
-    /*
-    filter2: function(data) {
-        return this.chartFilterData(data, 'Pressure');
-    }
-    */
 });

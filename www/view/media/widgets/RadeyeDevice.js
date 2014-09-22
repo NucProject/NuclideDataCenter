@@ -67,7 +67,7 @@ $class("RadeyeDevice", DeviceBase,
 
         var fieldItem = this._domNode.find('select.chart-field');
         console.log(fieldItem);
-        var title = fieldItem.text();
+
         var field = fieldItem.val();
         var min = fieldItem.attr('min');
         var max = fieldItem.attr('max');
@@ -76,8 +76,8 @@ $class("RadeyeDevice", DeviceBase,
         this.showCharts(this._domNode,
             {
                 selector: "div.charts",
-                title: title,
-                ytitle: title,
+                title: "剂量率",
+                ytitle: "剂量率",
                 start: start,
                 end: end,
                 max:150,

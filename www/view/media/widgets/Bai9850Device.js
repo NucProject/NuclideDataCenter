@@ -81,7 +81,7 @@ $class("Bai9850Device", DeviceBase,
 
             var fieldItem = this._domNode.find('select.chart-field');
             console.log(fieldItem);
-            var title = fieldItem.text();
+            var title = fieldItem.find(':selected').text();
             var field = fieldItem.val();
             var min = fieldItem.attr('min');
             var max = fieldItem.attr('max');
