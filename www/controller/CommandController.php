@@ -8,16 +8,73 @@
 
 class CommandController extends ApiController
 {
-
-
+    // Query DC commands from client.
+    // Used for KeepAlive also
     public function queryAction($station)
     {
         $queue = Key::StationCommandQueue . $station;
 
         $command = $this->redis->lPop($queue);
 
+        $now = time();
+        $offlineTime = date('Y-m-d H:i:s', $now + 20);
+
+        $c = ConnAlert::findFirst(array("station=$station", 'order' => 'id desc'));
+        if ($c)
+        {
+            $beginTime = $c->begintime;
+
+            if ($now - parent::parseTime2($beginTime) > 120)
+            {
+                // Connection recovered
+                $c->endtime = date('Y-m-d H:i:s', $now);
+                $c->save();
+
+                $c = new ConnAlert();
+                $c->station = $station;
+                $c->begintime = $offlineTime;
+                $c->endtime = $offlineTime;
+                $c->handled = 0;
+                $c->save();
+            }
+            else
+            {
+                $c->begintime = $offlineTime;
+                $c->endtime = $offlineTime;
+                $c->save();
+            }
+        }
+        else
+        {
+            $c = new ConnAlert();
+            $c->station = $station;
+            $c->begintime = $offlineTime;
+            $c->endtime = $offlineTime;
+            $c->handled = 0;
+            $c->save();
+        }
+
+        $this->redis->hSet(Key::KeepAlive, $station, $now);
+
         $command = json_decode($command);
         return parent::result($command);
+    }
+
+    public function onlineAction($station)
+    {
+        $time = $this->redis->hGet(Key::KeepAlive, $station);
+        return parent::result(array('diff' => (time() - $time)));
+    }
+
+    public function aliveAction($station)
+    {
+        $items = ConnAlert::find(array("station = $station", 'order' => 'id desc', 'limit' => 10));
+        $ret = array();
+        foreach ($items as $item)
+        {
+            array_push($ret, $item);
+        }
+        return parent::result(array('items' => $ret));
     }
 
     public function postAction()
@@ -40,7 +97,6 @@ class CommandController extends ApiController
         return parent::result(array('post' => true));
     }
 
-    // cinderella
     public function cinderellaAction($station)
     {
         if ($this->request->isPost())
