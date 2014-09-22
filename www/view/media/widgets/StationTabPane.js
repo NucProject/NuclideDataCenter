@@ -9,11 +9,19 @@ $class("StationTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     },
 
     onAttach: function(domNode) {
-        var stationNameNode = domNode.find('div.caption i.station');
-        setInterval(function(){
-            stationNameNode.text(g.getCurrentStationName())
-        }, 1000);
 
+        var this_ = this;
+        setInterval(function(){
+
+            this_.onQueryOnline(domNode);
+        }, 10000);
+        this_.onQueryOnline(domNode);
+
+    },
+
+    onQueryOnline: function(domNode) {
+        var stationStatusNode = domNode.find('div.caption span.offline');
+        stationStatusNode.text("(在线)")
     }
 
 });

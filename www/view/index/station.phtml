@@ -1,12 +1,12 @@
 <div class="span12" file="tab1.phtml" widget-class="StationTabPane" widget-id="station-tab-pane">
 	<div class="portlet box blue tabbable">
 		<div class="portlet-title">
-			<div class="caption"><i class="icon-reorder station"></i></div>
+			<div class="caption"><i class="icon-reorder station"> 北京站<span class="offline"></span></i></div>
 		</div>
         <div class="portlet-body" >
             <div class="tabbable portlet-tabs">
                 <ul class="nav nav-tabs">
-
+                    <li class="active!"><a href="#station_status_container" data-toggle="tab">状态</a></li>
                     <li class="active"><a href="#station_container" data-toggle="tab">简介</a></li>
                 </ul>
                 <div class="tab-content">
@@ -24,7 +24,15 @@
                         </div>
                     </div>
 
-                    
+
+                    <div class="tab-pane active" id="station_status_container">
+                        <div class="">
+                            <span></span>
+                        </div>
+                        <div class="list-container">
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
