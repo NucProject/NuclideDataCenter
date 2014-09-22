@@ -244,7 +244,7 @@ class ApiController extends \Phalcon\Mvc\Controller
 
     }
 
-	public function exitScript()
+    public function exitScript()
 	{
 		die();
 	}

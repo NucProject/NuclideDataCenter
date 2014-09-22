@@ -49,6 +49,7 @@ $class("Breadcrumb", [kx.Widget, kx.EventMixin],
         var stationId = g.getCurrentStationId();
         if (type == "network")
         {
+            console.log(1);
             g.showRow("#network-row");
         }
         else if (type == "station")
