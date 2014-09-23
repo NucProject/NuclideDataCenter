@@ -27,7 +27,7 @@ $class("BaiduMap", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             var label = new BMap.Label("我是百度标注哦",{offset:new BMap.Size(20,-10)});
             marker.setLabel(label); //添加百度label
             bm.setCenter(point);
-            alert(point.lng + "," + point.lat);
+            // alert(point.lng + "," + point.lat);
         }
 
         setTimeout(function(){

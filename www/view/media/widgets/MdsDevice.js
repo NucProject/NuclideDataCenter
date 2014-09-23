@@ -49,15 +49,15 @@ $class("MdsDevice", DeviceBase,
 
         this._dataListView.setHeaders([
             {'key':'time', 'name':'时间'},
-            {'key':'sid', 'name':'采样ID'},
+            {'key':'sid', 'name':'巡测ID'},
             {'key':'doserate', 'name':'剂量率'},
-            {'key':'lat', 'name':'lat'},
-            {'key':'lon', 'name':'lon'},
-            {'key':'speed', 'name':'speed'},
-            {'key':'height', 'name':'height'},
-            {'key':'map', 'name':'map'},    //????
-            {'key':'doserateex', 'name':'doserateex'},
-            {'key':'ifatificial', 'name':'ifatificial'}]);
+            {'key':'lat', 'name':'经度', 'type': 'str'},
+            {'key':'lon', 'name':'纬度', 'type': 'str'},
+            {'key':'speed', 'name':'速度'},
+            {'key':'height', 'name':'高度'},
+            //{'key':'map', 'name':'map'},    //????
+            {'key':'doserateex', 'name':'扩展剂量率'},
+            {'key':'ifatificial', 'name':'是否发现人工核素'}]);
     },
 
     fillListDefault: function(page) {

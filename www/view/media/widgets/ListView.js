@@ -232,6 +232,10 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
                     {
                         cl.push(item[key].toFixed(1));
                     }
+                    else if (this._headers[j]['type'] == 'str')
+                    {
+                        cl.push(item[key]);
+                    }
                     else
                     {
                         cl.push(item[key]);
