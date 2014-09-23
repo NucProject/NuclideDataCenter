@@ -5,8 +5,8 @@ $class("BaiduMap", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 {
 
     onAttach: function(domNode) {
-        var xx = 116.397428;
-        var yy = 39.90923;
+        var yy = 22.26859500;
+        var xx = 113.52092000;
         var gpsPoint = new BMap.Point(xx, yy);
 
         //地图初始化
@@ -31,7 +31,7 @@ $class("BaiduMap", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         }
 
         setTimeout(function(){
-            BMap.Convertor.translate(gpsPoint,0,translateCallback);     //真实经纬度转成百度坐标
+            BMap.Convertor.translate(gpsPoint, 0, translateCallback);     //真实经纬度转成百度坐标
         }, 2000);
     }
 });

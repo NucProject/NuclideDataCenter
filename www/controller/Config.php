@@ -99,7 +99,8 @@ class Config
             '01000305'=>"height",
             '01000306'=>"map",
             '01000307'=>"doserateex",
-            '01000308'=>"ifatificial"
+            '01000308'=>"ifatificial",
+            '01000309'=>"sid"
         ),
 
         'radeye' => array(

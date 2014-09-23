@@ -49,6 +49,7 @@ $class("MdsDevice", DeviceBase,
 
         this._dataListView.setHeaders([
             {'key':'time', 'name':'时间'},
+            {'key':'sid', 'name':'采样ID'},
             {'key':'doserate', 'name':'剂量率'},
             {'key':'lat', 'name':'lat'},
             {'key':'lon', 'name':'lon'},
