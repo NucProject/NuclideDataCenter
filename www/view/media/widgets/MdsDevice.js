@@ -50,14 +50,14 @@ $class("MdsDevice", DeviceBase,
         this._dataListView.setHeaders([
             {'key':'time', 'name':'时间'},
             {'key':'sid', 'name':'巡测ID'},
-            {'key':'doserate', 'name':'剂量率'},
-            {'key':'lat', 'name':'经度', 'type': 'str'},
-            {'key':'lon', 'name':'纬度', 'type': 'str'},
-            {'key':'speed', 'name':'速度'},
-            {'key':'height', 'name':'高度'},
+            {'key':'doserate', 'name':'剂量率(nSv/h)'},
+            {'key':'lat', 'name':'纬度(°)', 'type': 'str'},
+            {'key':'lon', 'name':'经度(°)', 'type': 'str'},
+            {'key':'speed', 'name':'速度(m/s)'},
+            {'key':'height', 'name':'高度(m)'},
             //{'key':'map', 'name':'map'},    //????
-            {'key':'doserateex', 'name':'扩展剂量率'},
-            {'key':'ifatificial', 'name':'是否发现人工核素'}]);
+            {'key':'doserateex', 'name':'扩展剂量率(nSv/h)'}
+            /*{'key':'ifatificial', 'name':'是否发现人工核素'}*/]);
 
         this.createSummaryList(domNode);
     },

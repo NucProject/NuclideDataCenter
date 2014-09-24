@@ -189,13 +189,13 @@ $class("Global", Base,
             case "environment":
                 return "环境与安防监控";
             case "bai9850":
-                return "气溶胶总放与碘自动监测系统";
+                return "气溶胶总放与碘监测系统";
             case "gama":
-                return "便携式γ辐射测量仪";
+                return "便携式核素甄别仪";
             case "mds":
                 return "大体积放射源搜索系统";
             case "radeye":
-                return "便携式核素甄别仪";
+                return "便携式γ辐射测量仪";
             case "bai9125":
                 return "水质放射性监测系统";
             case "bai9850":

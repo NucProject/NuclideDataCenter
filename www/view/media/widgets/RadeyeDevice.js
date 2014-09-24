@@ -49,7 +49,7 @@ $class("RadeyeDevice", DeviceBase,
 
         this._dataListView.setHeaders([
             {'key':'time', 'name':'时间'},
-            {'key':'doserate', 'name':'剂量率'}]);
+            {'key':'doserate', 'name':'剂量率(nSv/h)'}]);
     },
 
     fillListDefault: function(page) {

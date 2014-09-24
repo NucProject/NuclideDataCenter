@@ -56,13 +56,13 @@ $class("Bai9850Device", DeviceBase,
              */
             this._dataListView.setHeaders([
                 {'key':'time', 'name':'时间'},
-                {'key':'alphaactivity', 'name':'alphaactivity'},
-                {'key':'alpha', 'name':'alpha'},
-                {'key':'betaactivity', 'name':'betaactivity'},
-                {'key':'beta', 'name':'beta'},
-                {'key':'i131activity', 'name':'i131activity'},
-                {'key':'i131', 'name':'i131'},
-                {'key':'doserate', 'name':'doserate'}]);
+                {'key':'alphaactivity', 'name':'α活度(Bq/m^3)'},
+                {'key':'alpha', 'name':'α(cps)'},
+                {'key':'betaactivity', 'name':'β活度(Bq/m^3)'},
+                {'key':'beta', 'name':'β(cps)'},
+                {'key':'i131activity', 'name':'碘131活度(Bq/m^3)'},
+                {'key':'i131', 'name':'碘131(cps)'},
+                {'key':'doserate', 'name':'相对剂量率(uSv/h)'}]);
         },
 
         fillListDefault: function(page) {
