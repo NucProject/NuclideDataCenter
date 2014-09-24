@@ -111,8 +111,8 @@ $class("MdsDevice", DeviceBase,
             .find('div').attr('id', divId).css('height', 400);
 
         // Map about
-        var yy = 22.26859500;
-        var xx = 113.52092000;
+        var yy = 22.26859500;   // Lat
+        var xx = 113.52092000;  // Lon
         var gpsPoint = new BMap.Point(xx, yy);
 
 
@@ -163,17 +163,17 @@ $class("MdsDevice", DeviceBase,
 
     addPolyline: function(map, items) {
         var array = [];
-        var lx, ly;
+        var llon = 0, llat = 0;
         for (var i in items) {
             var item = items[i];
-            var y = item['lon'];
-            var x = item['lat'];
-            if (x == lx && y == ly)
+            var lon = item['lon'];
+            var lat = item['lat'];
+            if (lon == llon && lat == llat)
                 continue;
-            array.push(new BMap.Point(x, y));
+            array.push(new BMap.Point(lon, lat));
 
-            lx = x;
-            ly = y;
+            llon = lon;
+            llat = lat;
         }
 
         console.log(array)
