@@ -71,9 +71,15 @@ $class("MdsDevice", DeviceBase,
         var this_ = this;
 
         sumContainer.delegate('a', 'click', function(){
-
-            this_.onSidClicked($(this));
+            this_.showGisMap($(this));
             return false;
+        });
+
+        var listNode = this._domNode.find('#mds_statisic div.sum-container');
+        var gisNode = this._domNode.find('#mds_statisic div.gis');
+        this._domNode.find('#mds_statisic div.gis').delegate('a', 'click', function(){
+            listNode.slideDown();
+            gisNode.hide();
         });
 
         this._sumListView.setHeaders([
@@ -93,6 +99,53 @@ $class("MdsDevice", DeviceBase,
         console.log(111)
         this._chartInterval = 30 * 10000;
         this.updateCharts();
+    },
+
+    showGisMap: function(sender) {
+        var sid = sender.text();
+        // TODO:
+
+        var divId = "ID_" + new Date();
+
+        this._domNode.find('#mds_statisic div.sum-container').slideUp();
+        this._domNode.find('#mds_statisic div.gis').css('display', '')
+            .find('div').attr('id', divId).css('height', 400);
+
+        // Map about
+        var yy = 22.26859500;
+        var xx = 113.52092000;
+        var gpsPoint = new BMap.Point(xx, yy);
+
+        //地图初始化
+
+
+        var bm = new BMap.Map(divId);
+        bm.centerAndZoom(gpsPoint, 15);
+        bm.addControl(new BMap.NavigationControl());
+
+        //添加谷歌marker和label
+        var markergps = new BMap.Marker(gpsPoint);
+        bm.addOverlay(markergps); //添加GPS标注
+        var labelgps = new BMap.Label("巡测起点",{offset:new BMap.Size(0, -0)});
+        markergps.setLabel(labelgps); //添加GPS标注
+
+        //坐标转换完之后的回调函数
+        translateCallback = function (point){
+            var marker = new BMap.Marker(point);
+            bm.addOverlay(marker);
+            var label = new BMap.Label("路线起点",{offset:new BMap.Size(0, -0)});
+            marker.setLabel(label); //添加百度label
+            bm.setCenter(point);
+            // alert(point.lng + "," + point.lat);
+        }
+
+        return false;
+        setTimeout(function(){
+            BMap.Convertor.translate(gpsPoint, 0, translateCallback);     //真实经纬度转成百度坐标
+            return false;
+        }, 2000);
+
+        return false;
     },
 
     updateCharts: function() {
@@ -129,6 +182,25 @@ $class("MdsDevice", DeviceBase,
 
     onTabChanged: function() {
 
+    },
+
+    onSummaryShow: function() {
+        var this_ = this;
+        this.ajax('data/mdsSummary/' + g.getCurrentStationId(), null, function(data)
+        {
+            console.log(data)
+            var r = eval("(" + data + ")");
+            var items = r['results']['items'];
+            this_.updateSummaryList(items);
+        });
+    },
+
+    updateSummaryList: function(items) {
+        var params = this._sumListView.clearValues();
+        for (var i in items) {
+            var item = items[i];
+            this._sumListView.addValue(item, params);
+        }
     },
 
     onIntervalChanged: function(sender) {
