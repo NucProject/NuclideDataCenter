@@ -58,6 +58,31 @@ $class("MdsDevice", DeviceBase,
             //{'key':'map', 'name':'map'},    //????
             {'key':'doserateex', 'name':'扩展剂量率'},
             {'key':'ifatificial', 'name':'是否发现人工核素'}]);
+
+        this.createSummaryList(domNode);
+    },
+
+    createSummaryList: function(domNode) {
+        var sumContainer = domNode.find('div.sum-container');
+        this._sumListView = new ListView();
+        var dataListViewDomNode = this._sumListView.create();
+        dataListViewDomNode.appendTo(sumContainer);
+
+        var this_ = this;
+
+        sumContainer.delegate('a', 'click', function(){
+
+            this_.onSidClicked($(this));
+            return false;
+        });
+
+        this._sumListView.setHeaders([
+            {'key':'id', 'type': 'id'},
+            {'key':'sid', 'name': '巡测ID', 'type': 'link'},
+            {'key':'begintime', 'name':'开始时间'},
+            {'key':'endtime', 'name':'结束时间'},
+            {'key':'doserate', 'name':'剂量率'},
+            {'key':'doserateex', 'name':'扩展剂量率'}]);
     },
 
     fillListDefault: function(page) {

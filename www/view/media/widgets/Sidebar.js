@@ -39,9 +39,6 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                 return false;
             });
 
-            // select default
-            ul.find("li a:first").click();
-            g.setCurrentStationName(this._currentStationName);
         });
     },
 

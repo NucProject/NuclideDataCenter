@@ -34,12 +34,12 @@ class DataController extends ApiController
             echo json_encode($data);
             if ($data->save() !== false)
             {
-                if ($device == 'cinderelladata')
+                if ($device == 'mds')
                 {
-                    $sid = Cache::getLatest($this->redis, $station, 'cinderelladata');
-                    if ($sid != $data->Sid)
+                    $sid = Cache::getLatest($this->redis, $station, 'mds');
+                    if ($sid != $data->sid)
                     {
-                        self::summaryCinderellaData($station, $sid);
+                        self::summaryMdsData($station, $sid);
                     }
                 }
 
@@ -287,17 +287,17 @@ class DataController extends ApiController
 
     public function execSummaryAction($station, $sid)
     {
-        self::summaryCinderellaData($station, $sid);
+        self::summaryMdsData($station, $sid);
     }
 
-    public function cinderellaSummaryAction($station)
+    public function mdsSummaryAction($station)
     {
         if (!$this->request->isGet())
         {
             return parent::error(Error::BadHttpMethod, '');
         }
 
-        $data = CinderellaSum::find(array("station=$station"));
+        $data = MdsSum::find(array("station=$station"));
 
         $ret = array();
         foreach ($data as $item)
@@ -309,47 +309,38 @@ class DataController extends ApiController
     }
 
 
-    private static function summaryCinderellaData($station, $sid)
+    private static function summaryMdsData($station, $sid)
     {
-        $data = CinderellaData::find(array("station=$station and Sid='$sid'"));
+        $data = Mds::find(array("station=$station and sid='$sid'"));
         $count = count($data);
         $f = $data[0];
-        $begin = $end = ApiController::parseTime2($f->BeginTime);
+        $begin = $end = ApiController::parseTime2($f->time);
 
-        $barcode = $f->barcode;
-        $flow = 0.0;
+        $doserate = 0.0;
+        $doserateex = 0.0;
 
-        $flowPerHour = 0.0;
-        $pressure = 0.0;
         foreach ($data as $item)
         {
-            $cb = ApiController::parseTime2($item->BeginTime);
+            $cb = ApiController::parseTime2($item->time);
 
             if ($cb > $end) {
-                echo $cb;
                 $end = $cb;
             }
             if ($cb < $begin) {
-                echo $cb;
                 $begin = $cb;
             }
 
-            if ($item->Flow > $flow)
-                $flow = $item->Flow;
-
-            $flowPerHour += $item->FlowPerHour;
-            $pressure += $item->Pressure;
+            $doserate += $item->doserate;
+            $doserateex += $item->doserateex;
         }
 
-        $s = new CinderellaSum();
+        $s = new MdsSum();
         $s->station = $station;
         $s->sid = $sid;
         $s->begintime = date('Y-m-d H:i:s', $begin);
         $s->endtime = date('Y-m-d H:i:s', $end);
-        $s->barcode = $barcode;
-        $s->flow = $flow;
-        $s->pressure = $pressure / $count;
-        $s->flowPerHour = $flowPerHour / $count;
+        $s->doserate = $doserate / $count;
+        $s->doserateex = $doserateex  / $count;
         return $s->save();
 
     }
