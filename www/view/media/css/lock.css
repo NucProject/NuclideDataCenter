@@ -7,9 +7,12 @@ body {
 	margin: 0;
 }
 
+.brank {
+    margin: 20px 0px 0px 20px;
+}
 .page-lock {
     background-color: #3d3d3d !important;
-    min-height: 400px;
+    min-height: 450px;
 }
 
 .page-lock .page-logo {
@@ -18,12 +21,17 @@ body {
 }
 
 .page-lock .page-body {	
-   width: 600px;
+   width: 800px;
 
    padding: 10px;
    padding-top: 100px;
    margin:auto;
    background: url(../image/bg-white-lock.png) repeat;
+}
+
+.page_bottom {
+	background-color: #ffffff !important;
+    min-height: 600px;
 }
 /*
 .page-lock .page-body:after,
@@ -52,7 +60,7 @@ body {
 }
 
 .page-lock .page-lock-info {
-    margin-top: -80px;
+    margin-top: -60px;
 	float: right;
 	width: 280px;
 }
