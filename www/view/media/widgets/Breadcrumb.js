@@ -49,7 +49,7 @@ $class("Breadcrumb", [kx.Widget, kx.EventMixin],
         var stationId = g.getCurrentStationId();
         if (type == "network")
         {
-            console.log(1);
+            this.setLevels([{"url": "#network", "name": "监测网络", "type": "network"}]);
             g.showRow("#network-row");
         }
         else if (type == "station")
