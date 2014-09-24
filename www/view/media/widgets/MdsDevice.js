@@ -102,6 +102,7 @@ $class("MdsDevice", DeviceBase,
     },
 
     showGisMap: function(sender) {
+        var this_ = this
         // Map Container
         var divId = "ID_" + new Date();
 
@@ -136,19 +137,53 @@ $class("MdsDevice", DeviceBase,
             // alert(point.lng + "," + point.lat);
         }
 
+        /*
         return false;
         setTimeout(function(){
             BMap.Convertor.translate(gpsPoint, 0, translateCallback);     //真实经纬度转成百度坐标
             return false;
         }, 2000);
+        */
 
         //地图路线初始化
         var sid = sender.text();
         this.ajax('data/mds/' + g.getCurrentStationId() + "/" + sid, null, function(data){
-            console.log("!" + data);
+            var d = eval('(' + data + ')');
+            if (d['errorCode'] == 0)
+            {
+                var items = d['results']['items'];
+                this_.addPolyline(bm, items);
+            }
+
             return false;
         });
 
+        return false;
+    },
+
+    addPolyline: function(map, items) {
+        var array = [];
+        var lx, ly;
+        for (var i in items) {
+            var item = items[i];
+            var x = item['lon'];
+            var y = item['lat'];
+            if (x == lx && y == ly)
+                continue;
+            array.push(new BMap.Point(x, y));
+
+            lx = x;
+            ly = y;
+        }
+
+        console.log(array)
+        var polyline = new BMap.Polyline([
+            new BMap.Point(116.399, 39.910),
+            new BMap.Point(116.405, 39.920),
+            new BMap.Point(116.425, 39.900)
+        ], {strokeColor:"blue", strokeWeight:2, strokeOpacity:0.5});
+
+        map.addOverlay(polyline);
         return false;
     },
 

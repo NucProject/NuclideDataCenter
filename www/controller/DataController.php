@@ -315,7 +315,7 @@ class DataController extends ApiController
             return parent::error(Error::BadHttpMethod, '');
         }
 
-        $data = MdsSum::find(array("station=$station and sid='$sid'"));
+        $data = Mds::find(array("station=$station and sid='$sid'"));
 
         $ret = array();
         foreach ($data as $item)
