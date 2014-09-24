@@ -11,8 +11,9 @@ body {
     margin: 20px 0px 0px 20px;
 }
 .page-lock {
+	margin: 20px 0px 0px 0px;
     background-color: #3d3d3d !important;
-    min-height: 450px;
+    min-height: 500px;
 }
 
 .page-lock .page-logo {
