@@ -166,8 +166,8 @@ $class("MdsDevice", DeviceBase,
         var lx, ly;
         for (var i in items) {
             var item = items[i];
-            var x = item['lon'];
-            var y = item['lat'];
+            var y = item['lon'];
+            var x = item['lat'];
             if (x == lx && y == ly)
                 continue;
             array.push(new BMap.Point(x, y));
@@ -177,11 +177,7 @@ $class("MdsDevice", DeviceBase,
         }
 
         console.log(array)
-        var polyline = new BMap.Polyline([
-            new BMap.Point(116.399, 39.910),
-            new BMap.Point(116.405, 39.920),
-            new BMap.Point(116.425, 39.900)
-        ], {strokeColor:"blue", strokeWeight:2, strokeOpacity:0.5});
+        var polyline = new BMap.Polyline(array, {strokeColor:"blue", strokeWeight:2, strokeOpacity:0.5});
 
         map.addOverlay(polyline);
         return false;
