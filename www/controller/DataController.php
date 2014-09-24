@@ -308,6 +308,23 @@ class DataController extends ApiController
         return parent::result(array('items' => $ret));
     }
 
+    public function mdsAction($station, $sid)
+    {
+        if (!$this->request->isGet())
+        {
+            return parent::error(Error::BadHttpMethod, '');
+        }
+
+        $data = MdsSum::find(array("station=$station and sid='$sid'"));
+
+        $ret = array();
+        foreach ($data as $item)
+        {
+            array_push($ret, $item);
+        }
+
+        return parent::result(array('items' => $ret));
+    }
 
     private static function summaryMdsData($station, $sid)
     {

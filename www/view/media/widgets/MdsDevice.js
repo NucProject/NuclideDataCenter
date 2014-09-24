@@ -102,9 +102,7 @@ $class("MdsDevice", DeviceBase,
     },
 
     showGisMap: function(sender) {
-        var sid = sender.text();
-        // TODO:
-
+        // Map Container
         var divId = "ID_" + new Date();
 
         this._domNode.find('#mds_statisic div.sum-container').slideUp();
@@ -116,9 +114,8 @@ $class("MdsDevice", DeviceBase,
         var xx = 113.52092000;
         var gpsPoint = new BMap.Point(xx, yy);
 
-        //地图初始化
 
-
+        // Map
         var bm = new BMap.Map(divId);
         bm.centerAndZoom(gpsPoint, 15);
         bm.addControl(new BMap.NavigationControl());
@@ -144,6 +141,13 @@ $class("MdsDevice", DeviceBase,
             BMap.Convertor.translate(gpsPoint, 0, translateCallback);     //真实经纬度转成百度坐标
             return false;
         }, 2000);
+
+        //地图路线初始化
+        var sid = sender.text();
+        this.ajax('data/mds/' + g.getCurrentStationId() + "/" + sid, null, function(data){
+            console.log("!" + data);
+            return false;
+        });
 
         return false;
     },
