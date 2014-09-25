@@ -63,7 +63,6 @@ $class("Bai9850Device", DeviceBase,
                 {'key':'i131activity', 'name':'碘131活度(Bq/m^3)'},
                 {'key':'i131', 'name':'碘131(cps)'},
                 {'key':'doserate', 'name':'相对剂量率(uSv/h)'}]);
-
         },
 
         fillListDefault: function(page) {
@@ -71,7 +70,6 @@ $class("Bai9850Device", DeviceBase,
         },
 
         showChartsTab: function() {
-            console.log(111)
             this._chartInterval = 30 * 10000;
             this.updateCharts();
         },

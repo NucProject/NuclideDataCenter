@@ -111,14 +111,14 @@ $class("MdsDevice", DeviceBase,
             .find('div').attr('id', divId).css('height', 400);
 
         // Map about
-        var yy = 22.26859500;   // Lat
-        var xx = 113.52092000;  // Lon
+        // var yy = 22.26859500;   // Lat
+        // var xx = 113.52092000;  // Lon
         var gpsPoint = new BMap.Point(xx, yy);
 
 
         // Map
         var bm = new BMap.Map(divId);
-        bm.centerAndZoom(gpsPoint, 15);
+        // bm.centerAndZoom(gpsPoint, 15);
         bm.addControl(new BMap.NavigationControl());
 
         //添加谷歌marker和label
@@ -136,14 +136,6 @@ $class("MdsDevice", DeviceBase,
             bm.setCenter(point);
             // alert(point.lng + "," + point.lat);
         }
-
-        /*
-        return false;
-        setTimeout(function(){
-            BMap.Convertor.translate(gpsPoint, 0, translateCallback);     //真实经纬度转成百度坐标
-            return false;
-        }, 2000);
-        */
 
         //地图路线初始化
         var sid = sender.text();
@@ -176,10 +168,14 @@ $class("MdsDevice", DeviceBase,
             llat = lat;
         }
 
-        console.log(array)
-        var polyline = new BMap.Polyline(array, {strokeColor:"red", strokeWeight:2, strokeOpacity:0.5});
+        map.centerAndZoom(array[0], 15);
+        BMap.Convertor.transMore(array, 0, function(points){
 
-        map.addOverlay(polyline);
+            var polyline = new BMap.Polyline(points, {strokeColor:"red", strokeWeight:2, strokeOpacity:0.5});
+            map.addOverlay(polyline);
+            return false;
+        });
+
         return false;
     },
 
