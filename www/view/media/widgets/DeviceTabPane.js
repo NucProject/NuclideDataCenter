@@ -250,7 +250,9 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             }
             var f = parseFloat(v[i]);
             if (!isNaN(f))
-                v[i] = f.toFixed(1);
+            {
+                v[i] = f;
+            }
 
         }
         return v;
