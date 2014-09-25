@@ -62,7 +62,7 @@ $class("Bai9850Device", DeviceBase,
                 {'key':'beta', 'name':'beta'},
                 {'key':'i131activity', 'name':'i131activity'},
                 {'key':'i131', 'name':'i131'},
-                {'key':'doserate', 'name':'doserate'}]);
+                {'key':'doserate', 'name':'doserate' }]);
         },
 
         fillListDefault: function(page) {
