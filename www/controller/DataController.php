@@ -37,7 +37,7 @@ class DataController extends ApiController
                 if ($device == 'mds')
                 {
                     $sid = Cache::getLatest($this->redis, $station, 'mds');
-                    if ($sid != $data->sid && isset($sid))
+                    if ($sid && $sid != $data->sid)
                     {
                         self::summaryMdsData($station, $sid);
                     }
