@@ -173,6 +173,7 @@ $class("MdsDevice", DeviceBase,
 
             var polyline = new BMap.Polyline(points, {strokeColor:"red", strokeWeight:2, strokeOpacity:0.5});
             map.addOverlay(polyline);
+
             return false;
         });
 
