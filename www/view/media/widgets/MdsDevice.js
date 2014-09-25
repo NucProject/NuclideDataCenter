@@ -113,7 +113,7 @@ $class("MdsDevice", DeviceBase,
         // Map about
         // var yy = 22.26859500;   // Lat
         // var xx = 113.52092000;  // Lon
-        var gpsPoint = new BMap.Point(xx, yy);
+        // var gpsPoint = new BMap.Point(xx, yy);
 
 
         // Map
@@ -121,9 +121,8 @@ $class("MdsDevice", DeviceBase,
         // bm.centerAndZoom(gpsPoint, 15);
         bm.addControl(new BMap.NavigationControl());
 
-        //添加谷歌marker和label
-        var markergps = new BMap.Marker(gpsPoint);
-        bm.addOverlay(markergps); //添加GPS标注
+
+        /*
         var labelgps = new BMap.Label("巡测起点",{offset:new BMap.Size(0, -0)});
         markergps.setLabel(labelgps); //添加GPS标注
 
@@ -136,6 +135,7 @@ $class("MdsDevice", DeviceBase,
             bm.setCenter(point);
             // alert(point.lng + "," + point.lat);
         }
+        */
 
         //地图路线初始化
         var sid = sender.text();
