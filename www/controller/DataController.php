@@ -45,7 +45,14 @@ class DataController extends ApiController
 
                 if (!isset($history))
                 {
-                    Cache::updateLatestTime($this->redis, $station, $device);
+                    if ($device == 'mds')
+                    {
+                        Cache::updateLatestStat($this->redis, $station, $device, $data->sid);
+                    }
+                    else
+                    {
+                        Cache::updateLatestTime($this->redis, $station, $device);
+                    }
                     $check = AlertController::checkAlertRule($this->redis, $station, $device, $data);
                     array_push($alerts, $check);
                 }
@@ -329,7 +336,11 @@ class DataController extends ApiController
     private static function summaryMdsData($station, $sid)
     {
         $data = Mds::find(array("station=$station and sid='$sid'"));
+        if (!$data)
+            return;
         $count = count($data);
+        if ($count == 0)
+            return;
         $f = $data[0];
         $begin = $end = ApiController::parseTime2($f->time);
 
@@ -359,6 +370,5 @@ class DataController extends ApiController
         $s->doserate = $doserate / $count;
         $s->doserateex = $doserateex  / $count;
         return $s->save();
-
     }
 }
