@@ -45,7 +45,7 @@ $class("StationTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         var this_ = this;
 
         this.ajax('command/online/' + this._stationId, null, function(data){
-            console.log(data);
+            // console.log(data);
             var d = eval('(' + data + ')');
             if (d['errorCode'] == 0)
             {

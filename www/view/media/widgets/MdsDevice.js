@@ -168,15 +168,39 @@ $class("MdsDevice", DeviceBase,
             llat = lat;
         }
 
+        var points = [];
+        console.log("!" + array.length)
+        var counter = 0;
+        var translateCallback = function(index, results){
+
+            return function(point){
+                results[index] = point;
+                counter+=1;
+                console.log(counter)
+                if (counter >= array.length / 3 - 5)
+                {
+                    var points = [];
+                    for (var i in results) {
+                        points.push(results[i]);
+                    }
+                    console.log(points)
+                    var polyline = new BMap.Polyline(points, {strokeColor:"red", strokeWeight:2, strokeOpacity:0.5});
+                    map.addOverlay(polyline);
+                }
+
+            };
+        }
+
+        for (var i in array)
+        {
+            if ( i % 3 == 0 )
+            {
+                var gpsPoint = array[i];
+                BMap.Convertor.translate(gpsPoint, 0, translateCallback(i, points));
+            }
+        }
+
         map.centerAndZoom(array[0], 15);
-        BMap.Convertor.transMore(array, 0, function(points){
-
-            var polyline = new BMap.Polyline(points, {strokeColor:"red", strokeWeight:2, strokeOpacity:0.5});
-            map.addOverlay(polyline);
-
-            return false;
-        });
-
         return false;
     },
 
