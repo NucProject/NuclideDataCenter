@@ -37,7 +37,7 @@ class DataController extends ApiController
                 if ($device == 'mds')
                 {
                     $sid = Cache::getLatest($this->redis, $station, 'mds');
-                    if ($sid != $data->sid)
+                    if ($sid != $data->sid && isset($sid))
                     {
                         self::summaryMdsData($station, $sid);
                     }
@@ -315,7 +315,7 @@ class DataController extends ApiController
             return parent::error(Error::BadHttpMethod, '');
         }
 
-        $data = Mds::find(array("station=$station and sid='$sid'"));
+        $data = Mds::find(array("station=$station and sid='$sid'", 'order' => 'time'));
 
         $ret = array();
         foreach ($data as $item)
