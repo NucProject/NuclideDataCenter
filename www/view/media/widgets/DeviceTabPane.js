@@ -28,6 +28,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     PageCount: 100,
 
     __constructor: function() {
+        // the date picker show today as default.
+        this._today = true;
     },
 
     getPageEvent: function() {
@@ -95,7 +97,46 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         domNode.find('select.chart-field').change(kx.bind(this, function(){
             this.onFieldChanged && this.onFieldChanged();
         }));
+
+        this.initRefreshBar(domNode);
     },
+
+    initRefreshBar: function(domNode) {
+        var this_ = this;
+        var bar = domNode.find('div.refresh-bar');
+        bar.delegate('a', 'click', function(){
+            this_.onShow();
+            bar.fadeOut();
+        });
+
+        setInterval(kx.bind(this, function(){
+            if (this._today)
+            {
+                this.hasLatestData(bar);
+            }
+        }), 100000);
+        return false;
+    },
+
+    hasLatestData: function(bar) {
+        // bar.css('display', '');
+
+        var station = g.getCurrentStationId();
+        var url = "data/latest/" + station + "/" + this._deviceType;
+
+        this.ajax(url, null, function(data) {
+
+            var r = eval("(" + data + ")");
+            var latest = r['results']['status']
+            if (latest > this._lastestDataTime)
+            {
+                bar.css('display', '');
+            }
+        });
+
+        return true;
+    },
+
 
     onFieldChanged: function() {
         this.updateCharts && this.updateCharts();
@@ -146,7 +187,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     handleAlert: function(deviceType, id, tr, content) {
         console.log(deviceType, id, content);
         this.ajax("alert/handle", {'device': deviceType, 'id': id, 'comment': content}, function(data) {
-            $r = eval("(" + data + ")");
+            var $r = eval("(" + data + ")");
             if ($r.errorCode == 0) {
                 tr.find('td').css('background-color', 'yellow');
                 setTimeout(function(){
@@ -190,8 +231,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         if (this._currentShownDevice != this._deviceType)
             return;
 
-        console.log(payload)
-
         var this_ = this;
         var currentStationId = g.getCurrentStationId();
 
@@ -200,12 +239,15 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             var api = "data/fetch/" + currentStationId + "/" + this._deviceType;
 
             this.ajax(api, payload, function(data){
-                $r = eval("(" + data + ")");
-
-                console.log($r);
+                var $r = eval("(" + data + ")");
 
                 var items = $r.results.items;
                 this_._items = items;
+                // Fetch today data and has data.
+                if (items.length > 0 && this_.today)
+                {
+                    this_._lastestDataTime = g.getUnixTime();
+                }
                 this_.makeDataDict(items);
 
                 this_.renderData();
@@ -385,6 +427,12 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         var payload = {
             start: range.start.toString('yyyy-MM-dd'),
             end: range.end.toString('yyyy-MM-dd') };
+
+        this._today = false;
+        if (range.start.toString('yyyy-MM-dd') == Date.today().toString('yyyy-MM-dd'))
+        {
+            this._today = true;
+        }
         this.fetchData(payload);
     },
 
@@ -433,8 +481,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         var beginTime = g.getBeginTime().getTime();
 
         var diff = endTime - beginTime;
-        var multiDays = false;
-        var multiWeeks = false;
+
         var count = 1;
         if (interval == 30 * 10000) {
             count = 10;
@@ -450,10 +497,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             var t = Date.parse(item['time']).getTime();
             dict[t] = item[field];
         }
-
-        var d = new Date()
-        var value = null;
-        var start = false;
 
         var counter = 0;
         var gv = new AverageValue();
@@ -471,11 +514,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             gv.addValue(dict[i]);
         }
 
-        /*
-         for (var i in datas)
-         if (!isNaN(datas[i]))
-         console.log(datas[i])
-         */
         return {'data': datas};
     },
 
