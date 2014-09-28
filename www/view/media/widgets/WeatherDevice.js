@@ -37,11 +37,11 @@ $class("WeatherDevice", DeviceBase,
         var end = g.getEndTime().getTime();
 
         var fieldItem = this._domNode.find('select.chart-field');
-        console.log(fieldItem);
-        var title = fieldItem.find(":selected").text();
+        var sel = fieldItem.find(":selected");
+        var title = sel.text();
         var field = fieldItem.val();
-        var min = fieldItem.attr('min');
-        var max = fieldItem.attr('max');
+        var min = sel.attr('min');
+        var max = sel.attr('max');
 
         var interval =  this._chartInterval || 30 * 10000;
 

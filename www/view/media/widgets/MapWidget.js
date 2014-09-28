@@ -11,33 +11,36 @@ $class("BaiduMap", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
 
     showMap: function() {
-        var yy = 22.26859500;
-        var xx = 113.52092000;
-        var gpsPoint = new BMap.Point(xx, yy);
+
+        // 大气站
+        var y1 = 22.02178333;
+        var x1 = 113.21576333;
+        var gpsPoint1 = new BMap.Point(x1, y1);
+
+        // 水库
+        var y2 = 22.02178333;
+        var x2 = 113.21586533;
+        var gpsPoint2 = new BMap.Point(x2, y2);
 
         //地图初始化
-        var bm = new BMap.Map("allmap");
-        bm.centerAndZoom(gpsPoint, 15);
-        bm.addControl(new BMap.NavigationControl());
+        var map = new BMap.Map("allmap");
+        map.centerAndZoom(gpsPoint2, 14);
+        map.addControl(new BMap.NavigationControl());
 
-        //添加谷歌marker和label
-        var markergps = new BMap.Marker(gpsPoint);
-        bm.addOverlay(markergps); //添加GPS标注
-        var labelgps = new BMap.Label("我是GPS标注哦",{offset:new BMap.Size(0, -0)});
-        markergps.setLabel(labelgps); //添加GPS标注
+        this.addStation(map, gpsPoint1, "大气辐射环境自动监测站");
+        this.addStation(map, gpsPoint2, "竹银水库水质监测自动站");
+    },
 
-        //坐标转换完之后的回调函数
+    addStation: function(map, gpsPoint, text) {
+
         translateCallback = function (point){
             var marker = new BMap.Marker(point);
-            bm.addOverlay(marker);
-            var label = new BMap.Label("我是百度标注哦",{offset:new BMap.Size(0, -0)});
-            marker.setLabel(label); //添加百度label
-            bm.setCenter(point);
-            // alert(point.lng + "," + point.lat);
-        }
+            map.addOverlay(marker);
+            var label = new BMap.Label(text, {offset:new BMap.Size(20, -0)});
+            marker.setLabel(label);
+            //marker.setAnimation(BMAP_ANIMATION_BOUNCE);
+        };
 
-        setTimeout(function(){
-            BMap.Convertor.translate(gpsPoint, 0, translateCallback);     //真实经纬度转成百度坐标
-        }, 2000);
+        BMap.Convertor.translate(gpsPoint, 0, translateCallback);
     }
 });
