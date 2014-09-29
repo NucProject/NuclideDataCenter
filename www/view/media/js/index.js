@@ -782,7 +782,7 @@ var Index = function () {
                     position: 'top-left'
                 });
 
-                var unique_id = $.gritter.add({
+                /*var unique_id = $.gritter.add({
                     // (string | mandatory) the heading of the notification
                     title: 'Notification',
                     // (string | mandatory) the text inside the notification
@@ -795,7 +795,7 @@ var Index = function () {
                     time: '',
                     // (string | optional) the class name you want to apply to that specific message
                     class_name: 'my-sticky-class'
-                });
+                });*/
 
                 setTimeout(function () {
                     $.gritter.remove(unique_id, {
@@ -825,7 +825,7 @@ var Index = function () {
                     position: 'top-left'
                 });
 
-                var unique_id = $.gritter.add({
+                /*var unique_id = $.gritter.add({
                     // (string | mandatory) the heading of the notification
                     title: 'Inbox',
                     // (string | mandatory) the text inside the notification
@@ -838,7 +838,7 @@ var Index = function () {
                     time: '',
                     // (string | optional) the class name you want to apply to that specific message
                     class_name: 'my-sticky-class'
-                });
+                });*/
 
                 $.extend($.gritter.options, {
                     position: 'top-right'
