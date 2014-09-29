@@ -30,19 +30,50 @@ $class("BaiduMap", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         map.addControl(new BMap.NavigationControl());
 
         var this_ = this;
-        this.addStation(map, gpsPoint1, "大气辐射环境自动监测站");
-        setTimeout(function(){
-            this_.addStation(map, gpsPoint2, "竹银水库水质监测自动站");
-        }, 500);
+        this.addStation(map, gpsPoint1, "大气辐射环境自动监测站", function(){
+            this_.showStationRow(102);
+        });
+
+        this.addStation(map, gpsPoint2, "竹银水库水质监测自动站", function(){
+            this_.showStationRow(101);
+        });
+
     },
 
-    addStation: function(map, gpsPoint, text) {
+    showStationRow: function(stationId) {
+        $('#network-row').hide();
+        if (stationId == 101)
+        {
+            $('#station-102-row').hide();
+            $('#station-103-row').hide();
+            $('#station-101-row').show();
+        }
+        else if (stationId == 102)
+        {
+            $('#station-101-row').hide();
+            $('#station-103-row').hide();
+            $('#station-102-row').show();
+        }
+        else if (stationId == 103)
+        {
+            $('#station-102-row').hide();
+            $('#station-101-row').hide();
+            $('#station-103-row').show();
+        }
+        else
+        {
+            alert("Unknown station id => " + currentStationId);
+        }
+    },
+
+    addStation: function(map, gpsPoint, text, clickHandler) {
 
         translateCallback = function (point){
             map.centerAndZoom(point, 11);
             var marker = new BMap.Marker(point);
             map.addOverlay(marker);
             var label = new BMap.Label(text, {offset:new BMap.Size(20, -0)});
+            label.addEventListener("click", clickHandler);
             marker.setLabel(label);
             //marker.setAnimation(BMAP_ANIMATION_BOUNCE);
         };
