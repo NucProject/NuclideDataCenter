@@ -197,7 +197,7 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
             var r = eval("(" + data + ")");
             var latest = r['results']['status']
-            if (g.getUnixTime() - latest > 100)
+            if (g.getUnixTime() - latest > 60 * 30)
             {
                 self.updateRunState(false, "运行状态: 停止");
             }
