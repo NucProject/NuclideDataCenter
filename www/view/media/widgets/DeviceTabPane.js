@@ -128,6 +128,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
             var r = eval("(" + data + ")");
             var latest = r['results']['status']
+            console.log(111, latest);
             if (latest > this._lastestDataTime)
             {
                 bar.css('display', '');
@@ -244,7 +245,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                 var items = $r.results.items;
                 this_._items = items;
                 // Fetch today data and has data.
-                if (items.length > 0 && this_.today)
+                console.log(items.length, this_._today);
+                if (items.length > 0 && this_._today)
                 {
                     this_._lastestDataTime = g.getUnixTime();
                 }
