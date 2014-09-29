@@ -49,7 +49,7 @@ $class("Charts", null, {
             chart: {
                 marginBottom: 80,
                 reflow: true,
-                marginLeft: 50,
+                marginLeft: 70,
                 marginRight: 20,
                 turboThreshold: 2000
             },
@@ -69,9 +69,9 @@ $class("Charts", null, {
                 title: {
                     text: p.ytitle
                 },
-                maxZoom: 0.1,
-                max: p.max,
-                min: p.min
+                //maxZoom: 0.1,
+                //max: p.max,
+                //min: p.min
             },
             tooltip: {
                 formatter: function() {
@@ -80,7 +80,10 @@ $class("Charts", null, {
                     /*return '<b>'+ point.series.name +'</b><br/>'+
                         Highcharts.dateFormat('%A %B %e %Y', this.x) + ':<br/>'+
                         '1 USD = '+ Highcharts.numberFormat(point.y, 2) +' EUR';*/
-                    return '<b>' + point.series.name;
+                    //return '<b>' + point.series.name;
+                    return '<b>' + Highcharts.numberFormat(point.y, 2) + '</b><br/>' + 
+                        Highcharts.dateFormat('[%Y-%m-%d %H:%M:%S]', this.x); 
+
                 },
                 shared: true
             },
@@ -204,8 +207,8 @@ $class("Charts", null, {
                 title: {
                     text: null
                 },
-                max: p.max,
-                min: p.min,
+                //max: p.max,
+                //min: p.min,
                 showFirstLabel: true
             },
             tooltip: {
