@@ -104,6 +104,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     initRefreshBar: function(domNode) {
         var this_ = this;
         var bar = domNode.find('div.refresh-bar');
+
         bar.delegate('a', 'click', function(){
             this_.onShow();
             bar.fadeOut();

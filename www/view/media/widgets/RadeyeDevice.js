@@ -7,7 +7,7 @@
 $class("RadeyeSummaryDevice", DeviceSummaryBase,
 {
     __constructor: function() {
-
+        this._stationId = 103;
     },
 
     onAttach: function(domNode) {
