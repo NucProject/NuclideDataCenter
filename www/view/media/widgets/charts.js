@@ -121,7 +121,8 @@ $class("Charts", null, {
     // create the master chart
     createMaster: function(domNode, p)
     {
-        console.log(this.chartsData);
+
+        console.log(p);
         var this_ = this;
         var selector = 'div.charts-bar';
         this.masterChart = domNode.find(selector).highcharts({
