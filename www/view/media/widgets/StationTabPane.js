@@ -29,7 +29,6 @@ $class("StationTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         listDomNode.appendTo(domNode.find("div.conn-alert-list"));
 
         this._connList.setHeaders([
-            {'key':'id', 'name': 'ID'},
             {'key':'begintime', 'name':'(断线)开始时间'},
             {'key':'endtime', 'name':'(断线)结束时间'}
         ]);

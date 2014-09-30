@@ -190,14 +190,14 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
 
     getLatestData: function() {
-        var station = g.getCurrentStationId();
+        var station = this._stationId;
         var url = "data/latest/" + station + "/" + this._deviceType;
         var self = this;
         this.ajax(url, null, function(data) {
 
             var r = eval("(" + data + ")");
             var latest = r['results']['status']
-            if (g.getUnixTime() - latest > 100)
+            if (g.getUnixTime() - latest > 60 * 30)
             {
                 self.updateRunState(false, "运行状态: 停止");
             }
@@ -333,7 +333,7 @@ DeviceSummaryBase.showDevice = function(deviceType, params)
 $class("HpicSummaryDevice", DeviceSummaryBase,
 {
     __constructor: function() {
-
+        this._stationId = 102;
     },
 
     onAttach: function(domNode) {
@@ -372,7 +372,7 @@ $class("HpicSummaryDevice", DeviceSummaryBase,
 $class("WeatherSummaryDevice", DeviceSummaryBase,
 {
     __constructor: function() {
-
+        this._stationId = 102;
     },
 
     onAttach: function(domNode) {
@@ -390,120 +390,6 @@ $class("WeatherSummaryDevice", DeviceSummaryBase,
          });
          return false;
          */
-    },
-
-});
-
-
-$class("LabrSummaryDevice", DeviceSummaryBase,
-{
-    __constructor: function() {
-
-    },
-
-    onAttach: function(domNode) {
-        this._deviceType = "labr";
-        this.onAttached(domNode);
-    },
-
-    getLatestData: function() {
-        var station = g.getCurrentStationId();
-        var url = "data/latest/" + station + "/" + this._deviceType;
-        var self = this;
-
-        this.ajax(url, null, function(data) {
-
-            console.log(data)
-            var r = eval("(" + data + ")");
-            var latest = r['results']['status']
-            if (g.getUnixTime() - latest > 610)
-            {
-                self.updateRunState(false, "运行状态: 停止");
-            }
-            else
-            {
-                self.updateRunState(true, "运行状态: 运行");
-            }
-        });
-    },
-});
-
-$class("CinderellaSummaryDevice", DeviceSummaryBase,
-{
-    __constructor: function() {
-
-    },
-
-    onAttach: function(domNode) {
-        // Fix BUG for Cinderella running status shown.
-        this._deviceType = "cinderella";
-        this.onAttached(domNode);
-    },
-
-    getLatestData: function() {
-        var station = g.getCurrentStationId();
-        var url = "data/latest/" + station + "/cinderelladata";
-        var self = this;
-        this.ajax(url, null, function(data) {
-
-            var r = eval("(" + data + ")");
-            var latest = r['results']['status']
-            if (g.getUnixTime() - latest > 100)
-            {
-                self.updateRunState(false, "运行状态: 停止");
-            }
-            else
-            {
-                self.updateRunState(true, "运行状态: 运行");
-            }
-        });
-    },
-
-});
-
-$class("EnvSummaryDevice", DeviceSummaryBase,
-{
-    __constructor: function() {
-
-    },
-
-    onAttach: function(domNode) {
-        this._deviceType = "environment";
-        this.onAttached(domNode);
     }
-
-});
-
-$class("HpGeSummaryDevice", DeviceSummaryBase,
-{
-    __constructor: function() {
-
-    },
-
-    onAttach: function(domNode) {
-        this._deviceType = "hpge";
-        this.onAttached(domNode);
-    },
-
-    getLatestData: function() {
-        var station = g.getCurrentStationId();
-        var url = "data/latest/" + station + "/" + this._deviceType;
-        var self = this;
-
-        this.ajax(url, null, function(data) {
-
-            var r = eval("(" + data + ")");
-            var latest = r['results']['status']
-            if (!latest)
-            {
-                self.updateRunState(false, "当前SID: <未知>");
-            }
-            else
-            {
-                self.updateRunState(true, "当前SID: " + latest);
-            }
-        });
-    },
-
 
 });

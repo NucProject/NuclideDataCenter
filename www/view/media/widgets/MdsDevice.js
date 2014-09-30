@@ -42,6 +42,7 @@ $class("MdsDevice", DeviceBase,
     __constructor: function() {
         this._deviceType = "mds";
         this._noAlertData = true;
+        this._stationId = 103;
     },
 
     onAttach: function(domNode) {

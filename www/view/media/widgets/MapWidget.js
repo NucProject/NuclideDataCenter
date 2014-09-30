@@ -64,7 +64,7 @@ $class("BaiduMap", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         }
         else
         {
-            alert("Unknown station id => " + currentStationId);
+            alert("Unknown station id => " + stationId);
         }
     },
 

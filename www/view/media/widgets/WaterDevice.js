@@ -7,7 +7,7 @@
 $class("WaterSummaryDevice", DeviceSummaryBase,
 {
     __constructor: function() {
-
+        this._stationId = 101;
     },
 
     onAttach: function(domNode) {
