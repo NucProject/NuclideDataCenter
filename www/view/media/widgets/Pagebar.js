@@ -16,12 +16,12 @@ $class("Pagebar", [kx.Weblet, kx.EventMixin],
         var pt = '<li><a style="padding: 0px"><input type="text" placeholder="输入页码" style="width: 60px; margin-bottom: 0px"></a></li>'
         t.removeClass('template');
         var hasPageTextBox = false;
-        var left = 2;
+        var left = 8;
         for (var i = 2; i <= this._pageCount; i += 1) {
             var n = t.clone();
             n.attr('data-lp', i).find('a').text(i);
 
-            if (this._pageCount > 10 && i > left &&  i < this._pageCount - left + 1)
+            if (this._pageCount > 20 && i > left &&  i < this._pageCount - left + 1)
             {
                 if (!hasPageTextBox)
                 {
