@@ -22,7 +22,7 @@ $class("BaiduMap", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         var x2 = 113.28155000;
         var gpsPoint2 = new BMap.Point(x2, y2);
 
-        var gpsCenter = new BMap.Point(113.21576333, 22.02178333);
+        var gpsCenter = new BMap.Point(112.76, 22.5);
 
         //地图初始化
         var map = new BMap.Map("allmap");
@@ -37,6 +37,8 @@ $class("BaiduMap", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         this.addStation(map, gpsPoint2, "竹银水库水质监测自动站", function(){
             this_.showStationRow(101);
         });
+
+        map.centerAndZoom(gpsCenter, 11);
 
     },
 
@@ -69,12 +71,14 @@ $class("BaiduMap", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     addStation: function(map, gpsPoint, text, clickHandler) {
 
         translateCallback = function (point){
-            map.centerAndZoom(point, 11);
             var marker = new BMap.Marker(point);
             map.addOverlay(marker);
-            var label = new BMap.Label(text, {offset:new BMap.Size(20, -0)});
+            var label = new BMap.Label(text, {offset:new BMap.Size(20, -0)});            
             label.addEventListener("click", clickHandler);
             marker.setLabel(label);
+            /*var infowindow = new BMap.InfoWindow(text, {width:20,height:10, title:"自动站"})
+            map.openInfoWindow(infowindow,point);
+            infowindow.addEventListener("click", clickHandler);*/
             //marker.setAnimation(BMAP_ANIMATION_BOUNCE);
         };
 
