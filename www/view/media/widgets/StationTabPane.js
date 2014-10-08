@@ -88,6 +88,12 @@ $class("StationTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             var item = items[i];
               if (item['begintime'] != item['endtime'])
                   this._connList.addValue(item, params);
+              else
+              {
+                item['endtime'] = "现在"；
+                this._connList.addValue(item, params);
+              }
+
 
         }
         return;
