@@ -90,6 +90,7 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         var this_ = this;
         // TODO: modify here, if over 1sec.
         //
+        this_._domNode.find('div.calendar').fullCalendar('removeEventSource', { events: rates });
         setTimeout(function(){
             this_._domNode.find('div.calendar').fullCalendar('addEventSource', { events: rates });
         }, 2000);

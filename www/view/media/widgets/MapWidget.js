@@ -34,7 +34,7 @@ $class("BaiduMap", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             this_.showStationRow(102);
         });
 
-        this.addStation(map, gpsPoint2, "竹银水库水质监测自动站", function(){
+        this.addStation(map, gpsPoint2, "竹银水库水质自动监测站", function(){
             this_.showStationRow(101);
         });
 
