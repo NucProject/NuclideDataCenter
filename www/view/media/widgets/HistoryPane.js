@@ -90,7 +90,7 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         var this_ = this;
         // TODO: modify here, if over 1sec.
         //
-        this_._domNode.find('div.calendar').fullCalendar('removeEventSource', { events: rates });
+        this._domNode.find('div.calendar').fullCalendar('removeEvents');
         setTimeout(function(){
             this_._domNode.find('div.calendar').fullCalendar('addEventSource', { events: rates });
         }, 2000);
@@ -121,6 +121,7 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
     },
 
     onClickHistoryButton: function() {
+
         if (!this.selectDate) {
             g.showTip('请选择要获取历史数据的日期');
             return false;
