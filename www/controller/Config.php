@@ -31,7 +31,7 @@ class Config
             '0901040103' => 'Pressure',
             '0901040106' => 'Windspeed',
             '0901040105' => 'Direction',
-            '0901040104' => 'Raingauge',
+            '0901040104' => 'Rainspeed',
             '0901040107' => 'IfRain',
             'time' => 'time'
             ),
@@ -129,7 +129,7 @@ class Config
            'Pressure' => array('rule' => 0, 'level' => 2),
            'Windspeed' => array('rule' => 0, 'level' => 2),
            'Direction' => array('rule' => 0, 'level' => 2),
-           'Raingauge' => array('rule' => 0, 'level' => 2),
+           'Rainspeed' => array('rule' => 0, 'level' => 2),
            'IfRain' => array('rule' => 1, 'level' => 1)
         ),
 

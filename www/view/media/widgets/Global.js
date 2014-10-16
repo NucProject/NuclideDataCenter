@@ -108,7 +108,6 @@ $class("GroupValue", null, {
                 } else {
                     r[k] = parseFloat(v[k])
                 }
-
             }
         }
 
