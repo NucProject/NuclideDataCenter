@@ -4,8 +4,6 @@
 class ApiController extends \Phalcon\Mvc\Controller
 {
 
-
-
     protected $debug = false;
 
     private $beginTime;

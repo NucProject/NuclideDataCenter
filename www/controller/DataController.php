@@ -36,10 +36,11 @@ class DataController extends ApiController
             {
                 if ($device == 'cinderelladata')
                 {
-                    $sid = Cache::getLatest($this->redis, $station, 'cinderelladata');
+                    $sid = Cache::getCurrentSid($this->redis, $station);
                     if ($sid != $data->Sid)
                     {
                         self::summaryCinderellaData($station, $sid);
+                        Cache::setCurrentSid($this->redis, $station, $data->Sid);
                     }
                 }
 
