@@ -26,6 +26,7 @@ $class("Charts", null, {
         this.createMaster(domNode, p);
     },
 
+    // ZM：曲线中上面的部分
     createDetail: function(domNode, p, masterChart) {
 
         if (p.filter)
@@ -118,6 +119,7 @@ $class("Charts", null, {
 
     },
 
+    // ZM：曲线中下面的部分，可以选择区域的
     // create the master chart
     createMaster: function(domNode, p)
     {

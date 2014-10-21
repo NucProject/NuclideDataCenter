@@ -17,6 +17,9 @@ $class("DeviceTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
 //////////////////////////////////////////////////////////////////////////
 // Devices Base
+// ZM: 所以有一个DeviceBase：就是因为所有设备的很多代码写出来是雷同的，不写个基类，那么重复代码太多了。
+// 因为它们的很多行为是一样的，所以可以抽象出来一个基类。
+// 比如说，它们都有列表，（基本）都有曲线，等等。处理数据基本是一致的，只有具体的差别。
 $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 {
     _dataListView: null,
@@ -38,7 +41,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
     onAttach: function(domNode) {
         var dataPane = domNode.find("div.data-pane")
-
+        // ZM： 每个设备都有List显示数据吧?
         this._dataListView = new ListView();
         var dataListViewDomNode = this._dataListView.create();
         dataListViewDomNode.appendTo(dataPane);
@@ -59,11 +62,15 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
         ]);
 
+        // 每个设备都能响应时间变化而改变数据内容呈现吧？
         $('body').bind('transfer-selected-time', function(event, startTime, endTime) {
             this_.dateRangeChanged && this_.dateRangeChanged(startTime, endTime);
         });
 
         var self = this;
+        // ZM: 在设备派生类里面,如果_noAlertData不是true，那么在基类里面就能初始化报警的代码。
+        // 注意_noAlertData是放到派生类里面。只有设备才知道哪些设备要报警，哪些不需要。
+        // 但是统一都在基类一份代码干了。大不了不做。
         if (!this._noAlertData)
         {
             this.ajax("alert/config/" + this._deviceType, null, function(data){

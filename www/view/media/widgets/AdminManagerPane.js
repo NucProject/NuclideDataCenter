@@ -1,6 +1,8 @@
 /**
  * Created by zhuomuniao1 on 14-6-5.
  */
+// ZM: classes支持多继承, AdminManagerPane is-a Widget, 同时也支持kx.ActionMixin和kx.EventMixin的功能
+// 其中，ActionMixin是表示这个类支持Ajax, EventMixin 表示支持事件通知， 那么派生类从基类集成了这些功能了。
 
 $class("AdminManagerPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 {
@@ -13,7 +15,9 @@ $class("AdminManagerPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     onAttach: function(domNode) {
 
         domNode.find("a.add-admin").click(kx.bind(this, "addAdmin"));
-
+        // ZM：注意一个List对象的创建过程
+        // 1， Create先，再把它的domNode append 到已有的HTML结点上。
+        // 2. setHeaders, (这样是为后面的数据指明了哪些字段要显示)
         this._userListView = new ListView();
         var userListViewDomNode = this._userListView.create();
         userListViewDomNode.appendTo(domNode.find('div.users'));

@@ -21,6 +21,7 @@ $class("Pagebar", [kx.Weblet, kx.EventMixin],
             var n = t.clone();
             n.attr('data-lp', i).find('a').text(i);
 
+            // ZM：页面太多的时候，中间的部分就显示为input box
             if (this._pageCount > 20 && i > left &&  i < this._pageCount - left + 1)
             {
                 if (!hasPageTextBox)
