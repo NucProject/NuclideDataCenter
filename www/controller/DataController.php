@@ -13,6 +13,7 @@ class DataController extends ApiController
         $this->view->disable();
     }
 
+    // ZM:客户端上传数据的入口
     public function commitAction()
     {
         if (!$this->request->isPost())
@@ -34,6 +35,7 @@ class DataController extends ApiController
             echo json_encode($data);
             if ($data->save() !== false)
             {
+                // ZM:MDS设备每到Sid变化了，就对之前的N个一组数据进行Summary汇总（统计数据的由来）
                 if ($device == 'mds')
                 {
                     $sid = Cache::getLatest($this->redis, $station, 'mds');
@@ -47,6 +49,7 @@ class DataController extends ApiController
                 {
                     if ($device == 'mds')
                     {
+                        // ZM:MDS存Sid，而不是时间戳
                         Cache::updateLatestStat($this->redis, $station, $device, $data->sid);
                     }
                     else
@@ -69,6 +72,7 @@ class DataController extends ApiController
 
     }
 
+    // ZM：对于上传文件的设备来说，文件从这里上传(珠海没有，北京的才有)
     public function uploadAction($station, $fileType, $folder, $folder2)
     {
         if (!$this->request->isPost())
@@ -188,6 +192,7 @@ class DataController extends ApiController
         return parent::result(array("items" => $items));
     }
 
+    // ZM: 界面取最新时间，看设备是否还在上传（设备运行，停止的依据）
     public function latestAction($station, $device)
     {
         $status = Cache::getLatest($this->redis, $station, $device);
@@ -257,6 +262,7 @@ class DataController extends ApiController
         return parent::result(array('count' => $count));
     }
 
+    // ZM:历史数据统计
     public function checkAction($station, $device)
     {
         if (!$this->request->isPost())

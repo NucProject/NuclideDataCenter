@@ -1,10 +1,8 @@
 
 <?php
-
+// ZM:所有的Controller的基类
 class ApiController extends \Phalcon\Mvc\Controller
 {
-
-
 
     protected $debug = false;
 
@@ -117,6 +115,7 @@ class ApiController extends \Phalcon\Mvc\Controller
         }
 	}
 
+    // Test method
     public function testN42Action()
     {
 
@@ -129,6 +128,7 @@ class ApiController extends \Phalcon\Mvc\Controller
         echo json_encode($data);
     }
 
+    // ZM:解析Xml数据为PHP data
     public static function getN42Data($xml)
     {
         $namespaces = $xml->getNameSpaces(true);
@@ -235,13 +235,6 @@ class ApiController extends \Phalcon\Mvc\Controller
 
     public function testAction()
     {
-        $u= new User();
-        $u->user_id = 3;
-        $u->username = "222";
-        $u->password = ":";
-        $u->role =4;
-        echo $u->save();
-
     }
 
     public function exitScript()
