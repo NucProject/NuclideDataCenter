@@ -240,6 +240,13 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         if (this._currentShownDevice != this._deviceType)
             return;
 
+        // ZM: BigData:
+        // 这里这么处理，如果开始和结束时间差距小，维持以前的处理，把payload['interval'] 设为 30
+        // 否则就设为3600先，这样得到的每小时的平均值，数据一下子少了120倍。
+        // 但是在JS这段要做很多处理，把界面选择5分，30秒那些按钮去掉。
+        // 把曲线的interval也响应的设为3600，曲线也能正确显示了。
+        // payload['interval'] = 3600;
+
         var this_ = this;
         var currentStationId = g.getCurrentStationId();
 
@@ -249,7 +256,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
             this.ajax(api, payload, function(data){
                 var $r = eval("(" + data + ")");
-
+                console.log($r);
                 var items = $r.results.items;
                 this_._items = items;
                 // Fetch today data and has data.

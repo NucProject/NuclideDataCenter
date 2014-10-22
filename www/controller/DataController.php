@@ -130,11 +130,31 @@ class DataController extends ApiController
             $payload = $this->request->getPost();
             $start = $payload['start'];
             $end = $payload['end'];
+            $interval = $payload['interval'];
         }
         else
         {
             $start = $this->request->getQuery('start');
             $end = $this->request->getQuery('end');
+            $interval = $this->request->getQuery('interval');
+        }
+
+        $interval = isset($interval) ? $interval : 30;
+
+        // ZM: BigData: 当interval不是30的时候的一种补充, 走最新的SQL（区分设备）
+        if ($interval != 30)
+        {
+            if ($device == 'bai9850')
+            {
+                $items = $this->fetchBai9850Data($station, $start, $end, $interval);
+            }
+            else if ($device == 'weather')
+            {
+                $items = $this->fetchWeatherData($station, $start, $end, $interval);
+            }
+            // TODO: 补齐其他的设备的fetch***data
+
+            return parent::result(array("items" => $items));
         }
 
         $condition = "station=$station";
@@ -156,6 +176,48 @@ class DataController extends ApiController
         }
 
         return parent::result(array("items" => $items));
+    }
+
+    // TODO: 补齐数据项
+    private function fetchBai9850Data($station, $start, $end, $interval)
+    {
+        $phql = <<<PHQL
+select avg(d.alphaactivity) as alphaactivity, FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
+from bai9850 as d
+where d.station=$station and d.time>'$start' and d.time<'$end' group by time
+PHQL;
+
+        $data = $this->modelsManager->executeQuery($phql);
+        $items = array();
+        foreach ($data as $item)
+        {
+            array_push($items, $item);
+        }
+        return $items;
+    }
+
+    private function fetchWeatherData($station, $start, $end, $interval)
+    {
+        $phql = <<<PHQL
+select
+avg(d.Temperature) as Temperature,
+avg(d.Humidity) as Humidity,
+avg(d.Pressure) as Pressure,
+avg(d.Windspeed) as Windspeed,
+avg(d.Raingauge) as Raingauge,
+avg(d.Direction) as Direction,
+FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
+from weather as d
+where d.station=$station and d.time>'$start' and d.time<'$end' group by time
+PHQL;
+
+        $data = $this->modelsManager->executeQuery($phql);
+        $items = array();
+        foreach ($data as $item)
+        {
+            array_push($items, $item);
+        }
+        return $items;
     }
 
     public function fetchHpgeAction($station)
