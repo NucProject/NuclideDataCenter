@@ -13,6 +13,7 @@ class DataController extends ApiController
         $this->view->disable();
     }
 
+    // ZM:客户端上传数据的入口
     public function commitAction()
     {
         if (!$this->request->isPost())
@@ -34,6 +35,7 @@ class DataController extends ApiController
             echo json_encode($data);
             if ($data->save() !== false)
             {
+                // ZM:MDS设备每到Sid变化了，就对之前的N个一组数据进行Summary汇总（统计数据的由来）
                 if ($device == 'mds')
                 {
                     $sid = Cache::getLatest($this->redis, $station, 'mds');
@@ -47,6 +49,7 @@ class DataController extends ApiController
                 {
                     if ($device == 'mds')
                     {
+                        // ZM:MDS存Sid，而不是时间戳
                         Cache::updateLatestStat($this->redis, $station, $device, $data->sid);
                     }
                     else
@@ -69,6 +72,7 @@ class DataController extends ApiController
 
     }
 
+    // ZM：对于上传文件的设备来说，文件从这里上传(珠海没有，北京的才有)
     public function uploadAction($station, $fileType, $folder, $folder2)
     {
         if (!$this->request->isPost())
@@ -126,11 +130,31 @@ class DataController extends ApiController
             $payload = $this->request->getPost();
             $start = $payload['start'];
             $end = $payload['end'];
+            $interval = $payload['interval'];
         }
         else
         {
             $start = $this->request->getQuery('start');
             $end = $this->request->getQuery('end');
+            $interval = $this->request->getQuery('interval');
+        }
+
+        $interval = isset($interval) ? $interval : 30;
+
+        // ZM: BigData: 当interval不是30的时候的一种补充, 走最新的SQL（区分设备）
+        if ($interval != 30)
+        {
+            if ($device == 'bai9850')
+            {
+                $items = $this->fetchBai9850Data($station, $start, $end, $interval);
+            }
+            else if ($device == 'weather')
+            {
+                $items = $this->fetchWeatherData($station, $start, $end, $interval);
+            }
+            // TODO: 补齐其他的设备的fetch***data
+
+            return parent::result(array("items" => $items));
         }
 
         $condition = "station=$station";
@@ -152,6 +176,48 @@ class DataController extends ApiController
         }
 
         return parent::result(array("items" => $items));
+    }
+
+    // TODO: 补齐数据项
+    private function fetchBai9850Data($station, $start, $end, $interval)
+    {
+        $phql = <<<PHQL
+select avg(d.alphaactivity) as alphaactivity, FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
+from bai9850 as d
+where d.station=$station and d.time>'$start' and d.time<'$end' group by time
+PHQL;
+
+        $data = $this->modelsManager->executeQuery($phql);
+        $items = array();
+        foreach ($data as $item)
+        {
+            array_push($items, $item);
+        }
+        return $items;
+    }
+
+    private function fetchWeatherData($station, $start, $end, $interval)
+    {
+        $phql = <<<PHQL
+select
+avg(d.Temperature) as Temperature,
+avg(d.Humidity) as Humidity,
+avg(d.Pressure) as Pressure,
+avg(d.Windspeed) as Windspeed,
+avg(d.Raingauge) as Raingauge,
+avg(d.Direction) as Direction,
+FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
+from weather as d
+where d.station=$station and d.time>'$start' and d.time<'$end' group by time
+PHQL;
+
+        $data = $this->modelsManager->executeQuery($phql);
+        $items = array();
+        foreach ($data as $item)
+        {
+            array_push($items, $item);
+        }
+        return $items;
     }
 
     public function fetchHpgeAction($station)
@@ -188,6 +254,7 @@ class DataController extends ApiController
         return parent::result(array("items" => $items));
     }
 
+    // ZM: 界面取最新时间，看设备是否还在上传（设备运行，停止的依据）
     public function latestAction($station, $device)
     {
         $status = Cache::getLatest($this->redis, $station, $device);
@@ -257,6 +324,7 @@ class DataController extends ApiController
         return parent::result(array('count' => $count));
     }
 
+    // ZM:历史数据统计
     public function checkAction($station, $device)
     {
         if (!$this->request->isPost())
