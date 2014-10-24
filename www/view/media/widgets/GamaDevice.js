@@ -56,11 +56,11 @@ $class("GamaDevice", DeviceBase,
          */
         this._dataListView.setHeaders([
             {'key':'time', 'name':'时间'},
-            {'key':'gammalong', 'name':'γ比活度(Bq/m^3)'},
-            {'key':'gammacps', 'name':'γ计数率(CPS)'},
-            {'key':'emissionlong', 'name':'γ发射率(Bq/m^3/h)'},
-            {'key':'emissioncps', 'name':'γ发射率(CPS)'},
-            {'key':'betacps', 'name':'β计数率(CPS)'}]);
+            {'key':'gammalong', 'name':'γ活度(Bq/m^3)'},
+            {'key':'gammacps', 'name':'γ活度(cps)'},
+            {'key':'emissionlong', 'name':'γ活度发射率'},
+            {'key':'emissioncps', 'name':'emissioncpsγ'},
+            {'key':'betacps', 'name':'betacps'}]);
     },
 
     fillListDefault: function(page) {
