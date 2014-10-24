@@ -253,7 +253,7 @@ avg(d.emissionlong) as emissionlong,
 avg(d.emissioncps) as emissioncps,
 avg(d.betacps) as betacps,
 FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
-from bai125 as d
+from bai9125 as d
 where d.station=$station and d.time>'$start' and d.time<'$end' group by time
 PHQL;
 
