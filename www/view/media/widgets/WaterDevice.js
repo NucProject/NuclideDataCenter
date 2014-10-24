@@ -56,11 +56,11 @@ $class("WaterDevice", DeviceBase,
         */
         this._dataListView.setHeaders([
             {'key':'time', 'name':'时间'},
-            {'key':'gammalong', 'name':'γ活度(Bq/m^3)'},
-            {'key':'gammacps', 'name':'γ活度(cps)'},
-            {'key':'emissionlong', 'name':'γ发射率(Bq/m^3)'},
+            {'key':'gammalong', 'name':'γ比活度(Bq/m^3)'},
+            {'key':'gammacps', 'name':'γ计数率(CPS)'},
+            {'key':'emissionlong', 'name':'γ发射率(Bq/m^3/h)'},
             {'key':'emissioncps', 'name':'γ发射率(cps)'},
-            {'key':'betacps', 'name':'β活度(cps)'}]);
+            {'key':'betacps', 'name':'β计数率(CPS)'}]);
     },
 
     fillListDefault: function(page) {
