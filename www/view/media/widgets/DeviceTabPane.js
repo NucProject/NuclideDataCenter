@@ -247,6 +247,13 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         // 把曲线的interval也响应的设为3600，曲线也能正确显示了。
         // payload['interval'] = 3600;
 
+        //三天
+        if(payload['end'] - payload['start'] < 259200){
+            payload['interval'] = 30;
+        }
+        else{
+            payload['interval'] = 3600;
+        }
         var this_ = this;
         var currentStationId = g.getCurrentStationId();
 
