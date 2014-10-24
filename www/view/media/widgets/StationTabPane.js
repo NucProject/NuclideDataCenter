@@ -90,7 +90,7 @@ $class("StationTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                   this._connList.addValue(item, params);
               else
               {
-                item['endtime'] = "现在";
+                item['endtime'] = "断线中";
                 this._connList.addValue(item, params);
               }
 

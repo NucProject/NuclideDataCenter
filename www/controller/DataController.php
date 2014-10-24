@@ -152,7 +152,22 @@ class DataController extends ApiController
             {
                 $items = $this->fetchWeatherData($station, $start, $end, $interval);
             }
-            // TODO: 补齐其他的设备的fetch***data
+            else if ($device == 'bai9125')
+            {
+                $items = $this->fetchBai9125Data($station, $start, $end, $interval);
+            }
+            else if ($device == 'mds')
+            {
+                $items = $this->fetchMdsData($station, $start, $end, $interval);
+            }
+            else if ($device == 'radeye')
+            {
+                $items = $this->fetchRadeyeData($station, $start, $end, $interval);
+            }
+            else if ($device == 'hpic')
+            {
+                $items = $this->fetchHpicData($station, $start, $end, $interval);
+            }
 
             return parent::result(array("items" => $items));
         }
@@ -182,7 +197,15 @@ class DataController extends ApiController
     private function fetchBai9850Data($station, $start, $end, $interval)
     {
         $phql = <<<PHQL
-select avg(d.alphaactivity) as alphaactivity, FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
+select
+avg(d.alphaactivity) as alphaactivity,
+avg(d.alpha) as alpha,
+avg(d.betaactivity) as betaactivity,
+avg(d.beta) as beta,
+avg(d.i131activity) as i131activity,
+avg(d.i131) as i131,
+avg(d.doserate) as doserate,
+FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
 from bai9850 as d
 where d.station=$station and d.time>'$start' and d.time<'$end' group by time
 PHQL;
@@ -208,6 +231,90 @@ avg(d.Raingauge) as Raingauge,
 avg(d.Direction) as Direction,
 FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
 from weather as d
+where d.station=$station and d.time>'$start' and d.time<'$end' group by time
+PHQL;
+
+        $data = $this->modelsManager->executeQuery($phql);
+        $items = array();
+        foreach ($data as $item)
+        {
+            array_push($items, $item);
+        }
+        return $items;
+    }
+
+    private function fetchBai9125Data($station, $start, $end, $interval)
+    {
+        $phql = <<<PHQL
+select
+avg(d.gammalong) as gammalong,
+avg(d.gammacps) as gammacps,
+avg(d.emissionlong) as emissionlong,
+avg(d.emissioncps) as emissioncps,
+avg(d.betacps) as betacps,
+FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
+from bai125 as d
+where d.station=$station and d.time>'$start' and d.time<'$end' group by time
+PHQL;
+
+        $data = $this->modelsManager->executeQuery($phql);
+        $items = array();
+        foreach ($data as $item)
+        {
+            array_push($items, $item);
+        }
+        return $items;
+    }
+
+    private function fetchMdsData($station, $start, $end, $interval)
+    {
+        $phql = <<<PHQL
+select
+avg(d.doserate) as doserate,
+avg(d.doserateex) as doserateex,
+FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
+from mds as d
+where d.station=$station and d.time>'$start' and d.time<'$end' group by time
+PHQL;
+
+        $data = $this->modelsManager->executeQuery($phql);
+        $items = array();
+        foreach ($data as $item)
+        {
+            array_push($items, $item);
+        }
+        return $items;
+    }
+
+    private function fetchRadeyeData($station, $start, $end, $interval)
+    {
+        $phql = <<<PHQL
+select
+avg(d.doserate) as doserate,
+FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
+from radeye as d
+where d.station=$station and d.time>'$start' and d.time<'$end' group by time
+PHQL;
+
+        $data = $this->modelsManager->executeQuery($phql);
+        $items = array();
+        foreach ($data as $item)
+        {
+            array_push($items, $item);
+        }
+        return $items;
+    }
+
+    private function fetchHpicData($station, $start, $end, $interval)
+    {
+        $phql = <<<PHQL
+select
+avg(d.doserate) as doserate,
+avg(d.battery) as battery,
+avg(d.highvoltage) as highvoltage,
+avg(d.temperature) as temperature,
+FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
+from hpic as d
 where d.station=$station and d.time>'$start' and d.time<'$end' group by time
 PHQL;
 
