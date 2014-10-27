@@ -248,7 +248,11 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         // payload['interval'] = 3600;
 
         //三天
-        if(payload['end'] - payload['start'] < 259200){
+        var beginTime = new Date(payload['start'].replace(/-/g,"\/"));
+        var endTime = new Date(payload['end'].replace(/-/g,"\/"));
+        console.log("相差时间" + (endTime - beginTime));
+        if(endTime - beginTime <= 4*24*60*60*1000){
+            console.log("少于三天");
             payload['interval'] = 30;
         }
         else{
