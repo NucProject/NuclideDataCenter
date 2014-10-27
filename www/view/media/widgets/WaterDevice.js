@@ -68,8 +68,7 @@ $class("WaterDevice", DeviceBase,
     },
 
     showChartsTab: function() {
-        console.log(111)
-        this._chartInterval = 30 * 10000;
+
         this.updateCharts();
     },
 

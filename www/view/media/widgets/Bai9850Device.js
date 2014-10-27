@@ -70,7 +70,7 @@ $class("Bai9850Device", DeviceBase,
         },
 
         showChartsTab: function() {
-            this._chartInterval = 30 * 10000;
+            // this._chartInterval = 30 * 10000;
             this.updateCharts();
         },
 

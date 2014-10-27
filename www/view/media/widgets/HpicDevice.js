@@ -21,7 +21,8 @@ $class("HpicDevice", DeviceBase,
 
     showChartsTab: function() {
         var this_ = this;
-        this._chartInterval = 30 * 10000;
+
+        // this._chartInterval = 30 * 10000;
         setTimeout(function(){
             this_.updateCharts();
         }, 0);
@@ -32,7 +33,7 @@ $class("HpicDevice", DeviceBase,
         var start = g.getBeginTime().getTime();
         var end = g.getEndTime().getTime();
 
-        var interval =  this._chartInterval || 30 * 10000;
+        var interval =  this._chartInterval;    // || 30 * 10000;
         this.showCharts(this._domNode,
             {
                 selector: "div.charts",
@@ -49,7 +50,7 @@ $class("HpicDevice", DeviceBase,
 
     filter: function(data) {
         var currentField = 'doserate';
-        return this.chartFilterData(data, currentField, this._chartInterval);
+        return this.chartFilterData(data, currentField, this._chartInterval, this._step);
     },
 
     onTabChanged: function() {

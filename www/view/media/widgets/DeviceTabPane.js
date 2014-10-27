@@ -251,12 +251,16 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         var beginTime = new Date(payload['start'].replace(/-/g,"\/"));
         var endTime = new Date(payload['end'].replace(/-/g,"\/"));
         console.log("相差时间" + (endTime - beginTime));
-        if(endTime - beginTime <= 4*24*60*60*1000){
+        if(endTime - beginTime <= 4 * 24 * 3600 * 1000){
             console.log("少于三天");
             payload['interval'] = 30;
+            this._step = 30 * 1000;
+            this._chartInterval = 30 * 1000;
         }
         else{
             payload['interval'] = 3600;
+            this._step = 3600 * 1000;
+            this._chartInterval = 3600 * 1000;
         }
         var this_ = this;
         var currentStationId = g.getCurrentStationId();
@@ -281,6 +285,21 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                 this_.renderData();
 
             });
+        }
+    },
+
+    updateIntervalButtons: function(interval) {
+
+        this._domNode.find('.chart-interval a').removeClass('red');
+        if (interval == 30 * 1000) {
+            this._domNode.find('.chart-interval a.s30').addClass('red');
+
+        } else if (interval == 300 * 1000) {
+            this._domNode.find('.chart-interval a.m5').addClass('red');
+
+        } else if (interval == 3600 * 1000) {
+            var a = this._domNode.find('.chart-interval a.h1').addClass('red');
+ 
         }
     },
 
@@ -454,7 +473,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     dateRangeChanged: function(range) {
         var payload = {
             start: range.start.toString('yyyy-MM-dd'),
-            end: range.end.toString('yyyy-MM-dd') };
+            end: range.end.toString('yyyy-MM-dd')
+        };
 
         this._today = false;
         if (range.start.toString('yyyy-MM-dd') == Date.today().toString('yyyy-MM-dd'))
@@ -482,6 +502,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             this.onDataStatisitcTabShown();
         } else if (tabItem.hasClass('charts')) {
             this._onChartsPage = true;
+            this.updateIntervalButtons(this._chartInterval);
             this.showChartsTab && this.showChartsTab();
         } else if (tabItem.hasClass('data')) {
             this.onShow();
@@ -498,24 +519,12 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     chartFilterData: function(data, field, interval, step) {
 
         var datas = [];
-        var times = [];
-        var p = 0;
-
         var dict = [];
-
-        step = step || 30 * 1000;
-
         var endTime = g.getEndTime().getTime();
         var beginTime = g.getBeginTime().getTime();
 
-        var diff = endTime - beginTime;
-
-        var count = 1;
-        if (interval == 30 * 10000) {
-            count = 10;
-        } else if (interval == 3600 * 1000) {
-            count = 120;
-        }
+        step = step || 30 * 1000;
+        var count = interval / step;
 
 
         // Store data in a dict
