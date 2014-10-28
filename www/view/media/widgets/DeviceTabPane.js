@@ -292,14 +292,19 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
         this._domNode.find('.chart-interval a').removeClass('red');
         if (interval == 30 * 1000) {
+            this._domNode.find('.chart-interval a.s30').css('display', '');
+            this._domNode.find('.chart-interval a.m5').css('display', '');
             this._domNode.find('.chart-interval a.s30').addClass('red');
 
         } else if (interval == 300 * 1000) {
             this._domNode.find('.chart-interval a.m5').addClass('red');
 
         } else if (interval == 3600 * 1000) {
+            console.log(33);
+            this._domNode.find('.chart-interval a.s30').css('display', 'none');
+            this._domNode.find('.chart-interval a.m5').css('display', 'none');
             var a = this._domNode.find('.chart-interval a.h1').addClass('red');
- 
+
         }
     },
 
