@@ -168,6 +168,10 @@ class DataController extends ApiController
             {
                 $items = $this->fetchHpicData($station, $start, $end, $interval);
             }
+            else if ($device == 'inspector1000')
+            {
+                $items = $this->fetchInspector1000Data($station, $start, $end, $interval);
+            }
 
             return parent::result(array("items" => $items));
         }
@@ -315,6 +319,29 @@ avg(d.highvoltage) as highvoltage,
 avg(d.temperature) as temperature,
 FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
 from hpic as d
+where d.station=$station and d.time>'$start' and d.time<'$end' group by time
+PHQL;
+
+        $data = $this->modelsManager->executeQuery($phql);
+        $items = array();
+        foreach ($data as $item)
+        {
+            array_push($items, $item);
+        }
+        return $items;
+    }
+
+    private function fetchInspector1000Data($station, $start, $end, $interval)
+    {
+        $phql = <<<PHQL
+select
+avg(d.doserate) as doserate,
+avg(d.nuclide) as nuclide,
+avg(d.type) as type,
+avg(d.active) as active,
+avg(d.err) as err,
+FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
+from inspector1000 as d
 where d.station=$station and d.time>'$start' and d.time<'$end' group by time
 PHQL;
 

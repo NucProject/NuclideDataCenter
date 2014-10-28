@@ -4,14 +4,14 @@
 *
 */
 
-$class("GamaSummaryDevice", DeviceSummaryBase,
+$class("Inspector1000SummaryDevice", DeviceSummaryBase,
 {
     __constructor: function() {
         this._stationId = 103;
     },
 
     onAttach: function(domNode) {
-        this._deviceType = "gama";
+        this._deviceType = "inspector1000";
         this.onAttached(domNode);
     },
 
@@ -26,7 +26,7 @@ $class("GamaSummaryDevice", DeviceSummaryBase,
 
     changeAlertClicked: function()
     {
-        var url = "alert/set/" + g.getCurrentStationId() + "/gama";
+        var url = "alert/set/" + g.getCurrentStationId() + "/inspector1000";
         var payload = { "f": "doserate", "v1": 100, "v2": 150, "r": 1};
         this.ajax(url, payload, function(data){
             console.log(data)
@@ -37,7 +37,7 @@ $class("GamaSummaryDevice", DeviceSummaryBase,
 });
 
 
-$class("GamaDevice", DeviceBase,
+$class("Inspector1000Device", DeviceBase,
 {
     __constructor: function() {
         this._deviceType = "bai9850";
@@ -56,11 +56,11 @@ $class("GamaDevice", DeviceBase,
          */
         this._dataListView.setHeaders([
             {'key':'time', 'name':'时间'},
-            {'key':'gammalong', 'name':'γ活度(Bq/m^3)'},
-            {'key':'gammacps', 'name':'γ活度(cps)'},
-            {'key':'emissionlong', 'name':'γ活度发射率'},
-            {'key':'emissioncps', 'name':'emissioncpsγ'},
-            {'key':'betacps', 'name':'betacps'}]);
+            {'key':'doserate', 'name':'当前剂量率(μSv/h)'},
+            {'key':'nuclide', 'name':'识别到的核素(nuclide)'},
+            {'key':'type', 'name':'核素类型(type)'},
+            {'key':'active', 'name':'活度(μCi)'},
+            {'key':'err', 'name':'误差(%ERR)'}]);
     },
 
     fillListDefault: function(page) {
