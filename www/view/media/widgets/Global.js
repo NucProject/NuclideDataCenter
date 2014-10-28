@@ -197,8 +197,6 @@ $class("Global", Base,
                 return "便携式γ辐射测量仪";
             case "bai9125":
                 return "水质放射性监测系统";
-            case "bai9850":
-                return "";
         }
     },
 

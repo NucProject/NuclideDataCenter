@@ -105,6 +105,15 @@ class Config
 
         'radeye' => array(
             'time' => 'time', '01000401' => "doserate"
+        ),
+
+        'inspector1000' => array(
+            'time' => 'time',
+            '01000501' => "doserate",
+            '01000502' => "nuclide",
+            '01000503' => "type",
+            '01000504' => "active",
+            '01000505' => "err",
         )
 
     );
