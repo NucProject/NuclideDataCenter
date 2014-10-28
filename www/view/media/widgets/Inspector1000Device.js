@@ -40,7 +40,7 @@ $class("Inspector1000SummaryDevice", DeviceSummaryBase,
 $class("Inspector1000Device", DeviceBase,
 {
     __constructor: function() {
-        this._deviceType = "bai9850";
+        this._deviceType = "inspector1000";
         this._noAlertData = true;
     },
 
