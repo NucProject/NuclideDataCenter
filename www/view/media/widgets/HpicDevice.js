@@ -20,25 +20,25 @@ $class("HpicDevice", DeviceBase,
     },
 
     showChartsTab: function() {
-        var this_ = this;
+        //var this_ = this;
 
         // this._chartInterval = 30 * 10000;
-        setTimeout(function(){
-            this_.updateCharts();
-        }, 0);
-        //this.updateCharts();
+        //setTimeout(function(){
+            //this_.updateCharts();
+        //}, 0);
+        this.updateCharts();
     },
 
     updateCharts: function() {
         var start = g.getBeginTime().getTime();
         var end = g.getEndTime().getTime();
 
-        var interval =  this._chartInterval;    // || 30 * 10000;
+        var interval =  this._chartInterval || 30 * 10000;
         this.showCharts(this._domNode,
             {
                 selector: "div.charts",
                 title: "剂量率",
-                ytitle: "剂量率",
+                ytitle: "nGy/h",
                 start: start,
                 end: end,
                 max:150, min:40,

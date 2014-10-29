@@ -28,7 +28,7 @@ $class("WeatherDevice", DeviceBase,
     },
 
     showChartsTab: function() {
-        this._chartInterval = 30 * 10000;
+
         this.updateCharts();
     },
 
