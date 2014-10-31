@@ -61,20 +61,18 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 
         onFetchRate: function() {
             var view = this._domNode.find('div.calendar').fullCalendar('getView');
+
             var start = Date.parse(view.start);
             var end = Date.parse(view.end);
-            var startDate = start.toString('yyyy-MM-dd');
-            var endDate = end.toString('yyyy-MM-dd');
+
+            console.log(start);
 
             var this_ = this;
             this.getRate(start, end, function(rates){
                 this_._domNode.find('div.calendar').fullCalendar('removeEvents');
+                // console.log(rates);
                 this_._domNode.find('div.calendar').fullCalendar('addEventSource', { events: rates });
             });
-
-
-
-
 
         },
 
@@ -97,7 +95,7 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
                     }
 
                     var rates = [];
-                    var t = start;
+                    var t = start.clone();
                     while (t.getTime() < end.getTime())
                     {
                         var today = t.clone();
@@ -108,7 +106,7 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
                             var item = a[i];
                             if (item.time == todayStr)
                             {
-                                console.log(1)
+                                // console.log(1)
                                 r = (100 * item.count / expect).toFixed(1);
                             }
                         }
