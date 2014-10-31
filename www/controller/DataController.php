@@ -251,6 +251,22 @@ class DataController extends ApiController
         return parent::result(array('count' => $count));
     }
 
+    public function count2Action($station, $device)
+    {
+        $start = $this->request->getQuery('start');
+        $end = $this->request->getQuery('end');
+
+        $phql = "SELECT count(*) as count,  from_unixtime( floor((unix_timestamp(d.time) + 8 * 3600)/ 24 / 3600) * 24 * 3600 ) as time, day(d.time) as time1 from $device as d where d.station=$station and d.time>='$start' and d.time <'$end' group by time1";
+        $counts = $this->modelsManager->executeQuery($phql);
+        $items = array();
+        foreach ($counts as $count)
+        {
+            array_push($items, $count);
+        }
+        return parent::result(array('counts' => $items));
+
+    }
+
     public function checkAction($station, $device)
     {
         if (!$this->request->isPost())
