@@ -227,42 +227,6 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         DeviceSummaryBase.showDevice(this._deviceType);
         return false;
 
-        var dt = ["hpic", "weather", "labr", "environment", "hpge", "cinderella"];
-
-        for (var i in dt)
-        {
-            var wid = dt[i] + "-tab-pane";
-
-            var w = Widget.widgetById(wid);
-            if (w)
-            {
-                if (dt[i] != this._deviceType)
-                {
-                    w._domNode.hide();
-                    var d = Widget.widgetById(dt[i] + "-device");
-                    if (d)
-                    {
-                        d.onHide();
-                    }
-                }
-                else
-                {
-                    w._domNode.show();
-                    Widget.widgetById(this._deviceType + "-device").onShow();
-                }
-            }
-        }
-
-        var sidebar = Widget.widgetById("sidebar");
-        var breadcrumb = Widget.widgetById("breadcrumb");
-        var deviceName = g.getDeviceName(this._deviceType);
-        breadcrumb.setLevels(
-            [
-                {"url":"#network", "name":"监测网络", "type":"network"},
-                {"url":"#station" + sidebar.getCurrentStationId(), "name":sidebar.getCurrentStationName(), "type":"station"},
-                {"url":"#device-" + this._deviceType, "name": deviceName, "type":"device"}
-            ]);
-        return false;
     },
 
     onPaneShow: function(e)
@@ -290,7 +254,7 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
 DeviceSummaryBase.showDevice = function(deviceType, params)
 {
-    var dt = ["hpic", "weather", "bai9125", "bai9850", "radeye", "mds", "inspector1000"];
+    var dt =  ["hpic", "weather", "labr", "environment", "hpge", "cinderella"];
 
     console.log(deviceType);
     for (var i in dt)

@@ -144,9 +144,9 @@ class DataController extends ApiController
         // ZM: BigData: 当interval不是30的时候的一种补充, 走最新的SQL（区分设备）
         if ($interval != 30)
         {
-            if ($device == 'bai9850')
+            if ($device == 'cinderella')
             {
-                $items = $this->fetchBai9850Data($station, $start, $end, $interval);
+                $items = $this->fetchCinderellaData($station, $start, $end, $interval);
             }
             else if ($device == 'weather')
             {
@@ -168,9 +168,9 @@ class DataController extends ApiController
             {
                 $items = $this->fetchHpicData($station, $start, $end, $interval);
             }
-            else if ($device == 'inspector1000')
+            else if ($device == 'environment')
             {
-                $items = $this->fetchInspector1000Data($station, $start, $end, $interval);
+                $items = $this->fetchEnvironmentData($station, $start, $end, $interval);
             }
 
             return parent::result(array("items" => $items));
@@ -197,20 +197,20 @@ class DataController extends ApiController
         return parent::result(array("items" => $items));
     }
 
-    // TODO: 补齐数据项
-    private function fetchBai9850Data($station, $start, $end, $interval)
+    // TODO: 补齐数据项!!
+    private function fetchCinderellaData($station, $start, $end, $interval)
     {
         $phql = <<<PHQL
 select
-avg(d.alphaactivity) as alphaactivity,
-avg(d.alpha) as alpha,
-avg(d.betaactivity) as betaactivity,
-avg(d.beta) as beta,
-avg(d.i131activity) as i131activity,
-avg(d.i131) as i131,
-avg(d.doserate) as doserate,
+avg(d.) as alphaactivity,
+avg(d.) as alpha,
+avg(d.) as betaactivity,
+avg(d.) as beta,
+avg(d.) as i131activity,
+avg(d.) as i131,
+avg(d.) as doserate,
 FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
-from bai9850 as d
+from CinderellaData as d
 where d.station=$station and d.time>'$start' and d.time<'$end' group by time
 PHQL;
 
@@ -331,17 +331,19 @@ PHQL;
         return $items;
     }
 
-    private function fetchInspector1000Data($station, $start, $end, $interval)
+    private function fetchEnvironmentData($station, $start, $end, $interval)
     {
         $phql = <<<PHQL
 select
-avg(d.doserate) as doserate,
-avg(d.nuclide) as nuclide,
-avg(d.type) as type,
-avg(d.active) as active,
-avg(d.err) as err,
+avg(d.Temperature) as Temperature,
+avg(d.Humidity) as Humidity,
+avg(d.IfMainPowerOff) as IfMainPowerOff,
+avg(d.BatteryHours) as BatteryHours,
+avg(d.IfSmoke) as IfSmoke,
+avg(d.IfWater) as IfWater,
+avg(d.IfDoorOpen) as IfDoorOpen,
 FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
-from inspector1000 as d
+from Environment as d
 where d.station=$station and d.time>'$start' and d.time<'$end' group by time
 PHQL;
 

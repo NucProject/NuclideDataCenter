@@ -1,0 +1,39 @@
+<div class="span12" file="tab1.phtml" widget-class="DeviceTabPane" widget-id="hpge-tab-pane">
+    <div class="portlet box blue tabbable">
+        <div class="portlet-title">
+            <div class="caption"><i class="icon-reorder">&nbsp;高纯锗能谱仪</i></div>
+        </div>
+        <div class="portlet-body" widget-class="HpgeDevice" widget-id="hpge-device">
+            <div class="tabbable portlet-tabs">
+                <ul class="nav nav-tabs">
+                    <li><a href="#hpge_config" data-toggle="tab">设置</a></li>
+                    <li class="'dropdown">
+                        <a id="hpge_alert_a" href="#hpge_alert" data-toggle="tab" class="dropdown-toggle alerts" style="margin-top:6px;padding-top:8px;padding-bottom:8px">
+                            <!-- <i class="icon-warning-sign"></i> -->
+                            <span>报警&nbsp;</span>
+                            <span class="badge" style="position: relative;top:0px;right:5px;-webkit-border-radius: 12px !important;background: red">0</span>
+                        </a>
+                    </li>
+                    <li class="active"><a href="#hpge_data" data-toggle="tab">数据</a></li>
+                </ul>
+                <div class="tab-content">
+
+                    <div class="tab-pane active" id="hpge_data">
+                        <div class="data-pane">
+
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="hpge_alert">
+                        <div class="alert-pane">
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane config" id="hpge_config">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
