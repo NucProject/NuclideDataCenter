@@ -12,20 +12,21 @@ $class("HpicDevice", DeviceBase,
 
         this._dataListView.setHeaders([
             {'key':'time', 'name':'时间'},
-            {'key':'doserate', 'name':'剂量率', type: 'num'},
-            {'key':'battery', 'name':'电池', type: 'num'},
-            {'key':'highvoltage', 'name':'电压', type: 'num'},
-            {'key':'temperature', 'name':'温度', type: 'num'}]);
+            {'key':'doserate', 'name':'剂量率(nGy/h)', type: 'num'},
+            {'key':'battery', 'name':'电池电压(V)', type: 'num'},
+            {'key':'highvoltage', 'name':'探头电压(V)', type: 'num'},
+            {'key':'temperature', 'name':'探头温度(℃)', type: 'num'}]);
 
     },
 
     showChartsTab: function() {
-        var this_ = this;
-        this._chartInterval = 30 * 10000;
-        setTimeout(function(){
-            this_.updateCharts();
-        }, 0);
-        //this.updateCharts();
+        //var this_ = this;
+
+        // this._chartInterval = 30 * 10000;
+        //setTimeout(function(){
+            //this_.updateCharts();
+        //}, 0);
+        this.updateCharts();
     },
 
     updateCharts: function() {
@@ -37,7 +38,7 @@ $class("HpicDevice", DeviceBase,
             {
                 selector: "div.charts",
                 title: "剂量率",
-                ytitle: "剂量率",
+                ytitle: "nGy/h",
                 start: start,
                 end: end,
                 max:150, min:40,
@@ -49,7 +50,7 @@ $class("HpicDevice", DeviceBase,
 
     filter: function(data) {
         var currentField = 'doserate';
-        return this.chartFilterData(data, currentField, this._chartInterval);
+        return this.chartFilterData(data, currentField, this._chartInterval, this._step);
     },
 
     onTabChanged: function() {

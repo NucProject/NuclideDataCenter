@@ -1,14 +1,14 @@
 /**
- * Created by Healer on 14-8-30.
+ * Created by kcj on 14-9-28.
  */
-$class("Charts", null, {
+$class("DoubleCharts", null, {
 
     showCharts: function(domNode, p) {
 
         Highcharts.setOptions({ global: {useUTC: false}});
         this.params = p;
 
-        // console.log(new Date(p.start), new Date(p.end))
+        console.log(new Date(p.start), new Date(p.end))
         if (p.filter)
         {
             var array = p.filter(this._items);
@@ -16,9 +16,8 @@ $class("Charts", null, {
             for (var i in array.data)
             {
                 var v = array.data[i];
-                var n = parseFloat(v);
-                if (!isNaN(n))
-                    this.chartsData.push(n);
+                if (v)
+                    this.chartsData.push(parseFloat(v));
                 else
                     this.chartsData.push(null);
             }
@@ -27,7 +26,6 @@ $class("Charts", null, {
         this.createMaster(domNode, p);
     },
 
-    // ZM：曲线中上面的部分
     createDetail: function(domNode, p, masterChart) {
 
         if (p.filter)
@@ -51,7 +49,7 @@ $class("Charts", null, {
             chart: {
                 marginBottom: 80,
                 reflow: true,
-                marginLeft: 70,
+                marginLeft: 60,
                 marginRight: 20,
                 turboThreshold: 2000
             },
@@ -71,22 +69,20 @@ $class("Charts", null, {
                 title: {
                     text: p.ytitle
                 },
-                //maxZoom: 0.1,
-                //max: p.max,
-                //min: p.min
+                maxZoom: 0.1,
+                max: p.max,
+                min: p.min
             },
             tooltip: {
                 formatter: function() {
 
                     var point = this.points[0];
-
                     /*return '<b>'+ point.series.name +'</b><br/>'+
                         Highcharts.dateFormat('%A %B %e %Y', this.x) + ':<br/>'+
                         '1 USD = '+ Highcharts.numberFormat(point.y, 2) +' EUR';*/
                     //return '<b>' + point.series.name;
                     return '<b>' + Highcharts.numberFormat(point.y, 2) + '</b><br/>' + 
                         Highcharts.dateFormat('[%Y-%m-%d %H:%M:%S]', this.x); 
-
 
                 },
                 shared: true
@@ -122,12 +118,10 @@ $class("Charts", null, {
 
     },
 
-    // ZM：曲线中下面的部分，可以选择区域的
     // create the master chart
     createMaster: function(domNode, p)
     {
-
-        console.log(p);
+        console.log(this.chartsData);
         var this_ = this;
         var selector = 'div.charts-bar';
         this.masterChart = domNode.find(selector).highcharts({
@@ -212,8 +206,8 @@ $class("Charts", null, {
                 title: {
                     text: null
                 },
-                //max: p.max,
-                //min: p.min,
+                max: p.max,
+                min: p.min,
                 showFirstLabel: true
             },
             tooltip: {

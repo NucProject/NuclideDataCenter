@@ -13,21 +13,22 @@ $class("WeatherDevice", DeviceBase,
 
         this._dataListView.setHeaders([
             {'key':'time', 'name':'时间'},
-            {'key':'Raingauge', 'name':'雨量'},
-            {'key':'Windspeed', 'name':'风速'},
-            {'key':'Direction', 'name':'风向'},
-            {'key':'Pressure', 'name':'气压'},
-            {'key':'Temperature', 'name':'温度'},
-            {'key':'Humidity', 'name':'湿度'}]);
+            {'key':'Rainspeed', 'name':'雨量(mm)'},
+            {'key':'Windspeed', 'name':'风速(m/s)'},
+            {'key':'Direction', 'name':'风向(°)'},
+            {'key':'Pressure', 'name':'气压(kPa)'},
+            {'key':'Temperature', 'name':'温度(℃)'},
+            {'key':'Humidity', 'name':'湿度(%)'}]);
 
+        /*
         domNode.find('select.chart-field').change(kx.bind(this, function(){
             this.onFieldChanged();
         }));
-
+        */
     },
 
     showChartsTab: function() {
-        this._chartInterval = 30 * 10000;
+
         this.updateCharts();
     },
 
@@ -36,11 +37,12 @@ $class("WeatherDevice", DeviceBase,
         var end = g.getEndTime().getTime();
 
         var fieldItem = this._domNode.find('select.chart-field');
-        console.log(fieldItem);
-        var title = fieldItem.find(':selected').text();
+
+        var sel = fieldItem.find(":selected");
+        var title = sel.text();
         var field = fieldItem.val();
-        var min = fieldItem.attr('min');
-        var max = fieldItem.attr('max');
+        var min = sel.attr('min');
+        var max = sel.attr('max');
 
         var interval =  this._chartInterval || 30 * 10000;
 
@@ -87,14 +89,4 @@ $class("WeatherDevice", DeviceBase,
         this.updateCharts();
 
     },
-
-    onFieldChanged: function() {
-        this.updateCharts();
-    }
-
-    /*
-    filter2: function(data) {
-        return this.chartFilterData(data, 'Pressure');
-    }
-    */
 });

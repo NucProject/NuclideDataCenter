@@ -1,39 +1,37 @@
-<div class="span12" file="tab1.phtml" widget-class="DeviceTabPane" widget-id="hpic-tab-pane">
+<div class="span12" file="tab1.phtml" widget-class="DeviceTabPane" widget-id="radeye-tab-pane">
 	<div class="portlet box blue tabbable">
 		<div class="portlet-title">
-			<div class="caption"><i class="icon-reorder">&nbsp;高压电离室</i></div>
+			<div class="caption"><i class="icon-reorder">&nbsp;便携式核素甄别仪</i></div>
 		</div>
-		<div class="portlet-body" widget-class="HpicDevice" widget-id="hpic-device">
+		<div class="portlet-body" widget-class="RadeyeDevice" widget-id="radeye-device">
 			<div class="tabbable portlet-tabs">
 				<ul class="nav nav-tabs">
-                    <li><a href="#hpic_history" data-toggle="tab" class="history">获取率</a></li>
-                    <li><a href="#hpic_config" data-toggle="tab">设置</a></li>
-                    <li class="dropdown">
 
-                        <a id="hpic_alert_a" href="#hpic_alert" data-toggle="tab" class="dropdown-toggle alerts" style="margin-top:6px;padding-top:8px;padding-bottom:8px">
+                    <li><a href="#radeye_config" data-toggle="tab">设置</a></li>
+                    <li class="'dropdown">
+                        <a id="radeye_alert_a" href="#radeye_alert" data-toggle="tab" class="dropdown-toggle alerts" style="margin-top:6px;padding-top:8px;padding-bottom:8px">
                             <!-- <i class="icon-warning-sign"></i> -->
                             <span>报警&nbsp;</span>
                             <span class="badge" style="position: relative;top:0px;right:5px;-webkit-border-radius: 12px !important;background: red">0</span>
                         </a>
                     </li>
-                    <li><a href="#hpic_chart" class="charts" data-toggle="tab">曲线</a></li>
-                    <li class="active"><a href="#hpic_data" class="data" data-toggle="tab">数据</a></li>
+                    <li class=""><a href="#radeye_chart" class="charts" data-toggle="tab">曲线</a></li>
+                    <li class="active"><a href="#radeye_data" data-toggle="tab">数据</a></li>
+
 				</ul>
 				<div class="tab-content" style="position:relative;">
 
-					<div class="tab-pane active" id="hpic_data">
+                    <div class="tab-pane active" id="radeye_data">
                         <div class="refresh-bar" style="position:absolute;display: none; height: 24px;width: 100%; top:0px;left:0px;background-color: cornsilk">
                             <a href="javascript:void(0)"><span>点击获取最新数据</span></a>
-                        </div>
-                        <div class="interval">
-                            <a class="btn red s30">30秒</a><a class="btn m5">5分钟</a><a class="btn h1">1小时</a>
                         </div>
                         <div class="data-pane">
 
                         </div>
-					</div>
+                    </div>
 
-                    <div class="tab-pane" id="hpic_chart">
+
+                    <div class="tab-pane" id="radeye_chart">
                         <div class="chart-interval">
                             <a class="btn  s30">30秒</a><a class="btn red m5">5分钟</a><a class="btn h1">1小时</a>
                         </div>
@@ -44,20 +42,17 @@
 
                         </div>
                     </div>
-                    <div class="tab-pane config" id="hpic_config">
-                    </div>
-                    <div class="tab-pane" id="hpic_alert">
+
+                    <div class="tab-pane" id="radeye_alert">
                         <div class="alert-pane">
 
                         </div>
                     </div>
 
-                    <div class="tab-pane" id="hpic_history">
-                        <div class="calendar-container" class="fc-ltr fc">
-                        </div>
+                    <div class="tab-pane config" id="radeye_config">
                     </div>
 
-				</div>
+                </div>
 			</div>
 		</div>
 	</div>

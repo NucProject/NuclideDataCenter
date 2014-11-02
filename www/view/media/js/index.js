@@ -679,17 +679,18 @@ var Index = function () {
                 },
 
                 function (start, end) {
+                    // ZM: 时间选择器的入口
                     var end = end.clone().addHours(24);
                     var diff = end.getTime() - start.getTime();
                     var f = 'yyyy年MM月dd日';
 
                     if (diff > 86400000 * 30)
-                    {
-
+                    {// ZM:     时间跨度限制
                         return false;
                     }
 
                     if (diff <= 86400000) {
+                        // if time is short as one day, show a day, instead of a range of days
                         $('#dashboard-report-range').html("&nbsp;&nbsp;" + start.toString(f) + "&nbsp;&nbsp;");
                     } else {
                         $('#dashboard-report-range').html("&nbsp;&nbsp;" + start.toString(f) + " - " + end.toString(f) + "&nbsp;&nbsp;");
@@ -697,6 +698,7 @@ var Index = function () {
 
                     var time = {'start': start.clone() , 'end': end.clone() };
                     // console.log(time);
+                    // ZM: Search ""transfer-selected-time"" in the code
                     $('body').trigger("transfer-selected-time", time);
                 });
 
@@ -782,7 +784,7 @@ var Index = function () {
                     position: 'top-left'
                 });
 
-                var unique_id = $.gritter.add({
+                /*var unique_id = $.gritter.add({
                     // (string | mandatory) the heading of the notification
                     title: 'Notification',
                     // (string | mandatory) the text inside the notification
@@ -795,7 +797,7 @@ var Index = function () {
                     time: '',
                     // (string | optional) the class name you want to apply to that specific message
                     class_name: 'my-sticky-class'
-                });
+                });*/
 
                 setTimeout(function () {
                     $.gritter.remove(unique_id, {
@@ -825,7 +827,7 @@ var Index = function () {
                     position: 'top-left'
                 });
 
-                var unique_id = $.gritter.add({
+                /*var unique_id = $.gritter.add({
                     // (string | mandatory) the heading of the notification
                     title: 'Inbox',
                     // (string | mandatory) the text inside the notification
@@ -838,7 +840,7 @@ var Index = function () {
                     time: '',
                     // (string | optional) the class name you want to apply to that specific message
                     class_name: 'my-sticky-class'
-                });
+                });*/
 
                 $.extend($.gritter.options, {
                     position: 'top-right'

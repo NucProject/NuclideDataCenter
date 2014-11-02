@@ -6,7 +6,7 @@
  * Time: 下午7:46
  */
 
-class CinderellaSum extends \Phalcon\Mvc\Model
+class MdsSum extends \Phalcon\Mvc\Model
 {
 
 } 

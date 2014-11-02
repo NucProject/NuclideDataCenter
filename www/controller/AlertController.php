@@ -107,7 +107,7 @@ class AlertController extends ApiController
     }
 
 
-    public function checkAlertRule($redis, $station, $device, $data)
+    public static function checkAlertRule($redis, $station, $device, $data)
     {
         $values = AlertRule::getAlertValues($redis, $station, $device);
 

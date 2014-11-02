@@ -39,9 +39,6 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                 return false;
             });
 
-            // select default
-            ul.find("li a:first").click();
-            g.setCurrentStationName(this._currentStationName);
         });
     },
 
@@ -55,19 +52,25 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
     onStationClicked: function(li) {
 
-        this._domNode.find('ul.stations li a').css('background', '');
+        this._domNode.find('ul.stations li').css('background', '');
         li.css('background', '#575757')
 
         var currentStationId = li.attr("station_id")
         g.setCurrentStationId(currentStationId)
         this._currentStationName = li.find("a").text();
+        g.setCurrentStationName(this._currentStationName);
 
-
+        //
         $('#network-row').hide();
         $('#devices-row').hide();
         $('#admin-row').hide();
 
-        $('#station-row').show();
+        // TODO: different device for each station!
+        if (currentStationId == 128)
+        {
+            $('#station-128-row').show();
+        }
+
 
         var breadcrumb = Widget.widgetById("breadcrumb");
         breadcrumb.setLevels(

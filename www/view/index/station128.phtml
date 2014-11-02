@@ -1,4 +1,4 @@
-<div class="span12" file="tab1.phtml" widget-class="StationTabPane" widget-id="station-tab-pane">
+<div class="span12" file="tab1.phtml" widget-class="StationTabPane" widget-id="station-tab-pane" station_id="102">
 	<div class="portlet box blue tabbable">
 		<div class="portlet-title">
 			<div class="caption"><i class="icon-reorder station"> 北京站<span class="offline"></span></i></div>
@@ -6,14 +6,16 @@
         <div class="portlet-body" >
             <div class="tabbable portlet-tabs">
                 <ul class="nav nav-tabs">
+
                     <li class="active!"><a href="#station_status_container" data-toggle="tab">状态</a></li>
                     <li class="active"><a href="#station_container" data-toggle="tab">简介</a></li>
+
                 </ul>
                 <div class="tab-content">
 
-                    <div class="tab-pane active" id="station_container">
+                    <div class="tab-pane active" id="station_container_102">
                         <div style="float: left" class="span8">
-                            <?php $this->partial("index/devices"); ?>
+                            <?php $this->partial("index/devices128"); ?>
                             <div class="clearfix"></div>
                         </div>
 
@@ -24,7 +26,6 @@
                         </div>
                     </div>
 
-
                     <div class="tab-pane" id="station_status_container">
                         <div class="">
                             <span>网络连接历史状态</span>
@@ -33,6 +34,7 @@
 
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

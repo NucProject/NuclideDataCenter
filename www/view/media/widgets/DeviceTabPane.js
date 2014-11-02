@@ -17,6 +17,9 @@ $class("DeviceTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
 //////////////////////////////////////////////////////////////////////////
 // Devices Base
+// ZM: 所以有一个DeviceBase：就是因为所有设备的很多代码写出来是雷同的，不写个基类，那么重复代码太多了。
+// 因为它们的很多行为是一样的，所以可以抽象出来一个基类。
+// 比如说，它们都有列表，（基本）都有曲线，等等。处理数据基本是一致的，只有具体的差别。
 $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 {
     _dataListView: null,
@@ -28,6 +31,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     PageCount: 100,
 
     __constructor: function() {
+        // the date picker show today as default.
+        this._today = true;
     },
 
     getPageEvent: function() {
@@ -36,7 +41,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
     onAttach: function(domNode) {
         var dataPane = domNode.find("div.data-pane")
-
+        // ZM： 每个设备都有List显示数据吧?
         this._dataListView = new ListView();
         var dataListViewDomNode = this._dataListView.create();
         dataListViewDomNode.appendTo(dataPane);
@@ -57,11 +62,15 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
         ]);
 
+        // 每个设备都能响应时间变化而改变数据内容呈现吧？
         $('body').bind('transfer-selected-time', function(event, startTime, endTime) {
             this_.dateRangeChanged && this_.dateRangeChanged(startTime, endTime);
         });
 
         var self = this;
+        // ZM: 在设备派生类里面,如果_noAlertData不是true，那么在基类里面就能初始化报警的代码。
+        // 注意_noAlertData是放到派生类里面。只有设备才知道哪些设备要报警，哪些不需要。
+        // 但是统一都在基类一份代码干了。大不了不做。
         if (!this._noAlertData)
         {
             this.ajax("alert/config/" + this._deviceType, null, function(data){
@@ -91,6 +100,55 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
         this.initIntervalChange(domNode.find('div.interval'));
         this.initChartIntervalChange(domNode.find('div.chart-interval'));
+
+        domNode.find('select.chart-field').change(kx.bind(this, function(){
+            this.onFieldChanged && this.onFieldChanged();
+        }));
+
+        this.initRefreshBar(domNode);
+    },
+
+    initRefreshBar: function(domNode) {
+        var this_ = this;
+        var bar = domNode.find('div.refresh-bar');
+
+        bar.delegate('a', 'click', function(){
+            this_.onShow();
+            bar.fadeOut();
+        });
+
+        setInterval(kx.bind(this, function(){
+            if (this._today)
+            {
+                this.hasLatestData(bar);
+            }
+        }), 100000);
+        return false;
+    },
+
+    hasLatestData: function(bar) {
+        // bar.css('display', '');
+
+        var station = g.getCurrentStationId();
+        var url = "data/latest/" + station + "/" + this._deviceType;
+
+        this.ajax(url, null, function(data) {
+
+            var r = eval("(" + data + ")");
+            var latest = r['results']['status']
+            console.log(111, latest);
+            if (latest > this._lastestDataTime)
+            {
+                bar.css('display', '');
+            }
+        });
+
+        return true;
+    },
+
+
+    onFieldChanged: function() {
+        this.updateCharts && this.updateCharts();
     },
 
     initIntervalChange: function(domNode) {
@@ -138,7 +196,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     handleAlert: function(deviceType, id, tr, content) {
         console.log(deviceType, id, content);
         this.ajax("alert/handle", {'device': deviceType, 'id': id, 'comment': content}, function(data) {
-            $r = eval("(" + data + ")");
+            var $r = eval("(" + data + ")");
             if ($r.errorCode == 0) {
                 tr.find('td').css('background-color', 'yellow');
                 setTimeout(function(){
@@ -182,8 +240,28 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         if (this._currentShownDevice != this._deviceType)
             return;
 
-        console.log(payload)
+        // ZM: BigData:
+        // 这里这么处理，如果开始和结束时间差距小，维持以前的处理，把payload['interval'] 设为 30
+        // 否则就设为3600先，这样得到的每小时的平均值，数据一下子少了120倍。
+        // 但是在JS这段要做很多处理，把界面选择5分，30秒那些按钮去掉。
+        // 把曲线的interval也响应的设为3600，曲线也能正确显示了。
+        // payload['interval'] = 3600;
 
+        //三天
+        var beginTime = new Date(payload['start'].replace(/-/g,"\/"));
+        var endTime = new Date(payload['end'].replace(/-/g,"\/"));
+        console.log("相差时间" + (endTime - beginTime));
+        if(endTime - beginTime <= 4 * 24 * 3600 * 1000){
+            console.log("少于三天");
+            payload['interval'] = 30;
+            this._step = 30 * 1000;
+            this._chartInterval = 30 * 1000;
+        }
+        else{
+            payload['interval'] = 3600;
+            this._step = 3600 * 1000;
+            this._chartInterval = 3600 * 1000;
+        }
         var this_ = this;
         var currentStationId = g.getCurrentStationId();
 
@@ -192,17 +270,41 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             var api = "data/fetch/" + currentStationId + "/" + this._deviceType;
 
             this.ajax(api, payload, function(data){
-                $r = eval("(" + data + ")");
-
+                var $r = eval("(" + data + ")");
                 console.log($r);
-
                 var items = $r.results.items;
                 this_._items = items;
+                // Fetch today data and has data.
+                console.log(items.length, this_._today);
+                if (items.length > 0 && this_._today)
+                {
+                    this_._lastestDataTime = g.getUnixTime();
+                }
                 this_.makeDataDict(items);
 
                 this_.renderData();
 
             });
+        }
+    },
+
+    updateIntervalButtons: function(interval) {
+
+        this._domNode.find('.chart-interval a').removeClass('red');
+        if (interval == 30 * 1000) {
+            this._domNode.find('.chart-interval a.s30').css('display', '');
+            this._domNode.find('.chart-interval a.m5').css('display', '');
+            this._domNode.find('.chart-interval a.s30').addClass('red');
+
+        } else if (interval == 300 * 1000) {
+            this._domNode.find('.chart-interval a.m5').addClass('red');
+
+        } else if (interval == 3600 * 1000) {
+            console.log(33);
+            this._domNode.find('.chart-interval a.s30').css('display', 'none');
+            this._domNode.find('.chart-interval a.m5').css('display', 'none');
+            var a = this._domNode.find('.chart-interval a.h1').addClass('red');
+
         }
     },
 
@@ -237,12 +339,15 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
     fixValue: function(v) {
         for (var i in v) {
+
             if (i == 'time' || i == 'starttime' || i == 'endtime' || i == 'BeginTime') {
                 continue;
             }
             var f = parseFloat(v[i]);
             if (!isNaN(f))
-                v[i] = f.toFixed(4);
+            {
+                v[i] = f;
+            }
 
         }
         return v;
@@ -374,7 +479,14 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     dateRangeChanged: function(range) {
         var payload = {
             start: range.start.toString('yyyy-MM-dd'),
-            end: range.end.toString('yyyy-MM-dd') };
+            end: range.end.toString('yyyy-MM-dd')
+        };
+
+        this._today = false;
+        if (range.start.toString('yyyy-MM-dd') == Date.today().toString('yyyy-MM-dd'))
+        {
+            this._today = true;
+        }
         this.fetchData(payload);
     },
 
@@ -396,6 +508,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             this.onDataStatisitcTabShown();
         } else if (tabItem.hasClass('charts')) {
             this._onChartsPage = true;
+            this.updateIntervalButtons(this._chartInterval);
             this.showChartsTab && this.showChartsTab();
         } else if (tabItem.hasClass('data')) {
             this.onShow();
@@ -412,29 +525,13 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     chartFilterData: function(data, field, interval, step) {
 
         var datas = [];
-        var times = [];
-        var p = 0;
-
         var dict = [];
-
-        step = step || 30 * 1000;
-
         var endTime = g.getEndTime().getTime();
         var beginTime = g.getBeginTime().getTime();
 
-        var diff = endTime - beginTime;
-        var multiDays = false;
-        var multiWeeks = false;
-        var count = 1;
-        count = interval / step;
 
-        /*
-        if (interval == 30 * 10000) {
-            count = 10;
-        } else if (interval == 3600 * 1000) {
-            count = 120;
-        }*/
-
+        step = step || 30 * 1000;
+        var count = interval / step;
 
 
 
@@ -445,10 +542,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             var t = Date.parse(item['time']).getTime();
             dict[t] = item[field];
         }
-
-        var d = new Date()
-        var value = null;
-        var start = false;
 
         var counter = 0;
         var gv = new AverageValue();
@@ -466,11 +559,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             gv.addValue(dict[i]);
         }
 
-        /*
-         for (var i in datas)
-         if (!isNaN(datas[i]))
-         console.log(datas[i])
-         */
         return {'data': datas};
     },
 
