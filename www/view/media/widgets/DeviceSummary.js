@@ -401,7 +401,7 @@ $class("HpgeSummaryDevice", DeviceSummaryBase,
         },
 
         onAttach: function(domNode) {
-            this._deviceType = "weather";
+            this._deviceType = "hpge";
             this.onAttached(domNode);
         },
 
