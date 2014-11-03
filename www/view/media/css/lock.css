@@ -2,29 +2,39 @@
 Lock Page
 ***/
 body {
-	background-color: #ddd;
+	background-color: #ffffff !important;
 	padding: 0;
 	margin: 0;
 }
 
+.brank {
+    margin: 20px 0px 0px 20px;
+}
 .page-lock {
-   top: 50%;
-   left: 50%;
-   position: absolute;
-   margin-top: -140px;
-   margin-left: -260px;
+	margin: 20px 0px 0px 0px;
+    background-color: #3d3d3d !important;
+    min-height: 500px;
 }
 
 .page-lock .page-logo {
-	margin-bottom: 15px;
+	margin-bottom: 0px;
+
 }
 
 .page-lock .page-body {	
-   width: 500px;
+   width: 800px;
+
    padding: 10px;
+   padding-top: 150px;
+   margin:auto;
    background: url(../image/bg-white-lock.png) repeat;
 }
 
+.page_bottom {
+	background-color: #ffffff !important;
+    min-height: 600px;
+}
+/*
 .page-lock .page-body:after,
 .page-lock .page-body:before {
 	display: table;
@@ -35,6 +45,7 @@ body {
 .page-lock .page-body:after {
 	clear: both;
 }
+*/
 
 .page-lock .page-footer {
    margin-top: 10px;
@@ -50,13 +61,14 @@ body {
 }
 
 .page-lock .page-lock-info {
+    margin-top: -60px;
 	float: right;
 	width: 280px;
 }
 
 .page-lock .page-lock-info h1 {
 	margin-top: -5px;
-	font-weight: 300;
+	font-weight: 380;
 	color: #fff;
 	font-size: 28px;
 	line-height: 32px;

@@ -31,7 +31,7 @@ class Config
             '0901040103' => 'Pressure',
             '0901040106' => 'Windspeed',
             '0901040105' => 'Direction',
-            '0901040104' => 'Raingauge',
+            '0901040104' => 'Rainspeed',
             '0901040107' => 'IfRain',
             'time' => 'time'
             ),
@@ -64,8 +64,59 @@ class Config
         'cinderellastatus' => array(
             '01' => 'StateBits',
             'time' => 'time'
-            )
-        );
+            ),
+
+        'bai9125' => array(
+            'time' => 'time',
+            '01000201' => 'gammalong',
+            '01000202' => 'gammacps',
+            '01000203' => 'emissionlong',
+            '01000204' => 'emissioncps',
+            '01000205' => 'betacps',
+            '01000206' => 'status',
+            '01000207' => 'valve1',
+            '01000208' => 'valve2',
+            '01000209' => 'valve3'
+            ),
+
+        'bai9850' => array(
+            'time' => 'time',
+            '99900001'=>"alphaactivity",
+            '99900002'=>"alpha",
+            '99900003'=>"betaactivity",
+            '99900004'=>"beta",
+            '99900005'=>"i131activity",
+            '99900006'=>"i131",
+            '99900007'=>"doserate"
+            ),
+        
+        'mds' => array(
+            'time' => 'time',
+            '01000301'=>"doserate",
+            '01000302'=>"lat",
+            '01000303'=>"lon",
+            '01000304'=>"speed",
+            '01000305'=>"height",
+            '01000306'=>"map",
+            '01000307'=>"doserateex",
+            '01000308'=>"ifatificial",
+            '01000309'=>"sid"
+        ),
+
+        'radeye' => array(
+            'time' => 'time', '01000401' => "doserate"
+        ),
+
+        'inspector1000' => array(
+            'time' => 'time',
+            '01000501' => "doserate",
+            '01000502' => "nuclide",
+            '01000503' => "type",
+            '01000504' => "active",
+            '01000505' => "err",
+        )
+
+    );
 
     public static $d = array(
 
@@ -87,7 +138,7 @@ class Config
            'Pressure' => array('rule' => 0, 'level' => 2),
            'Windspeed' => array('rule' => 0, 'level' => 2),
            'Direction' => array('rule' => 0, 'level' => 2),
-           'Raingauge' => array('rule' => 0, 'level' => 2),
+           'Rainspeed' => array('rule' => 0, 'level' => 2),
            'IfRain' => array('rule' => 1, 'level' => 1)
         ),
 

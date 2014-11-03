@@ -11,7 +11,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 *********************/
 
 /***
-Colors
+Colo
 blue:  #4b8df8
 light blue: #bfd5fa
 red: #e02222
@@ -407,6 +407,7 @@ Header and header elements.
 }
 
 .header .nav > li.dropdown.user .dropdown-toggle {
+  margin-top: -20px;
   padding: 6px 4px 7px 9px;
 }
 
@@ -909,11 +910,11 @@ Page title
 ***/
 .page-title {
   padding: 0px;
-  font-size: 30px;
+  font-size: 5px;
   letter-spacing: -1px;
   display: block;
   color: #666;
-  margin: 20px 0px 15px 0px;
+  margin: -20px 0px 15px 0px;
   font-weight: 300;
   font-family: 'Open Sans';
 }

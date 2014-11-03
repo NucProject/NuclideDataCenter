@@ -46,13 +46,15 @@ $class("Breadcrumb", [kx.Widget, kx.EventMixin],
         var url = i.attr("href");
         var type = i.attr("type");
 
+        var stationId = g.getCurrentStationId();
         if (type == "network")
         {
-            // g.showRow("#network-row");
+            this.setLevels([{"url": "#network", "name": "监测网络", "type": "network"}]);
+            g.showRow("#network-row");
         }
         else if (type == "station")
         {
-            g.showRow("#station-row");
+            g.showRow("#station-" + stationId + "-row");
         }
         else if (type == "device")
         {

@@ -37,7 +37,7 @@
 						<!-- customized.phtml -->
 						<!-- END BEGIN STYLE CUSTOMIZER -->
 						<!-- BEGIN PAGE TITLE & BREADCRUMB-->
-						<h3 class="page-title">辐射环境自动监测系统&nbsp;&nbsp;<small>数据中心</small></h3>
+						<h3 class="page-title">&nbsp;</h3>
 
                         <div widget-class="Breadcrumb" widget-id="breadcrumb">
                             <ul class="breadcrumb">
@@ -60,7 +60,7 @@
                                 </li>
                                 <!-- 4 levels at most -->
                                 <li class="pull-right no-text-shadow">
-                                    <div id="dashboard-report-range" class="dashboard-date-range tooltips no-tooltip-on-touch-device responsive" data-tablet="" data-desktop="tooltips" data-placement="top" data-original-title="Change dashboard date range">
+                                    <div id="dashboard-report-range" class="dashboard-date-range tooltips no-tooltip-on-touch-device responsive" data-tablet="" data-desktop="tooltips" data-placement="top" data-original-title="选择日期">
                                         <i class="icon-calendar"></i>
                                         <span></span>
                                         <i class="icon-angle-down"></i>
@@ -82,10 +82,11 @@
 					<!-- END DASHBOARD STATS -->
 					<div class="clearfix"></div>
 
-                    <div class="row-fluid" id="station-row">
-                        <?php $this->partial("index/station"); ?>
+                    <div class="row-fluid" id="station-128-row">
+                        <?php $this->partial("index/station128"); ?>
                         <div class="clearfix"></div>
                     </div>
+
 
                     <div id="devices-row">
                         <div class="row-fluid ">
@@ -97,6 +98,15 @@
                             <div class="clearfix"></div>
                         </div>
                         <div class="row-fluid " >
+                            <?php $this->partial("index/device_cinddata_pane"); ?>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="row-fluid " >
+                            <?php $this->partial("index/device_environment_pane"); ?>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="row-fluid " >
                             <?php $this->partial("index/device_labr_pane"); ?>
                             <div class="clearfix"></div>
                         </div>
@@ -104,18 +114,13 @@
                             <?php $this->partial("index/device_hpge_pane"); ?>
                             <div class="clearfix"></div>
                         </div>
-                        <div class="row-fluid ">
-                            <?php $this->partial("index/device_cinddata_pane"); ?>
-                            <div class="clearfix"></div>
-                        </div>
-                        <div class="row-fluid ">
-                            <?php $this->partial("index/device_environment_pane"); ?>
-                            <div class="clearfix"></div>
-                        </div>
 
                     </div>
 
-
+                    <div class="row-fluid" id="network-row">
+                        <?php $this->partial("index/map"); ?>
+                        <div class="clearfix"></div>
+                    </div>
 
                     <div class="row-fluid" id="admin-row">
                         <?php $this->partial("index/admin"); ?>
@@ -125,7 +130,7 @@
                 </div>
 				<!-- dashboard end -->
 			</div>
-			<!-- END PAGE CONTAINER-->    
+			<!-- END PAGE CONTAINER-->
 		</div>
 		<!-- END PAGE -->
 	</div>
@@ -135,7 +140,7 @@
 	<!-- BEGIN FOOTER -->
 	<div class="footer">
 		<div class="footer-inner">
-			2013 &copy; Metronic by keenthemes.
+			2014 &copy; 北京中检维康技术有限公司.
 		</div>
 		<div class="footer-tools">
 			<span class="go-top">

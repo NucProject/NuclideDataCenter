@@ -20,7 +20,7 @@ $class("LabrDevice", DeviceBase,
             {'key':'starttime', 'name':'开始时间'},
             {'key':'endtime', 'name':'结束时间'},
             {'key': 'refnuclidefound', 'name':"找到参考核素", 'type': 'bool'},
-            {'key':'N42path', 'name':'链接', 'type': 'url'}]
+            {'key': 'N42path', 'name':'链接', 'type': 'url'}]
         );
     },
 

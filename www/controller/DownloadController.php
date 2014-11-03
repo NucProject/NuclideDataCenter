@@ -8,7 +8,7 @@
 
 class DownloadController extends ApiController
 {
-
+    // ZM: 北京站有两个文件下载的地方，走这里。
     public function hpgeAction($station, $sid, $fileName)
     {
         Header("HTTP/1.1 303 See Other");

@@ -1,10 +1,8 @@
 
 <?php
-
+// ZM:所有的Controller的基类
 class ApiController extends \Phalcon\Mvc\Controller
 {
-
-
 
     protected $debug = false;
 
@@ -117,6 +115,7 @@ class ApiController extends \Phalcon\Mvc\Controller
         }
 	}
 
+    // Test method
     public function testN42Action()
     {
 
@@ -129,6 +128,7 @@ class ApiController extends \Phalcon\Mvc\Controller
         echo json_encode($data);
     }
 
+    // ZM:解析Xml数据为PHP data
     public static function getN42Data($xml)
     {
         $namespaces = $xml->getNameSpaces(true);
@@ -139,6 +139,10 @@ class ApiController extends \Phalcon\Mvc\Controller
         $saras = $m->children($namespaces[$prefix[0]])->Spectrum->children($namespaces[$prefix[1]]);
 
         $doserate = $m->children($namespaces[$prefix[0]])->CountDoseData[1]->DoseRate;
+        if (!$doserate)
+        {
+            $doserate = $m->children($namespaces[$prefix[0]])->CountDoseData[0]->DoseRate;
+        }
         $nuclidefound = $m->AnalysisResults->NuclideAnalysis->children($namespaces[$prefix[1]])->CalibrationNuclideFound;
         $t = $saras->Temperature;
         $v = $saras->HighVoltage;
@@ -150,6 +154,7 @@ class ApiController extends \Phalcon\Mvc\Controller
             'starttime' => self::parseTime( (string)$startTime), 'endtime' => self::parseTime( (string)$endTime)
         );
     }
+
 
     public function envAction($type, $param = null)
     {
@@ -196,6 +201,14 @@ class ApiController extends \Phalcon\Mvc\Controller
         }
     }
 
+    public function crystalAction()
+    {
+        $ObjectFactory = new COM ( "CrystalReports115.ObjectFactory.1" ) or die ( "Error on load" );
+            echo "AA";
+
+    }
+
+
     public static function parseTime($time)
     {
         $parsed = date_parse_from_format("Y-m-d H:i:s", $time);
@@ -225,6 +238,7 @@ class ApiController extends \Phalcon\Mvc\Controller
         // echo json_encode($parsed);
         return $ret;
     }
+
 
 	public function exitScript()
 	{

@@ -190,14 +190,14 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
 
     getLatestData: function() {
-        var station = g.getCurrentStationId();
+        var station = this._stationId;
         var url = "data/latest/" + station + "/" + this._deviceType;
         var self = this;
         this.ajax(url, null, function(data) {
 
             var r = eval("(" + data + ")");
             var latest = r['results']['status']
-            if (g.getUnixTime() - latest > 100)
+            if (g.getUnixTime() - latest > 60 * 30)
             {
                 self.updateRunState(false, "运行状态: 停止");
             }
@@ -227,42 +227,6 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         DeviceSummaryBase.showDevice(this._deviceType);
         return false;
 
-        var dt = ["hpic", "weather", "labr", "environment", "hpge", "cinderella"];
-
-        for (var i in dt)
-        {
-            var wid = dt[i] + "-tab-pane";
-
-            var w = Widget.widgetById(wid);
-            if (w)
-            {
-                if (dt[i] != this._deviceType)
-                {
-                    w._domNode.hide();
-                    var d = Widget.widgetById(dt[i] + "-device");
-                    if (d)
-                    {
-                        d.onHide();
-                    }
-                }
-                else
-                {
-                    w._domNode.show();
-                    Widget.widgetById(this._deviceType + "-device").onShow();
-                }
-            }
-        }
-
-        var sidebar = Widget.widgetById("sidebar");
-        var breadcrumb = Widget.widgetById("breadcrumb");
-        var deviceName = g.getDeviceName(this._deviceType);
-        breadcrumb.setLevels(
-            [
-                {"url":"#network", "name":"监测网络", "type":"network"},
-                {"url":"#station" + sidebar.getCurrentStationId(), "name":sidebar.getCurrentStationName(), "type":"station"},
-                {"url":"#device-" + this._deviceType, "name": deviceName, "type":"device"}
-            ]);
-        return false;
     },
 
     onPaneShow: function(e)
@@ -290,8 +254,9 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
 DeviceSummaryBase.showDevice = function(deviceType, params)
 {
-    var dt = ["hpic", "weather", "labr", "environment", "hpge", "cinderella"];
+    var dt =  ["hpic", "weather", "labr", "environment", "hpge", "cinderella"];
 
+    console.log(deviceType);
     for (var i in dt)
     {
         var wid = dt[i] + "-tab-pane";
@@ -332,7 +297,7 @@ DeviceSummaryBase.showDevice = function(deviceType, params)
 $class("HpicSummaryDevice", DeviceSummaryBase,
 {
     __constructor: function() {
-
+        this._stationId = 102;
     },
 
     onAttach: function(domNode) {
@@ -371,7 +336,7 @@ $class("HpicSummaryDevice", DeviceSummaryBase,
 $class("WeatherSummaryDevice", DeviceSummaryBase,
 {
     __constructor: function() {
-
+        this._stationId = 102;
     },
 
     onAttach: function(domNode) {
@@ -393,6 +358,30 @@ $class("WeatherSummaryDevice", DeviceSummaryBase,
 
 });
 
+$class("HpgeSummaryDevice", DeviceSummaryBase,
+    {
+        __constructor: function() {
+            this._stationId = 102;
+        },
+
+        onAttach: function(domNode) {
+            this._deviceType = "hpge";
+            this.onAttached(domNode);
+        },
+
+        onSettingPaneShow: function(fieldConfig)
+        {
+            console.log(fieldConfig);
+            /*
+             var url = "alert/get/" + g.getCurrentStationId() + "/hpic";
+             this.ajax(url, null, function(data){
+             console.log(data)
+             });
+             return false;
+             */
+        },
+
+    });
 
 $class("LabrSummaryDevice", DeviceSummaryBase,
 {
@@ -691,39 +680,5 @@ $class("EnvSummaryDevice", DeviceSummaryBase,
         this._deviceType = "environment";
         this.onAttached(domNode);
     }
-
-});
-
-$class("HpGeSummaryDevice", DeviceSummaryBase,
-{
-    __constructor: function() {
-
-    },
-
-    onAttach: function(domNode) {
-        this._deviceType = "hpge";
-        this.onAttached(domNode);
-    },
-
-    getLatestData: function() {
-        var station = g.getCurrentStationId();
-        var url = "data/latest/" + station + "/" + this._deviceType;
-        var self = this;
-
-        this.ajax(url, null, function(data) {
-
-            var r = eval("(" + data + ")");
-            var latest = r['results']['status']
-            if (!latest)
-            {
-                self.updateRunState(false, "当前SID: <未知>");
-            }
-            else
-            {
-                self.updateRunState(true, "当前SID: " + latest);
-            }
-        });
-    },
-
 
 });
