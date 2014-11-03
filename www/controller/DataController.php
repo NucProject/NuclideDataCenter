@@ -47,7 +47,7 @@ class DataController extends ApiController
                 if (!isset($history))
                 {
                     Cache::updateLatestTime($this->redis, $station, $device);
-                    $check = AlertController::checkAlertRule($this->redis, $station, $device, $data);
+                    $check = true; //AlertController::checkAlertRule($this->redis, $station, $device, $data);
                     array_push($alerts, $check);
                 }
                 array_push($success, array('device' => $device, 'time' => $entry->time));
@@ -256,7 +256,7 @@ class DataController extends ApiController
         $start = $this->request->getQuery('start');
         $end = $this->request->getQuery('end');
 
-        $phql = "SELECT count(*) as count,  from_unixtime( floor((unix_timestamp(d.time) + 8 * 3600)/ 24 / 3600) * 24 * 3600 ) as time, day(d.time) as time1 from $device as d where d.station=$station and d.time>='$start' and d.time <'$end' group by time1";
+        $phql = "SELECT count(distinct d.time) as count,  from_unixtime( floor((unix_timestamp(d.time) + 8 * 3600)/ 24 / 3600) * 24 * 3600 ) as time, day(d.time) as time1 from $device as d where d.station=$station and d.time>='$start' and d.time <'$end' group by time1";
         $counts = $this->modelsManager->executeQuery($phql);
         $items = array();
         foreach ($counts as $count)

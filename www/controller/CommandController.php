@@ -8,6 +8,14 @@
 
 class CommandController extends ApiController
 {
+
+    public function clearAction($station)
+    {
+        $queue = Key::StationCommandQueue . $station;
+        $command = $this->redis->del($queue);
+        return parent::result($command);
+    }
+
     // Query DC commands from client.
     // Used for KeepAlive also
     public function queryAction($station)
@@ -15,6 +23,9 @@ class CommandController extends ApiController
         $queue = Key::StationCommandQueue . $station;
 
         $command = $this->redis->lPop($queue);
+        $command = json_decode($command);
+        return parent::result($command);
+
 
         $now = time();
         $offlineTime = date('Y-m-d H:i:s', $now + 20);
