@@ -407,81 +407,77 @@ PHQL;
 
     public function execSummaryAction($station, $sid)
     {
-        self::summaryMdsData($station, $sid);
+        self::summaryCinderellaData($station, $sid);
     }
 
-    public function mdsSummaryAction($station)
+    public function cinderellaSummaryAction($station)
+    {
+        if (!$this->request->isGet())
+        {
+            return parent::error(Error::BadHttpMethod, '');
+        }
+        $data = CinderellaSum::find(array("station=$station"));
+        $ret = array();
+        foreach ($data as $item)
+        {
+            array_push($ret, $item);
+        }
+        return parent::result(array('items' => $ret));
+    }
+
+    public function cinderellaSummary2Action($station)
     {
         if (!$this->request->isGet())
         {
             return parent::error(Error::BadHttpMethod, '');
         }
 
-        $data = MdsSum::find(array("station=$station"));
+        $phql = "select s.sid, s.begintime, s.endtime, barcode, count(h.path) as count from CinderellaSum s left join Hpge h on h.sid=s.sid where s.station=$station group by s.sid";
 
+        $data = $this->modelsManager->executeQuery($phql);
         $ret = array();
         foreach ($data as $item)
         {
             array_push($ret, $item);
         }
-
         return parent::result(array('items' => $ret));
     }
 
-    public function mdsAction($station, $sid)
+    private static function summaryCinderellaData($station, $sid)
     {
-        if (!$this->request->isGet())
-        {
-            return parent::error(Error::BadHttpMethod, '');
-        }
-
-        $data = Mds::find(array("station=$station and sid='$sid'", 'order' => 'time'));
-
-        $ret = array();
-        foreach ($data as $item)
-        {
-            array_push($ret, $item);
-        }
-
-        return parent::result(array('items' => $ret));
-    }
-
-    private static function summaryMdsData($station, $sid)
-    {
-        $data = Mds::find(array("station=$station and sid='$sid'"));
-        if (!$data)
-            return;
+        $data = CinderellaData::find(array("station=$station and Sid='$sid'"));
         $count = count($data);
-        if ($count == 0)
-            return;
         $f = $data[0];
-        $begin = $end = ApiController::parseTime2($f->time);
-
-        $doserate = 0.0;
-        $doserateex = 0.0;
-
+        $begin = $end = ApiController::parseTime2($f->BeginTime);
+        $barcode = $f->barcode;
+        $flow = 0.0;
+        $flowPerHour = 0.0;
+        $pressure = 0.0;
         foreach ($data as $item)
         {
-            $cb = ApiController::parseTime2($item->time);
-
+            $cb = ApiController::parseTime2($item->BeginTime);
             if ($cb > $end) {
+                echo $cb;
                 $end = $cb;
             }
             if ($cb < $begin) {
+                echo $cb;
                 $begin = $cb;
             }
-
-            $doserate += $item->doserate;
-            $doserateex += $item->doserateex;
+            if ($item->Flow > $flow)
+                $flow = $item->Flow;
+            $flowPerHour += $item->FlowPerHour;
+            $pressure += $item->Pressure;
         }
-
-        $s = new MdsSum();
+        $s = new CinderellaSum();
         $s->station = $station;
         $s->sid = $sid;
         $s->begintime = date('Y-m-d H:i:s', $begin);
         $s->endtime = date('Y-m-d H:i:s', $end);
-        $s->doserate = $doserate / $count;
-        $s->doserateex = $doserateex  / $count;
+        $s->barcode = $barcode;
+        $s->flow = $flow;
+        $s->pressure = $pressure / $count;
+        $s->flowPerHour = $flowPerHour / $count;
         return $s->save();
     }
 }

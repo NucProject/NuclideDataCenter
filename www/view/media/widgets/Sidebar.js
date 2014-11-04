@@ -39,6 +39,8 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                 return false;
             });
 
+            this.onStationClicked(ul.find("li:first"));
+
         });
     },
 
