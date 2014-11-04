@@ -38,25 +38,20 @@ class DataController extends ApiController
                 // ZM:MDS设备每到Sid变化了，就对之前的N个一组数据进行Summary汇总（统计数据的由来）
                 if ($device == 'mds')
                 {
-                    $sid = Cache::getLatest($this->redis, $station, 'mds');
-                    if ($sid && $sid != $data->sid)
+
+                    $sid = Cache::getCurrentSid($this->redis, $station);
+                    if ($sid != $data->Sid)
                     {
-                        self::summaryMdsData($station, $sid);
+                        self::summaryCinderellaData($station, $sid);
+                        Cache::setCurrentSid($this->redis, $station, $data->Sid);
                     }
                 }
 
                 if (!isset($history))
                 {
-                    if ($device == 'mds')
-                    {
-                        // ZM:MDS存Sid，而不是时间戳
-                        Cache::updateLatestStat($this->redis, $station, $device, $data->sid);
-                    }
-                    else
-                    {
-                        Cache::updateLatestTime($this->redis, $station, $device);
-                    }
-                    $check = AlertController::checkAlertRule($this->redis, $station, $device, $data);
+                    Cache::updateLatestTime($this->redis, $station, $device);
+                    $check = true; //AlertController::checkAlertRule($this->redis, $station, $device, $data);
+
                     array_push($alerts, $check);
                 }
                 array_push($success, array('device' => $device, 'time' => $entry->time));
@@ -144,36 +139,23 @@ class DataController extends ApiController
         // ZM: BigData: 当interval不是30的时候的一种补充, 走最新的SQL（区分设备）
         if ($interval != 30)
         {
-            if ($device == 'cinderella')
-            {
-                $items = $this->fetchCinderellaData($station, $start, $end, $interval);
-            }
-            else if ($device == 'weather')
+            if ($device == 'weather')
             {
                 $items = $this->fetchWeatherData($station, $start, $end, $interval);
-            }
-            else if ($device == 'bai9125')
-            {
-                $items = $this->fetchBai9125Data($station, $start, $end, $interval);
-            }
-            else if ($device == 'mds')
-            {
-                $items = $this->fetchMdsData($station, $start, $end, $interval);
-            }
-            else if ($device == 'radeye')
-            {
-                $items = $this->fetchRadeyeData($station, $start, $end, $interval);
+                return parent::result(array("items" => $items));
             }
             else if ($device == 'hpic')
             {
                 $items = $this->fetchHpicData($station, $start, $end, $interval);
+                return parent::result(array("items" => $items));
             }
             else if ($device == 'environment')
             {
                 $items = $this->fetchEnvironmentData($station, $start, $end, $interval);
+                return parent::result(array("items" => $items));
             }
 
-            return parent::result(array("items" => $items));
+            // HpGe and Labr don't follow this rule.
         }
 
         $condition = "station=$station";
@@ -197,32 +179,6 @@ class DataController extends ApiController
         return parent::result(array("items" => $items));
     }
 
-    // TODO: 补齐数据项!!
-    private function fetchCinderellaData($station, $start, $end, $interval)
-    {
-        $phql = <<<PHQL
-select
-avg(d.) as alphaactivity,
-avg(d.) as alpha,
-avg(d.) as betaactivity,
-avg(d.) as beta,
-avg(d.) as i131activity,
-avg(d.) as i131,
-avg(d.) as doserate,
-FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
-from CinderellaData as d
-where d.station=$station and d.time>'$start' and d.time<'$end' group by time
-PHQL;
-
-        $data = $this->modelsManager->executeQuery($phql);
-        $items = array();
-        foreach ($data as $item)
-        {
-            array_push($items, $item);
-        }
-        return $items;
-    }
-
     private function fetchWeatherData($station, $start, $end, $interval)
     {
         $phql = <<<PHQL
@@ -235,68 +191,6 @@ avg(d.Raingauge) as Raingauge,
 avg(d.Direction) as Direction,
 FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
 from weather as d
-where d.station=$station and d.time>'$start' and d.time<'$end' group by time
-PHQL;
-
-        $data = $this->modelsManager->executeQuery($phql);
-        $items = array();
-        foreach ($data as $item)
-        {
-            array_push($items, $item);
-        }
-        return $items;
-    }
-
-    private function fetchBai9125Data($station, $start, $end, $interval)
-    {
-        $phql = <<<PHQL
-select
-avg(d.gammalong) as gammalong,
-avg(d.gammacps) as gammacps,
-avg(d.emissionlong) as emissionlong,
-avg(d.emissioncps) as emissioncps,
-avg(d.betacps) as betacps,
-FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
-from bai9125 as d
-where d.station=$station and d.time>'$start' and d.time<'$end' group by time
-PHQL;
-
-        $data = $this->modelsManager->executeQuery($phql);
-        $items = array();
-        foreach ($data as $item)
-        {
-            array_push($items, $item);
-        }
-        return $items;
-    }
-
-    private function fetchMdsData($station, $start, $end, $interval)
-    {
-        $phql = <<<PHQL
-select
-avg(d.doserate) as doserate,
-avg(d.doserateex) as doserateex,
-FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
-from mds as d
-where d.station=$station and d.time>'$start' and d.time<'$end' group by time
-PHQL;
-
-        $data = $this->modelsManager->executeQuery($phql);
-        $items = array();
-        foreach ($data as $item)
-        {
-            array_push($items, $item);
-        }
-        return $items;
-    }
-
-    private function fetchRadeyeData($station, $start, $end, $interval)
-    {
-        $phql = <<<PHQL
-select
-avg(d.doserate) as doserate,
-FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
-from radeye as d
 where d.station=$station and d.time>'$start' and d.time<'$end' group by time
 PHQL;
 
@@ -460,7 +354,22 @@ PHQL;
         return parent::result(array('count' => $count));
     }
 
-    // ZM:历史数据统计
+    public function count2Action($station, $device)
+    {
+        $start = $this->request->getQuery('start');
+        $end = $this->request->getQuery('end');
+
+        $phql = "SELECT count(distinct d.time) as count,  from_unixtime( floor((unix_timestamp(d.time) + 8 * 3600)/ 24 / 3600) * 24 * 3600 ) as time, day(d.time) as time1 from $device as d where d.station=$station and d.time>='$start' and d.time <'$end' group by time1";
+        $counts = $this->modelsManager->executeQuery($phql);
+        $items = array();
+        foreach ($counts as $count)
+        {
+            array_push($items, $count);
+        }
+        return parent::result(array('counts' => $items));
+
+    }
+
     public function checkAction($station, $device)
     {
         if (!$this->request->isPost())

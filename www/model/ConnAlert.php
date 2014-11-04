@@ -13,9 +13,4 @@
 
 class ConnAlert extends \Phalcon\Mvc\Model
 {
-
-<<<<<<< HEAD
-} 
-=======
 }
->>>>>>> zhh

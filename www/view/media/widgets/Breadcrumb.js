@@ -50,7 +50,7 @@ $class("Breadcrumb", [kx.Widget, kx.EventMixin],
         if (type == "network")
         {
             this.setLevels([{"url": "#network", "name": "监测网络", "type": "network"}]);
-            g.showRow("#network-row");
+            // g.showRow("#network-row");
         }
         else if (type == "station")
         {

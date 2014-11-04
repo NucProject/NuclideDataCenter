@@ -10,7 +10,6 @@ $class("StationTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
     __constructor: function() {
 
-
     },
 
     onAttach: function(domNode) {
@@ -19,7 +18,7 @@ $class("StationTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         this._stationId = domNode.attr('station_id');
         console.log(this._stationId);
 
-        var stationStatusNode = domNode.find('div.caption span.online');
+        var stationStatusNode = domNode.find('div.caption span.offline');
         setInterval(function(){
             stationStatusNode.text(this_.getOnlineString())
         }, 10000);
@@ -45,7 +44,7 @@ $class("StationTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         var this_ = this;
 
         this.ajax('command/online/' + this._stationId, null, function(data){
-            // console.log(data);
+            console.log(data);
             var d = eval('(' + data + ')');
             if (d['errorCode'] == 0)
             {
@@ -131,7 +130,7 @@ $class("StationTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         var this_ = this;
         this.ajax("command/alive/" + stationId, null, function(data)
         {
-            //console.log(data);
+            console.log('2' +  data);
             var d = eval('(' + data + ')');
             if (d['errorCode'] == 0)
             {
