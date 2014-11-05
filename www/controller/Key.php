@@ -8,6 +8,8 @@ class Key
 
     const StationDeviceLatest = "s:d:time";
 
+    const StationDeviceLatestStatus = "s:d:stat";
+
     const StationCinderellaSid = "s:d:sid";
 
     const StationDeviceFieldRule = "s:d:f:";

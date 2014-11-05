@@ -107,12 +107,12 @@ class ApiController extends \Phalcon\Mvc\Controller
         }
 	}
 
-	public function getRedisValueAction($key)
+	public function redisAction($key)
 	{
 		$redis = $this->redis;
 		if ($redis->exists($key))
         {
-
+            echo $redis->get($key);
         }
 		else
         {

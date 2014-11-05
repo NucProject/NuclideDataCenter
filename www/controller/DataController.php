@@ -35,8 +35,8 @@ class DataController extends ApiController
             echo json_encode($data);
             if ($data->save() !== false)
             {
-                // ZM:MDS设备每到Sid变化了，就对之前的N个一组数据进行Summary汇总（统计数据的由来）
-                if ($device == 'mds')
+                // ZM:Cinderella设备每到Sid变化了，就对之前的N个一组数据进行Summary汇总（统计数据的由来）
+                if ($device == 'cinderelladata')
                 {
 
                     $sid = Cache::getCurrentSid($this->redis, $station);
@@ -104,6 +104,7 @@ class DataController extends ApiController
                 if ($fileType == 'labr')
                 {
                     File::recordN42File($station, $filePath, $folder, $folder2, $fileName);
+                    Cache::updateLatestTime($this->redis, $station, 'labr');
                 }
                 else if ($fileType == 'hpge')
                 {

@@ -197,6 +197,7 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
             var r = eval("(" + data + ")");
             var latest = r['results']['status']
+            console.log(latest);
             if (g.getUnixTime() - latest > 60 * 30)
             {
                 self.updateRunState(false, "运行状态: 停止");
@@ -298,7 +299,7 @@ DeviceSummaryBase.showDevice = function(deviceType, params)
 $class("HpicSummaryDevice", DeviceSummaryBase,
 {
     __constructor: function() {
-        this._stationId = 102;
+        this._stationId = 128;
     },
 
     onAttach: function(domNode) {
@@ -337,7 +338,7 @@ $class("HpicSummaryDevice", DeviceSummaryBase,
 $class("WeatherSummaryDevice", DeviceSummaryBase,
 {
     __constructor: function() {
-        this._stationId = 102;
+        this._stationId = 128;
     },
 
     onAttach: function(domNode) {
@@ -362,7 +363,7 @@ $class("WeatherSummaryDevice", DeviceSummaryBase,
 $class("HpgeSummaryDevice", DeviceSummaryBase,
     {
         __constructor: function() {
-            this._stationId = 102;
+            this._stationId = 128;
         },
 
         onAttach: function(domNode) {
@@ -387,7 +388,7 @@ $class("HpgeSummaryDevice", DeviceSummaryBase,
 $class("LabrSummaryDevice", DeviceSummaryBase,
 {
     __constructor: function() {
-
+        this._stationId = 128;
     },
 
     onAttach: function(domNode) {
@@ -420,7 +421,7 @@ $class("LabrSummaryDevice", DeviceSummaryBase,
 $class("CinderellaSummaryDevice", DeviceSummaryBase,
 {
     __constructor: function() {
-
+        this._stationId = 128;
     },
 
     onAttach: function(domNode) {
@@ -674,7 +675,7 @@ $class("CinderellaSummaryDevice", DeviceSummaryBase,
 $class("EnvSummaryDevice", DeviceSummaryBase,
 {
     __constructor: function() {
-
+        this._stationId = 128;
     },
 
     onAttach: function(domNode) {
