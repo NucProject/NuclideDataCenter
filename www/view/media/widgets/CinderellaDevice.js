@@ -26,6 +26,34 @@ $class("CinderellaDevice", DeviceBase,
         this.createSummaryList(domNode);
     },
 
+    showChartsTab: function() {
+        this.updateCharts();
+    },
+
+    updateCharts: function() {
+        var start = g.getBeginTime().getTime();
+        var end = g.getEndTime().getTime();
+
+        var interval =  this._chartInterval || 30 * 10000;
+        this.showCharts(this._domNode,
+            {
+                selector: "div.charts",
+                title: "瞬时流量",
+                ytitle: "nGy/h",
+                start: start,
+                end: end,
+                max:150, min:40,
+                interval: interval,
+                filter: kx.bind(this, 'filter')
+            }
+        );
+    },
+
+    filter: function(data) {
+        var currentField = 'FlowPerHour';
+        return this.chartFilterData(data, currentField, this._chartInterval, this._step);
+    },
+
     fillListDefault: function(page) {
         this.fillList(page)
     },
