@@ -31,7 +31,9 @@ $class("LabrDevice", DeviceBase,
 
     filter: function(data) {
         console.log(this._chartInterval);
-        var result =  this.chartFilterData(data, 'doserate', this._chartInterval, 300000);
+        this._chartInterval = 3600 * 1000;
+        this._step = 300 * 1000;
+        var result =  this.chartFilterData(data, 'doserate', this._chartInterval, this._step);
         console.log(result);
         return result;
     },

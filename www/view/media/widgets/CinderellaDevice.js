@@ -51,7 +51,14 @@ $class("CinderellaDevice", DeviceBase,
 
     filter: function(data) {
         var currentField = 'FlowPerHour';
-        return this.chartFilterData(data, currentField, this._chartInterval, this._step);
+        console.log(data.length);
+        if (data.length > 1000) {
+            this._chartInterval = 3600 * 1000;
+            this._step = 30 * 1000;
+        }
+        var d =  this.chartFilterData(data, currentField, this._chartInterval, this._step);
+        return d;
+
     },
 
     fillListDefault: function(page) {
