@@ -38,25 +38,20 @@ class DataController extends ApiController
                 // ZM:MDS设备每到Sid变化了，就对之前的N个一组数据进行Summary汇总（统计数据的由来）
                 if ($device == 'mds')
                 {
-                    $sid = Cache::getLatest($this->redis, $station, 'mds');
-                    if ($sid && $sid != $data->sid)
+
+                    $sid = Cache::getCurrentSid($this->redis, $station);
+                    if ($sid != $data->Sid)
                     {
-                        self::summaryMdsData($station, $sid);
+                        self::summaryCinderellaData($station, $sid);
+                        Cache::setCurrentSid($this->redis, $station, $data->Sid);
                     }
                 }
 
                 if (!isset($history))
                 {
-                    if ($device == 'mds')
-                    {
-                        // ZM:MDS存Sid，而不是时间戳
-                        Cache::updateLatestStat($this->redis, $station, $device, $data->sid);
-                    }
-                    else
-                    {
-                        Cache::updateLatestTime($this->redis, $station, $device);
-                    }
-                    $check = AlertController::checkAlertRule($this->redis, $station, $device, $data);
+                    Cache::updateLatestTime($this->redis, $station, $device);
+                    $check = true; //AlertController::checkAlertRule($this->redis, $station, $device, $data);
+
                     array_push($alerts, $check);
                 }
                 array_push($success, array('device' => $device, 'time' => $entry->time));
@@ -144,36 +139,23 @@ class DataController extends ApiController
         // ZM: BigData: 当interval不是30的时候的一种补充, 走最新的SQL（区分设备）
         if ($interval != 30)
         {
-            if ($device == 'cinderella')
-            {
-                $items = $this->fetchCinderellaData($station, $start, $end, $interval);
-            }
-            else if ($device == 'weather')
+            if ($device == 'weather')
             {
                 $items = $this->fetchWeatherData($station, $start, $end, $interval);
-            }
-            else if ($device == 'bai9125')
-            {
-                $items = $this->fetchBai9125Data($station, $start, $end, $interval);
-            }
-            else if ($device == 'mds')
-            {
-                $items = $this->fetchMdsData($station, $start, $end, $interval);
-            }
-            else if ($device == 'radeye')
-            {
-                $items = $this->fetchRadeyeData($station, $start, $end, $interval);
+                return parent::result(array("items" => $items));
             }
             else if ($device == 'hpic')
             {
                 $items = $this->fetchHpicData($station, $start, $end, $interval);
+                return parent::result(array("items" => $items));
             }
             else if ($device == 'environment')
             {
                 $items = $this->fetchEnvironmentData($station, $start, $end, $interval);
+                return parent::result(array("items" => $items));
             }
 
-            return parent::result(array("items" => $items));
+            // HpGe and Labr don't follow this rule.
         }
 
         $condition = "station=$station";
@@ -197,32 +179,6 @@ class DataController extends ApiController
         return parent::result(array("items" => $items));
     }
 
-    // TODO: 补齐数据项!!
-    private function fetchCinderellaData($station, $start, $end, $interval)
-    {
-        $phql = <<<PHQL
-select
-avg(d.) as alphaactivity,
-avg(d.) as alpha,
-avg(d.) as betaactivity,
-avg(d.) as beta,
-avg(d.) as i131activity,
-avg(d.) as i131,
-avg(d.) as doserate,
-FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
-from CinderellaData as d
-where d.station=$station and d.time>'$start' and d.time<'$end' group by time
-PHQL;
-
-        $data = $this->modelsManager->executeQuery($phql);
-        $items = array();
-        foreach ($data as $item)
-        {
-            array_push($items, $item);
-        }
-        return $items;
-    }
-
     private function fetchWeatherData($station, $start, $end, $interval)
     {
         $phql = <<<PHQL
@@ -235,68 +191,6 @@ avg(d.Raingauge) as Raingauge,
 avg(d.Direction) as Direction,
 FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
 from weather as d
-where d.station=$station and d.time>'$start' and d.time<'$end' group by time
-PHQL;
-
-        $data = $this->modelsManager->executeQuery($phql);
-        $items = array();
-        foreach ($data as $item)
-        {
-            array_push($items, $item);
-        }
-        return $items;
-    }
-
-    private function fetchBai9125Data($station, $start, $end, $interval)
-    {
-        $phql = <<<PHQL
-select
-avg(d.gammalong) as gammalong,
-avg(d.gammacps) as gammacps,
-avg(d.emissionlong) as emissionlong,
-avg(d.emissioncps) as emissioncps,
-avg(d.betacps) as betacps,
-FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
-from bai9125 as d
-where d.station=$station and d.time>'$start' and d.time<'$end' group by time
-PHQL;
-
-        $data = $this->modelsManager->executeQuery($phql);
-        $items = array();
-        foreach ($data as $item)
-        {
-            array_push($items, $item);
-        }
-        return $items;
-    }
-
-    private function fetchMdsData($station, $start, $end, $interval)
-    {
-        $phql = <<<PHQL
-select
-avg(d.doserate) as doserate,
-avg(d.doserateex) as doserateex,
-FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
-from mds as d
-where d.station=$station and d.time>'$start' and d.time<'$end' group by time
-PHQL;
-
-        $data = $this->modelsManager->executeQuery($phql);
-        $items = array();
-        foreach ($data as $item)
-        {
-            array_push($items, $item);
-        }
-        return $items;
-    }
-
-    private function fetchRadeyeData($station, $start, $end, $interval)
-    {
-        $phql = <<<PHQL
-select
-avg(d.doserate) as doserate,
-FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
-from radeye as d
 where d.station=$station and d.time>'$start' and d.time<'$end' group by time
 PHQL;
 
@@ -460,7 +354,22 @@ PHQL;
         return parent::result(array('count' => $count));
     }
 
-    // ZM:历史数据统计
+    public function count2Action($station, $device)
+    {
+        $start = $this->request->getQuery('start');
+        $end = $this->request->getQuery('end');
+
+        $phql = "SELECT count(distinct d.time) as count,  from_unixtime( floor((unix_timestamp(d.time) + 8 * 3600)/ 24 / 3600) * 24 * 3600 ) as time, day(d.time) as time1 from $device as d where d.station=$station and d.time>='$start' and d.time <'$end' group by time1";
+        $counts = $this->modelsManager->executeQuery($phql);
+        $items = array();
+        foreach ($counts as $count)
+        {
+            array_push($items, $count);
+        }
+        return parent::result(array('counts' => $items));
+
+    }
+
     public function checkAction($station, $device)
     {
         if (!$this->request->isPost())
@@ -498,81 +407,77 @@ PHQL;
 
     public function execSummaryAction($station, $sid)
     {
-        self::summaryMdsData($station, $sid);
+        self::summaryCinderellaData($station, $sid);
     }
 
-    public function mdsSummaryAction($station)
+    public function cinderellaSummaryAction($station)
+    {
+        if (!$this->request->isGet())
+        {
+            return parent::error(Error::BadHttpMethod, '');
+        }
+        $data = CinderellaSum::find(array("station=$station"));
+        $ret = array();
+        foreach ($data as $item)
+        {
+            array_push($ret, $item);
+        }
+        return parent::result(array('items' => $ret));
+    }
+
+    public function cinderellaSummary2Action($station)
     {
         if (!$this->request->isGet())
         {
             return parent::error(Error::BadHttpMethod, '');
         }
 
-        $data = MdsSum::find(array("station=$station"));
+        $phql = "select s.sid, s.begintime, s.endtime, barcode, count(h.path) as count from CinderellaSum s left join Hpge h on h.sid=s.sid where s.station=$station group by s.sid";
 
+        $data = $this->modelsManager->executeQuery($phql);
         $ret = array();
         foreach ($data as $item)
         {
             array_push($ret, $item);
         }
-
         return parent::result(array('items' => $ret));
     }
 
-    public function mdsAction($station, $sid)
+    private static function summaryCinderellaData($station, $sid)
     {
-        if (!$this->request->isGet())
-        {
-            return parent::error(Error::BadHttpMethod, '');
-        }
-
-        $data = Mds::find(array("station=$station and sid='$sid'", 'order' => 'time'));
-
-        $ret = array();
-        foreach ($data as $item)
-        {
-            array_push($ret, $item);
-        }
-
-        return parent::result(array('items' => $ret));
-    }
-
-    private static function summaryMdsData($station, $sid)
-    {
-        $data = Mds::find(array("station=$station and sid='$sid'"));
-        if (!$data)
-            return;
+        $data = CinderellaData::find(array("station=$station and Sid='$sid'"));
         $count = count($data);
-        if ($count == 0)
-            return;
         $f = $data[0];
-        $begin = $end = ApiController::parseTime2($f->time);
-
-        $doserate = 0.0;
-        $doserateex = 0.0;
-
+        $begin = $end = ApiController::parseTime2($f->BeginTime);
+        $barcode = $f->barcode;
+        $flow = 0.0;
+        $flowPerHour = 0.0;
+        $pressure = 0.0;
         foreach ($data as $item)
         {
-            $cb = ApiController::parseTime2($item->time);
-
+            $cb = ApiController::parseTime2($item->BeginTime);
             if ($cb > $end) {
+                echo $cb;
                 $end = $cb;
             }
             if ($cb < $begin) {
+                echo $cb;
                 $begin = $cb;
             }
-
-            $doserate += $item->doserate;
-            $doserateex += $item->doserateex;
+            if ($item->Flow > $flow)
+                $flow = $item->Flow;
+            $flowPerHour += $item->FlowPerHour;
+            $pressure += $item->Pressure;
         }
-
-        $s = new MdsSum();
+        $s = new CinderellaSum();
         $s->station = $station;
         $s->sid = $sid;
         $s->begintime = date('Y-m-d H:i:s', $begin);
         $s->endtime = date('Y-m-d H:i:s', $end);
-        $s->doserate = $doserate / $count;
-        $s->doserateex = $doserateex  / $count;
+        $s->barcode = $barcode;
+        $s->flow = $flow;
+        $s->pressure = $pressure / $count;
+        $s->flowPerHour = $flowPerHour / $count;
         return $s->save();
     }
 }

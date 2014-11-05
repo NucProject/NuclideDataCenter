@@ -269,6 +269,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         {
             var api = "data/fetch/" + currentStationId + "/" + this._deviceType;
 
+            console.log(payload)
             this.ajax(api, payload, function(data){
                 var $r = eval("(" + data + ")");
                 console.log($r);

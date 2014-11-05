@@ -38,6 +38,18 @@ class Cache
         return $redis->Get($key);
     }
 
+    public static function getCurrentSid($redis, $station)
+    {
+        $key = Key::StationCinderellaSid . "[$station]";
+        return $redis->Get($key);
+    }
+
+    public static function setCurrentSid($redis, $station, $sid)
+    {
+        $key = Key::StationCinderellaSid . "[$station]";
+        return $redis->Set($key, $sid);
+    }
+
 
     public static function setAlertValue($redis, $station, $device)
     {

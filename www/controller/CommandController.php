@@ -8,16 +8,27 @@
 
 class CommandController extends ApiController
 {
+
+    public function clearAction($station)
+    {
+        $queue = Key::StationCommandQueue . $station;
+        $command = $this->redis->del($queue);
+        return parent::result($command);
+    }
+
     // Query DC commands from client.
     // Used for KeepAlive also
     public function queryAction($station)
     {
         $queue = Key::StationCommandQueue . $station;
 
-        $command = $this->redis->lPop($queue);
-
         $now = time();
         $offlineTime = date('Y-m-d H:i:s', $now + 20);
+        $this->redis->hSet(Key::KeepAlive, $station, $now);
+
+        $command = $this->redis->lPop($queue);
+        $command = json_decode($command);
+        return parent::result($command);
 
         $c = ConnAlert::findFirst(array("station=$station", 'order' => 'id desc'));
         if ($c)
@@ -54,7 +65,7 @@ class CommandController extends ApiController
             $c->save();
         }
 
-        $this->redis->hSet(Key::KeepAlive, $station, $now);
+
 
         $command = json_decode($command);
         return parent::result($command);

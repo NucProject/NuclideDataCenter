@@ -226,7 +226,6 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
         DeviceSummaryBase.showDevice(this._deviceType);
         return false;
-
     },
 
     onPaneShow: function(e)
@@ -284,6 +283,8 @@ DeviceSummaryBase.showDevice = function(deviceType, params)
     var sidebar = Widget.widgetById("sidebar");
     var breadcrumb = Widget.widgetById("breadcrumb");
     var deviceName = g.getDeviceName(deviceType);
+
+    console.log(sidebar.getCurrentStationId());
     breadcrumb.setLevels(
         [
             {"url":"#network", "name":"监测网络", "type":"network"},
