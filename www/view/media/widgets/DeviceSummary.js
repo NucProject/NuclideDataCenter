@@ -197,7 +197,7 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
             var r = eval("(" + data + ")");
             var latest = r['results']['status']
-            console.log(latest);
+            // console.log(latest);
             if (g.getUnixTime() - latest > 60 * 30)
             {
                 self.updateRunState(false, "运行状态: 停止");
@@ -403,7 +403,7 @@ $class("LabrSummaryDevice", DeviceSummaryBase,
 
         this.ajax(url, null, function(data) {
 
-            console.log(data)
+            // console.log(data)
             var r = eval("(" + data + ")");
             var latest = r['results']['status']
             if (g.getUnixTime() - latest > 610)

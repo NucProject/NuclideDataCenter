@@ -105,6 +105,7 @@ $class("HpgeDevice", DeviceBase,
                 sid: params
             };
         }
+        console.log(payload);
         this.fetchDataBySid(payload);
 
         return false;

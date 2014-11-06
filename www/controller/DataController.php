@@ -50,7 +50,7 @@ class DataController extends ApiController
                 if (!isset($history))
                 {
                     Cache::updateLatestTime($this->redis, $station, $device);
-                    $check = true; //AlertController::checkAlertRule($this->redis, $station, $device, $data);
+                    $check = AlertController::checkAlertRule($this->redis, $station, $device, $data);
 
                     array_push($alerts, $check);
                 }
@@ -263,8 +263,7 @@ PHQL;
 
         $condition = "station=$station";
 
-
-        if (isset($sid))
+        if ($sid)
         {
             $condition .= " and sid='$sid'";
         }

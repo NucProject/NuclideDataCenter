@@ -250,7 +250,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         //三天
         var beginTime = new Date(payload['start'].replace(/-/g,"\/"));
         var endTime = new Date(payload['end'].replace(/-/g,"\/"));
-        console.log("相差时间" + (endTime - beginTime));
+        console.log("相差时间：" + (endTime - beginTime));
+
         if(endTime - beginTime <= 4 * 24 * 3600 * 1000){
             console.log("少于三天");
             payload['interval'] = 30;
@@ -330,7 +331,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     onShow: function()
     {
         this._currentShownDevice = this._deviceType;
-        console.log("On Show: " + this._currentShownDevice);
+
         var payload = {
             start: g.getBeginTime('yyyy-MM-dd'),
             end: g.getEndTime('yyyy-MM-dd')

@@ -26,10 +26,6 @@ class CommandController extends ApiController
         $offlineTime = date('Y-m-d H:i:s', $now + 20);
         $this->redis->hSet(Key::KeepAlive, $station, $now);
 
-        $command = $this->redis->lPop($queue);
-        $command = json_decode($command);
-        return parent::result($command);
-
         $c = ConnAlert::findFirst(array("station=$station", 'order' => 'id desc'));
         if ($c)
         {
@@ -65,8 +61,7 @@ class CommandController extends ApiController
             $c->save();
         }
 
-
-
+        $command = $this->redis->lPop($queue);
         $command = json_decode($command);
         return parent::result($command);
     }
