@@ -116,7 +116,7 @@ class ApiController extends \Phalcon\Mvc\Controller
         }
 		else
         {
-            echo '<None>';
+            echo "[None] $key";
         }
 	}
 

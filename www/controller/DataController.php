@@ -42,8 +42,9 @@ class DataController extends ApiController
                     $sid = Cache::getCurrentSid($this->redis, $station);
                     if ($sid != $data->Sid)
                     {
-                        self::summaryCinderellaData($station, $sid);
                         Cache::setCurrentSid($this->redis, $station, $data->Sid);
+
+                        self::summaryCinderellaData($station, $sid);
                     }
                 }
 
@@ -110,6 +111,7 @@ class DataController extends ApiController
                 {
                     File::recordHpGeFile($station, $filePath, $fileName, $folder, $folder2);
                     Cache::updateLatestStat($this->redis, $station, $fileType, $folder, 3600 * 8);
+                    Cache::updateLatestTime($this->redis, $station, 'labr');
                 }
             }
 
@@ -447,23 +449,24 @@ PHQL;
     {
         $data = CinderellaData::find(array("station=$station and Sid='$sid'"));
         $count = count($data);
+        if ($count == 0)
+            return;
+
         $f = $data[0];
-        $begin = $end = ApiController::parseTime2($f->BeginTime);
+        $begin = ApiController::parseTime2($f->BeginTime);
         $barcode = $f->barcode;
         $flow = 0.0;
         $flowPerHour = 0.0;
         $pressure = 0.0;
+        $end = 0;
         foreach ($data as $item)
         {
-            $cb = ApiController::parseTime2($item->BeginTime);
+            $cb = ApiController::parseTime2($item->time);
+
             if ($cb > $end) {
-                echo $cb;
                 $end = $cb;
             }
-            if ($cb < $begin) {
-                echo $cb;
-                $begin = $cb;
-            }
+
             if ($item->Flow > $flow)
                 $flow = $item->Flow;
             $flowPerHour += $item->FlowPerHour;

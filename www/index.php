@@ -17,6 +17,7 @@ $loader->registerDirs(
 
 
 Config::$mysqlHost = '127.0.0.1';
+
 if (isset($_SERVER['NDCDB_HOST']))
 {
     //Config::$mysqlHost = $_SERVER['NDCDB_HOST'];
