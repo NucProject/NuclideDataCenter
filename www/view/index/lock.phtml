@@ -192,6 +192,12 @@
 
                 return false;
             })
+            //按下回车登陆
+            $(".page-body").keydown(function(e){
+                if(e.which == 13){
+                    $('a.signin').trigger('click');
+                }
+            });
 
         });
 
