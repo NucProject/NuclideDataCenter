@@ -109,7 +109,14 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
                                 r = (100 * item.count / expect).toFixed(1);
                             }
                         }
-                        rates.push({'start': today, 'end': today, 'title': r + '%'})
+                        var text = '数据获取率:' + r + '%';
+                        if (r >= 95) {
+                            var c = 'green';
+                        } else {
+                            var c = 'red';
+                        }
+
+                        rates.push({'start': today, 'end': today, 'title': text, textColor: c})
                         t.addDays(1);
                     }
 

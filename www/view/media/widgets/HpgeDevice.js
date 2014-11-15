@@ -43,7 +43,7 @@ $class("HpgeDevice", DeviceBase,
 
         this_._sumListView._domNode.delegate('a[href]', 'click', function(){
 
-            
+
             return false;
         });
 

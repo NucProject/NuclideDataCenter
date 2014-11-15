@@ -24,7 +24,7 @@ $class("BaiduMap", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         map.addControl(new BMap.NavigationControl());
 
         var this_ = this;
-        this.addStation(map, gpsPoint1, "北京站", function(){
+        this.addStation(map, gpsPoint1, "超大流量大气辐射环境自动监测站", function(){
             this_.showStationRow(128);
         });
 
