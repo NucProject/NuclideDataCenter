@@ -142,6 +142,7 @@ $class("Global", Base,
             var url = $(this).attr("href");
             var id = url;
 
+            console.log(1111);
             self.showRow(id);
 
             return false;
@@ -157,15 +158,17 @@ $class("Global", Base,
     },
 
     showRow: function(row) {
+        console.log(this);
         for (var i in this._row)
         {
             if (this._row[i] == row)
             {
-                $(row).show();
+                $(row).css('display', 'block');
             }
             else
             {
-                $(this._row[i]).hide();
+                console.log(222, this._row[i])
+                $(this._row[i]).css('display', 'none');
             }
         }
     },

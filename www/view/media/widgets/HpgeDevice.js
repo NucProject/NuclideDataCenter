@@ -21,9 +21,6 @@ $class("HpgeDevice", DeviceBase,
 
         this.createSummaryList(domNode);
 
-            this._domNode.delegate('a.cinderella', 'click', function () {
-                DeviceSummaryBase.showDevice('cinderella');
-            });
     },
 
     createSummaryList: function(domNode) {
@@ -108,6 +105,8 @@ $class("HpgeDevice", DeviceBase,
                 end: g.getEndTime('yyyy-MM-dd'),
                 sid: params
             };
+
+            this._domNode.find('ul.nav_tabs')
         }
         console.log(payload);
         this.fetchDataBySid(payload);

@@ -275,6 +275,7 @@ DeviceSummaryBase.showDevice = function(deviceType, params)
             }
             else
             {
+                console.log(1221212)
                 w._domNode.show();
                 Widget.widgetById(deviceType + "-device").onShow(params);
             }

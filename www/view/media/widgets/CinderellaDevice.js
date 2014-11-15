@@ -21,7 +21,9 @@ $class("CinderellaDevice", DeviceBase,
             {'key':'BeginTime', 'name':'开始时间'},
             {'key':'Flow', 'name':"流量"},
             {'key':'FlowPerHour', 'name':'瞬时流量'},
-            {'key':'Pressure', 'name':'气压'}]);
+            {'key':'Pressure', 'name':'气压'},
+            {'key':'PressureDiff', 'name':'气流压差'},
+            {'key':'Temperature', 'name':'温度'}]);
 
         this.createSummaryList(domNode);
     },
@@ -119,8 +121,8 @@ $class("CinderellaDevice", DeviceBase,
 
     onSidClicked: function(sender) {
         var sid = sender.text();
-        DeviceSummaryBase.showDevice('hpge', sid);
-
+        // DeviceSummaryBase.showDevice('hpge', sid);
+        window.open('/main/index/hpge/' + sid)
     },
 
     onRemoveClicked: function(sender)

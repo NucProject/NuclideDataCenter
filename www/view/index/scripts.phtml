@@ -111,9 +111,25 @@
                 var d = eval("(" + data + ")")
                 console.log(data)
                 if(d.errorCode == 201){
+
                     location.href = "/main/lock";
                 } else {
-                    $('body').css('display', '')
+                    var url = window.location.href;
+                    if (url.indexOf('hpge') > 0)
+                    {
+                        g.showRow("#devices-row");
+                        var sid = url.substr(url.indexOf('hpge/') + 5);
+                        DeviceSummaryBase.showDevice('hpge', sid);
+                        setTimeout(function(){
+                            $('body').css('display', '');
+                            g.showRow("#devices-row");
+                        }, 0);
+                    }
+                    else
+                    {
+                        $('body').css('display', '');
+                        g.showRow("#station-128-row");
+                    }
                 }
             }
         });
@@ -141,13 +157,17 @@
 
 
         g.init();
-        g.addRow("#station-128-row");
+        g.setCurrentStationId(128);
         //g.addRow("#network-row");
+        g.addRow("#station-128-row");
         g.addRow("#devices-row");
         g.addRow("#admin-row");
 
-
         g.showRow("#station-128-row");
+
+
+
+
 
         // TODO: Move to each station-devices;
         /*
