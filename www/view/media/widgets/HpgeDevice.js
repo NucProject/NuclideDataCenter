@@ -41,6 +41,12 @@ $class("HpgeDevice", DeviceBase,
             {'key':'count', 'name':'文件数量'},
             {'key':'handle', 'name':'补齐'}]);
 
+        this_._sumListView._domNode.delegate('a[href]', 'click', function(){
+
+            
+            return false;
+        });
+
         this_._sumListView._domNode.delegate('td a.supp', 'click', function(){
             var sid = $(this).attr('data')
             this_.setCommandForHpgeFiles(sid);
