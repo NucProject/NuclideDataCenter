@@ -20,6 +20,10 @@ $class("HpgeDevice", DeviceBase,
             {'key':'path', 'name':'下载', 'type': 'url'}]);
 
         this.createSummaryList(domNode);
+
+            this._domNode.delegate('a.cinderella', 'click', function () {
+                DeviceSummaryBase.showDevice('cinderella');
+            });
     },
 
     createSummaryList: function(domNode) {
