@@ -73,9 +73,15 @@ $class("CinderellaDevice", DeviceBase,
 
         var this_ = this;
 
-        sumContainer.delegate('a', 'click', function(){
+        sumContainer.delegate('a[href]', 'click', function(){
 
             this_.onSidClicked($(this));
+            return false;
+        });
+
+        sumContainer.delegate('a.remove', 'click', function(){
+
+            this_.onRemoveClicked($(this));
             return false;
         });
 
@@ -88,13 +94,13 @@ $class("CinderellaDevice", DeviceBase,
             {'key':'barcode', 'name':'条码'},
             {'key':'flow', 'name':'累计流量'},
             {'key':'flowPerHour', 'name':'平均瞬时流量'},
-            {'key':'pressure', 'name':'平均气压'}]);
+            {'key':'handle', 'name':'处理'}]);
     },
 
     onSummaryShow: function() {
         var this_ = this;
 
-        this.ajax('data/cinderellaSummary/' + g.getCurrentStationId(), null, function(data){
+        this.ajax('data/cinderellaSummary2/' + g.getCurrentStationId(), null, function(data){
             var r = eval("("+data+")");
             var items = r['results']['items'];
             this_.updateSummaryList(items);
@@ -105,6 +111,8 @@ $class("CinderellaDevice", DeviceBase,
         var params = this._sumListView.clearValues();
         for (var i in items) {
             var item = items[i];
+            var sid = item.sid;
+            item.handle = "<a class='btn red remove' sid='" + sid + "'>删除</a>";
             this._sumListView.addValue(item, params);
         }
     },
@@ -113,5 +121,22 @@ $class("CinderellaDevice", DeviceBase,
         var sid = sender.text();
         DeviceSummaryBase.showDevice('hpge', sid);
 
+    },
+
+    onRemoveClicked: function(sender)
+    {
+        var sid = sender.attr('sid');
+
+        this.ajax('data/delCinderellaSummary/' + g.getCurrentStationId() + '/' + sid, null, function(data){
+            var r = eval("("+data+")");
+
+            console.log(r);
+            var tr = sender.parent().parent();
+            if (r.errorCode == 0) {
+                tr.slideUp();
+            } else {
+                alert('删除记录失败');
+            }
+        });
     }
 });
