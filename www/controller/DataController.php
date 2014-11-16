@@ -279,7 +279,7 @@ PHQL;
         }
 
         //echo $condition;
-        $data = Hpge::find(array($condition));
+        $data = Hpge::find(array($condition, 'order' => 'time desc'));
 
         $items = array();
         foreach ($data as $item)

@@ -71,7 +71,7 @@ $class("HpgeDevice", DeviceBase,
         var params = this._sumListView.clearValues();
         for (var i in items) {
             var item = items[i];
-            if (item.count < 16)
+            if (item.count < 13)
             {
                 item.handle = "<a class='btn blue supp' data=" + item.sid + ">补齐文件</a>";
             }
