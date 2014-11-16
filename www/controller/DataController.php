@@ -176,6 +176,10 @@ class DataController extends ApiController
         $items = array();
         foreach ($data as $item)
         {
+            if ($device == 'labr')
+            {
+                $item->doserate = floatval($item->doserate) * 1000.0;
+            }
             array_push($items, $item);
         }
 

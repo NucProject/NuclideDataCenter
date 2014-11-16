@@ -228,7 +228,7 @@ $class("Global", Base,
     },
 
     getBeginTime: function(format) {
-        var ret = this._beginTime || new Date();
+        var ret = this._beginTime || Date.today();
         if (format)
         {
             return ret.toString(format);
@@ -237,7 +237,7 @@ $class("Global", Base,
     },
 
     getEndTime: function(format) {
-        var ret = this._endTime || new Date().addHours(24);
+        var ret = this._endTime || Date.today().addHours(24);
         if (format)
         {
             return ret.toString(format);

@@ -19,21 +19,22 @@ $class("LabrDevice", DeviceBase,
             {'key':'highvoltage', 'name':'探头高压（V）', type: 'num'},
             {'key':'starttime', 'name':'开始时间'},
             {'key':'endtime', 'name':'结束时间'},
-            {'key': 'refnuclidefound', 'name':"找到参考核素", 'type': 'bool'},
-            {'key': 'N42path', 'name':'链接', 'type': 'url'}]
+            {'key':'refnuclidefound', 'name':"找到参考核素", 'type': 'bool'},
+            {'key':'N42path', 'name':'链接', 'type': 'url'}]
         );
     },
 
     showChartsTab: function() {
         this._chartInterval = 30 * 10000;
+        this._step = 30 * 10000;
         this.updateCharts();
     },
 
     filter: function(data) {
-        console.log(this._chartInterval);
-        this._chartInterval = 3600 * 1000;
-        this._step = 300 * 1000;
+        this._chartInterval = 30 * 10000;
+        this._step = 30 * 10000;
         var result =  this.chartFilterData(data, 'doserate', this._chartInterval, this._step);
+        console.log("filter");
         console.log(result);
         return result;
     },
@@ -42,14 +43,18 @@ $class("LabrDevice", DeviceBase,
         this.fillList(page)
     },
 
+    /*
     fixValue: function(v) {
         v['doserate'] = 1000 * v['doserate'];
         return this.__super(DeviceBase.prototype.fixValue, [v]);
-    },
+    },*/
 
     updateCharts: function() {
         var start = g.getBeginTime().getTime();
         var end = g.getEndTime().getTime();
+
+        console.log(start, end)
+
         var max = 10;
         var min = -10;
         var interval =  this._chartInterval || 30 * 10000;
@@ -83,6 +88,6 @@ $class("LabrDevice", DeviceBase,
 
         this.updateCharts();
 
-    },
+    }
 });
 

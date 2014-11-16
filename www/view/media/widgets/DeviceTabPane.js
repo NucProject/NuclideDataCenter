@@ -531,11 +531,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         var endTime = g.getEndTime().getTime();
         var beginTime = g.getBeginTime().getTime();
 
-
         step = step || 30 * 1000;
         var count = interval / step;
-
-
 
         // Store data in a dict
         var item = null;
@@ -547,19 +544,31 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
         var counter = 0;
         var gv = new AverageValue();
-        for (var i = beginTime; i <= endTime; i += step)
+        console.log("Count", count);
+        if (count == 1)
         {
-            //
-            if (counter == count) {
-                counter = 0;
-
-                datas.push( gv.getValue() );
-                gv.clearValues();
+            for (var i = beginTime; i <= endTime; i += step)
+            {
+                datas.push( dict[i] );
             }
-
-            counter += 1;
-            gv.addValue(dict[i]);
         }
+        else
+        {
+            for (var i = beginTime; i <= endTime; i += step)
+            {
+                //
+                if (counter == count) {
+                    counter = 0;
+
+                    datas.push( gv.getValue() );
+                    gv.clearValues();
+                }
+
+                counter += 1;
+                gv.addValue(dict[i]);
+            }
+        }
+
 
         return {'data': datas};
     },
