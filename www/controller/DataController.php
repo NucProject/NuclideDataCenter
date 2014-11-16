@@ -498,6 +498,7 @@ PHQL;
             $flowPerHour += $item->FlowPerHour;
             $pressure += $item->Pressure;
         }
+
         $s = new CinderellaSum();
         $s->station = $station;
         $s->sid = $sid;
@@ -507,6 +508,7 @@ PHQL;
         $s->flow = $flow;
         $s->pressure = $pressure / $count;
         $s->flowPerHour = $flowPerHour / $count;
+
         return $s->save();
     }
 }
