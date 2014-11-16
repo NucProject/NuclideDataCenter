@@ -294,6 +294,9 @@ PHQL;
     public function latestAction($station, $device)
     {
         $status = Cache::getLatest($this->redis, $station, $device);
+        if ($status === false) {
+            $status= 0;
+        }
         return parent::result(array('station' => $station, 'device' => $device, 'status' => $status));
     }
 

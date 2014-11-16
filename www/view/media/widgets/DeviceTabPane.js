@@ -136,7 +136,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
             var r = eval("(" + data + ")");
             var latest = r['results']['status']
-            console.log(111, latest);
+
             if (latest > this._lastestDataTime)
             {
                 bar.css('display', '');

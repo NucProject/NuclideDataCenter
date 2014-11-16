@@ -142,7 +142,6 @@ $class("Global", Base,
             var url = $(this).attr("href");
             var id = url;
 
-            console.log(1111);
             self.showRow(id);
 
             return false;

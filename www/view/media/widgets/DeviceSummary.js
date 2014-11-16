@@ -407,8 +407,9 @@ $class("LabrSummaryDevice", DeviceSummaryBase,
             // console.log(data)
             var r = eval("(" + data + ")");
             var latest = r['results']['status']
-            if (g.getUnixTime() - latest > 610)
+            if (g.getUnixTime() - latest > 7200)
             {
+                console.log("!!!!", latest);
                 self.updateRunState(false, "运行状态: 停止");
             }
             else
