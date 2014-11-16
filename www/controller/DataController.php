@@ -111,7 +111,7 @@ class DataController extends ApiController
                 {
                     File::recordHpGeFile($station, $filePath, $fileName, $folder, $folder2);
                     Cache::updateLatestStat($this->redis, $station, $fileType, $folder, 3600 * 8);
-                    Cache::updateLatestTime($this->redis, $station, 'labr');
+                    Cache::updateLatestTime($this->redis, $station, 'hpge');
                 }
             }
 
