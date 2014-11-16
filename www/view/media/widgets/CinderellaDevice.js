@@ -95,7 +95,8 @@ $class("CinderellaDevice", DeviceBase,
             {'key':'endtime', 'name':'结束时间'},
             {'key':'barcode', 'name':'条码'},
             {'key':'flow', 'name':'累计流量'},
-            {'key':'flowPerHour', 'name':'平均瞬时流量'},
+            {'key':'flowPerHour', 'name':'平均瞬时流量', },
+            {'key':'worktime', 'name':'工作时间'},
             {'key':'handle', 'name':'处理'}]);
     },
 
@@ -114,6 +115,10 @@ $class("CinderellaDevice", DeviceBase,
         for (var i in items) {
             var item = items[i];
             var sid = item.sid;
+            if (!isNaN(item.flowPerHour))
+            {
+                item.flowPerHour = parseFloat(item.flowPerHour).toFixed(1);
+            }
             item.handle = "<a class='btn red remove' sid='" + sid + "'>删除</a>";
             this._sumListView.addValue(item, params);
         }
