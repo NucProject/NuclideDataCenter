@@ -69,7 +69,7 @@ class CommandController extends ApiController
     public function onlineAction($station)
     {
         $time = $this->redis->hGet(Key::KeepAlive, $station);
-        return parent::result(array('diff' => (time() - $time)));
+        return parent::result(array('diff' => (time() - $time), 'time' => $time));
     }
 
     public function aliveAction($station)
