@@ -21,7 +21,9 @@ $class("CinderellaDevice", DeviceBase,
             {'key':'BeginTime', 'name':'开始时间'},
             {'key':'Flow', 'name':"流量"},
             {'key':'FlowPerHour', 'name':'瞬时流量'},
-            {'key':'Pressure', 'name':'气压'}]);
+            {'key':'Pressure', 'name':'气压'},
+            {'key':'PressureDiff', 'name':'气流压差'},
+            {'key':'Temperature', 'name':'温度'}]);
 
         this.createSummaryList(domNode);
     },
@@ -34,7 +36,7 @@ $class("CinderellaDevice", DeviceBase,
         var start = g.getBeginTime().getTime();
         var end = g.getEndTime().getTime();
 
-        var interval =  this._chartInterval || 30 * 10000;
+        var interval =  this._chartInterval || 30 * 1000;
         this.showCharts(this._domNode,
             {
                 selector: "div.charts",
@@ -51,10 +53,12 @@ $class("CinderellaDevice", DeviceBase,
 
     filter: function(data) {
         var currentField = 'FlowPerHour';
-        console.log(data.length);
-        if (data.length > 1000) {
-            this._chartInterval = 3600 * 1000;
+
+        if (data.length <= 2880) {
+            this._chartInterval = 30 * 1000;
             this._step = 30 * 1000;
+        } else {
+
         }
         var d =  this.chartFilterData(data, currentField, this._chartInterval, this._step);
         return d;
@@ -73,9 +77,15 @@ $class("CinderellaDevice", DeviceBase,
 
         var this_ = this;
 
-        sumContainer.delegate('a', 'click', function(){
+        sumContainer.delegate('a[href]', 'click', function(){
 
             this_.onSidClicked($(this));
+            return false;
+        });
+
+        sumContainer.delegate('a.remove', 'click', function(){
+
+            this_.onRemoveClicked($(this));
             return false;
         });
 
@@ -88,13 +98,13 @@ $class("CinderellaDevice", DeviceBase,
             {'key':'barcode', 'name':'条码'},
             {'key':'flow', 'name':'累计流量'},
             {'key':'flowPerHour', 'name':'平均瞬时流量'},
-            {'key':'pressure', 'name':'平均气压'}]);
+            {'key':'handle', 'name':'处理'}]);
     },
 
     onSummaryShow: function() {
         var this_ = this;
 
-        this.ajax('data/cinderellaSummary/' + g.getCurrentStationId(), null, function(data){
+        this.ajax('data/cinderellaSummary2/' + g.getCurrentStationId(), null, function(data){
             var r = eval("("+data+")");
             var items = r['results']['items'];
             this_.updateSummaryList(items);
@@ -105,13 +115,32 @@ $class("CinderellaDevice", DeviceBase,
         var params = this._sumListView.clearValues();
         for (var i in items) {
             var item = items[i];
+            var sid = item.sid;
+            item.handle = "<a class='btn red remove' sid='" + sid + "'>删除</a>";
             this._sumListView.addValue(item, params);
         }
     },
 
     onSidClicked: function(sender) {
         var sid = sender.text();
-        DeviceSummaryBase.showDevice('hpge', sid);
+        // DeviceSummaryBase.showDevice('hpge', sid);
+        window.open('/main/index/hpge/' + sid)
+    },
 
+    onRemoveClicked: function(sender)
+    {
+        var sid = sender.attr('sid');
+
+        this.ajax('data/delCinderellaSummary/' + g.getCurrentStationId() + '/' + sid, null, function(data){
+            var r = eval("("+data+")");
+
+            console.log(r);
+            var tr = sender.parent().parent();
+            if (r.errorCode == 0) {
+                tr.slideUp();
+            } else {
+                alert('删除记录失败');
+            }
+        });
     }
 });

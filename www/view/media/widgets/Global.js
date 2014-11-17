@@ -157,15 +157,17 @@ $class("Global", Base,
     },
 
     showRow: function(row) {
+        console.log(this);
         for (var i in this._row)
         {
             if (this._row[i] == row)
             {
-                $(row).show();
+                $(row).css('display', 'block');
             }
             else
             {
-                $(this._row[i]).hide();
+                console.log(222, this._row[i])
+                $(this._row[i]).css('display', 'none');
             }
         }
     },
@@ -225,7 +227,7 @@ $class("Global", Base,
     },
 
     getBeginTime: function(format) {
-        var ret = this._beginTime || new Date();
+        var ret = this._beginTime || Date.today();
         if (format)
         {
             return ret.toString(format);
@@ -234,7 +236,7 @@ $class("Global", Base,
     },
 
     getEndTime: function(format) {
-        var ret = this._endTime || new Date().addHours(24);
+        var ret = this._endTime || Date.today().addHours(24);
         if (format)
         {
             return ret.toString(format);

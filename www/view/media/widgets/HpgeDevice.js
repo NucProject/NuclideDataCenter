@@ -20,6 +20,7 @@ $class("HpgeDevice", DeviceBase,
             {'key':'path', 'name':'下载', 'type': 'url'}]);
 
         this.createSummaryList(domNode);
+
     },
 
     createSummaryList: function(domNode) {
@@ -40,9 +41,20 @@ $class("HpgeDevice", DeviceBase,
             {'key':'count', 'name':'文件数量'},
             {'key':'handle', 'name':'补齐'}]);
 
+        this_._sumListView._domNode.delegate('a[href]', 'click', function(){
+            var sid = $(this).attr('href');
+            window.open('/main/index/hpge/' + sid);
+            return false;
+        });
+
         this_._sumListView._domNode.delegate('td a.supp', 'click', function(){
-            var sid = $(this).attr('data')
+            var sid = $(this).attr('data');
             this_.setCommandForHpgeFiles(sid);
+        });
+
+        this_._sumListView._domNode.delegate('td a.remove', 'click', function(){
+            // var sid = $(this).attr('data')
+            this_.removeRecord($(this));
         });
     },
 
@@ -60,13 +72,28 @@ $class("HpgeDevice", DeviceBase,
         });
     },
 
+    removeRecord: function (sender) {
+        var sid = sender.attr('data')
+        this.ajax('data/delCinderellaSummary/' + g.getCurrentStationId() + '/' + sid, null, function(data){
+            var r = eval("("+data+")");
+
+            console.log(r);
+            var tr = sender.parent().parent();
+            if (r.errorCode == 0) {
+                tr.slideUp();
+            } else {
+                alert('删除记录失败');
+            }
+        });
+    },
+
     updateSummaryList: function(items) {
         var params = this._sumListView.clearValues();
         for (var i in items) {
             var item = items[i];
-            if (item.count < 16)
+            if (item.count < 13)
             {
-                item.handle = "<a class='btn blue supp' data=" + item.sid + ">补齐文件</a>";
+                item.handle = "<a class='btn blue supp' data=" + item.sid + ">补齐文件</a><a class='btn red remove' data=" + item.sid + ">删除</a>";
             }
             this._sumListView.addValue(item, params);
         }
@@ -104,6 +131,8 @@ $class("HpgeDevice", DeviceBase,
                 end: g.getEndTime('yyyy-MM-dd'),
                 sid: params
             };
+
+            this._domNode.find('ul.nav_tabs')
         }
         console.log(payload);
         this.fetchDataBySid(payload);

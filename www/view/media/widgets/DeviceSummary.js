@@ -275,6 +275,7 @@ DeviceSummaryBase.showDevice = function(deviceType, params)
             }
             else
             {
+                console.log(1221212)
                 w._domNode.show();
                 Widget.widgetById(deviceType + "-device").onShow(params);
             }
@@ -361,29 +362,49 @@ $class("WeatherSummaryDevice", DeviceSummaryBase,
 });
 
 $class("HpgeSummaryDevice", DeviceSummaryBase,
+{
+    __constructor: function() {
+        this._stationId = 128;
+    },
+
+    onAttach: function(domNode) {
+        this._deviceType = "hpge";
+        this.onAttached(domNode);
+    },
+
+    onSettingPaneShow: function(fieldConfig)
     {
-        __constructor: function() {
-            this._stationId = 128;
-        },
+        console.log(fieldConfig);
+        /*
+         var url = "alert/get/" + g.getCurrentStationId() + "/hpic";
+         this.ajax(url, null, function(data){
+         console.log(data)
+         });
+         return false;
+         */
+    },
 
-        onAttach: function(domNode) {
-            this._deviceType = "hpge";
-            this.onAttached(domNode);
-        },
+    getLatestData: function() {
+        var station = g.getCurrentStationId();
+        var url = "data/latest/" + station + "/" + this._deviceType;
+        var self = this;
 
-        onSettingPaneShow: function(fieldConfig)
-        {
-            console.log(fieldConfig);
-            /*
-             var url = "alert/get/" + g.getCurrentStationId() + "/hpic";
-             this.ajax(url, null, function(data){
-             console.log(data)
-             });
-             return false;
-             */
-        },
+        this.ajax(url, null, function(data) {
 
-    });
+            var r = eval("(" + data + ")");
+            var latest = r['results']['status']
+            if (g.getUnixTime() - latest > 7200)
+            {
+                self.updateRunState(false, "运行状态: 停止");
+            }
+            else
+            {
+                self.updateRunState(true, "运行状态: 运行");
+            }
+        });
+    }
+
+});
 
 $class("LabrSummaryDevice", DeviceSummaryBase,
 {
@@ -415,7 +436,7 @@ $class("LabrSummaryDevice", DeviceSummaryBase,
                 self.updateRunState(true, "运行状态: 运行");
             }
         });
-    },
+    }
 });
 
 $class("CinderellaSummaryDevice", DeviceSummaryBase,

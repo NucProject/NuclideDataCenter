@@ -111,7 +111,7 @@ class DataController extends ApiController
                 {
                     File::recordHpGeFile($station, $filePath, $fileName, $folder, $folder2);
                     Cache::updateLatestStat($this->redis, $station, $fileType, $folder, 3600 * 8);
-                    Cache::updateLatestTime($this->redis, $station, 'labr');
+                    Cache::updateLatestTime($this->redis, $station, 'hpge');
                 }
             }
 
@@ -176,6 +176,10 @@ class DataController extends ApiController
         $items = array();
         foreach ($data as $item)
         {
+            if ($device == 'labr')
+            {
+                $item->doserate = floatval($item->doserate) * 1000.0;
+            }
             array_push($items, $item);
         }
 
@@ -275,7 +279,7 @@ PHQL;
         }
 
         //echo $condition;
-        $data = Hpge::find(array($condition));
+        $data = Hpge::find(array($condition, 'order' => 'time desc'));
 
         $items = array();
         foreach ($data as $item)
@@ -290,6 +294,9 @@ PHQL;
     public function latestAction($station, $device)
     {
         $status = Cache::getLatest($this->redis, $station, $device);
+        if ($status === false) {
+            $status= 0;
+        }
         return parent::result(array('station' => $station, 'device' => $device, 'status' => $status));
     }
 
@@ -434,7 +441,7 @@ PHQL;
             return parent::error(Error::BadHttpMethod, '');
         }
 
-        $phql = "select s.sid, s.begintime, s.endtime, barcode, count(h.path) as count from CinderellaSum s left join Hpge h on h.sid=s.sid where s.station=$station group by s.sid";
+        $phql = "select s.sid, s.begintime, s.endtime, barcode, count(h.path) as count, s.flow, s.pressure, s.flowPerHour from CinderellaSum s left join Hpge h on h.sid=s.sid where s.station=$station group by s.sid order by s.begintime DESC";
 
         $data = $this->modelsManager->executeQuery($phql);
         $ret = array();
@@ -443,6 +450,25 @@ PHQL;
             array_push($ret, $item);
         }
         return parent::result(array('items' => $ret));
+    }
+
+    public function delCinderellaSummaryAction($station, $sid)
+    {
+        if (!$this->request->isGet())
+        {
+            return parent::error(Error::BadHttpMethod, '');
+        }
+
+        $data = CinderellaSum::find(array("station=$station and sid='$sid'"));
+        if ($data)
+        {
+            if ($data->delete())
+            {
+                return parent::result(array('sid' => $sid, 'removed' => true));
+            }
+        }
+
+        return parent::error(Error::BadRecord, '');
     }
 
     private static function summaryCinderellaData($station, $sid)
@@ -472,6 +498,7 @@ PHQL;
             $flowPerHour += $item->FlowPerHour;
             $pressure += $item->Pressure;
         }
+
         $s = new CinderellaSum();
         $s->station = $station;
         $s->sid = $sid;
@@ -481,6 +508,7 @@ PHQL;
         $s->flow = $flow;
         $s->pressure = $pressure / $count;
         $s->flowPerHour = $flowPerHour / $count;
+
         return $s->save();
     }
 }

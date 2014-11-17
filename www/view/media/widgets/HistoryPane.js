@@ -97,8 +97,11 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
                     var t = start.clone();
                     while (t.getTime() < end.getTime())
                     {
-                        var today = t.clone();
-                        var todayStr = today.toString('yyyy-MM-dd');
+                        var cur = t.clone();
+                        if (cur.getTime() > +new Date())
+                            break;
+
+                        var todayStr = cur.toString('yyyy-MM-dd');
                         var r = "0";
                         for (var i in a)
                         {
@@ -109,7 +112,18 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
                                 r = (100 * item.count / expect).toFixed(1);
                             }
                         }
-                        rates.push({'start': today, 'end': today, 'title': r + '%'})
+                        var text = '数据获取率:' + r + '%';
+                        if (r >= 95) {
+                            var c = 'green';
+                        } else {
+                            var c = 'red';
+                        }
+
+                        if (todayStr == (new Date().toString('yyyy-MM-dd'))) {
+                            var c = 'orange';
+                        }
+
+                        rates.push({'start': cur, 'end': cur, 'title': text, textColor: c})
                         t.addDays(1);
                     }
 
