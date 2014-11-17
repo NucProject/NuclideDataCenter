@@ -415,8 +415,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                 continue;
 
             var key = keys[i];
-            var m = key.substr(15, 1);
-            var s = key.substr(17, 2);
+            var m = key.substr(15, 1);//找分钟的位置的数
+            var s = key.substr(17, 2);//找秒数
 
             value = this._dict[key];
 
