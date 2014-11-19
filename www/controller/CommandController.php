@@ -109,14 +109,15 @@ class CommandController extends ApiController
         {
             $status = $this->request->getRawBody();
             $queue = Key::StationCinderellaStatus . $station;
-            $this->redis->set($queue, $status);
+            $this->redis->set($queue, json_encode(array('status' => $status, 'time' => time())));
             return parent::result(array('update' => true));
         }
         else if ($this->request->isGet())
         {
             $queue = Key::StationCinderellaStatus . $station;
-            $status = $this->redis->get($queue);
-            return parent::result(array('status' => $status));
+            $json = $this->redis->get($queue);
+            $d = json_decode($json, true);
+            return parent::result(array('status' => $d['status'], 'time' => $d['time']));
         }
 
         return parent::error(Error::BadHttpMethod, '');
