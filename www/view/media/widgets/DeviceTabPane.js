@@ -369,6 +369,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         keys.sort().reverse();
         for (var i in keys) {
 
+            console.log(keys[i])
             if (count >= from) {
                 start = true;
             }

@@ -28,8 +28,10 @@ $class("HpgeDevice", DeviceBase,
         var dict = [];
         for (var i in items) {
             var item = items[i];
-            // var t = item['time'];
-            dict[i] = item;
+            var t = item['time']; // 不能以time为key，并且排序了.
+            t = t + i;
+            dict[t] = item;
+            console.log(item)
         }
         this._dict = dict;
         return this._dict;
