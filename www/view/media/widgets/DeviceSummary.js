@@ -453,6 +453,29 @@ $class("CinderellaSummaryDevice", DeviceSummaryBase,
 
     getLatestData: function() {
         var station = g.getCurrentStationId();
+        var url = "data/latest/" + station + "/cinderelladata";
+        var self = this;
+
+        this.ajax(url, null, function(data) {
+
+            // console.log(data)
+            var r = eval("(" + data + ")");
+            var latest = r['results']['status']
+            if (g.getUnixTime() - latest > 120)
+            {
+                self.updateRunState(false, "运行状态: 停止");
+            }
+            else
+            {
+                self.updateRunState(true, "运行状态: 运行");
+            }
+        });
+
+        this.getCinderellaStatus();
+    },
+
+    getCinderellaStatus: function() {
+        var station = g.getCurrentStationId();
         // Get Cinderella Device Running step;
         var url = "command/cinderella/" + station;
         var self = this;
@@ -483,11 +506,13 @@ $class("CinderellaSummaryDevice", DeviceSummaryBase,
         }
 
         b = b.split("").reverse().join("");
+
         this.searchBitStatus(b, s);
     },
 
     updateStatus: function(statusText) {
-        this.updateRunState(true, "运行状态: " + statusText);
+
+        // this.updateRunState(true, "运行状态: " + '运行');
     },
 
     searchBitStatus: function(data, p)
@@ -604,6 +629,7 @@ $class("CinderellaSummaryDevice", DeviceSummaryBase,
         }
 
         //应急报警
+        /*
         if (data[0] == "1")
         {
             this.updateStatus("紧急开关报警");
@@ -611,7 +637,7 @@ $class("CinderellaSummaryDevice", DeviceSummaryBase,
         if (data[0] == "0")
         {
             this.updateStatus("紧急开关正常");
-        }
+        }*/
 
         // 模式, 过程
         if (p[0] == "0")
