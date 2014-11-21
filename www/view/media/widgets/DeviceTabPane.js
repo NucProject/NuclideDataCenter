@@ -188,7 +188,10 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             this.fillList(page);
         } else if (sender.hasClass('h1')) {
             this.fillList1Hour(page);
-        } else {
+        }else if (sender.hasClass('d1')) {
+            this.fillList1Day(page);
+        }
+        else {
             this.fillListDefault(page);
         }
     },
@@ -306,6 +309,13 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             this._domNode.find('.chart-interval a.s30').css('display', 'none');
             this._domNode.find('.chart-interval a.m5').css('display', 'none');
             var a = this._domNode.find('.chart-interval a.h1').addClass('red');
+
+        }
+        else if (interval == 24*3600 * 1000) {
+            this._domNode.find('.chart-interval a.s30').css('display', 'none');
+            this._domNode.find('.chart-interval a.m5').css('display', 'none');
+            this._domNode.find('.chart-interval a.h1').css('display', 'none');
+            var a = this._domNode.find('.chart-interval a.d1').addClass('red');
 
         }
     },
@@ -476,6 +486,23 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         }
 
         this.updatePageBar(12)
+    },
+
+    fillList1Day: function() {
+        var params = this._dataListView.clearValues();
+
+        var keys = Object.keys(this._dict);
+        keys.sort().reverse();
+        var gv = null;
+        for (var i in keys) {
+            var key = keys[i];
+            gv = new GroupValue({'time': key});
+            value = this._dict[key];
+            gv && gv.addValue(value);
+        }
+        this._dataListView.addValue(gv.getValue(), params);
+
+        this.updatePageBar(1)
     },
 
     dateRangeChanged: function(range) {
