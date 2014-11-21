@@ -81,7 +81,10 @@ $class("WeatherDevice", DeviceBase,
             this._chartInterval = 30 * 1000;
         } else if (sender.hasClass('h1')) {
             this._chartInterval = 3600 * 1000;
-        } else {
+        }else if (sender.hasClass('d1')) {
+            this._chartInterval = 24*3600 * 1000;
+        }
+        else {
             // 5min as default;
             this._chartInterval = 30 * 10000;
         }

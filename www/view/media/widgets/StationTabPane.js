@@ -90,6 +90,7 @@ $class("StationTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                   this._connList.addValue(item, params);
               else
               {
+                  //如果endtime-now<120,不显示或者显示为正常
                 item['endtime'] = "断线中";
                 this._connList.addValue(item, params);
               }
