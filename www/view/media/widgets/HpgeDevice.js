@@ -23,6 +23,18 @@ $class("HpgeDevice", DeviceBase,
 
     },
 
+    // 特殊处理 Hpge的数据有文件时间一样的!
+    makeDataDict: function(items) {
+        var dict = [];
+        for (var i in items) {
+            var item = items[i];
+            // var t = item['time'];
+            dict[i] = item;
+        }
+        this._dict = dict;
+        return this._dict;
+    },
+
     createSummaryList: function(domNode) {
         var sumContainer = domNode.find('div.sum-container');
         this._sumListView = new ListView();
