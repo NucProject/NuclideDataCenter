@@ -460,7 +460,7 @@ $class("CinderellaSummaryDevice", DeviceSummaryBase,
 
             // console.log(data)
             var r = eval("(" + data + ")");
-            var latest = r['results']['status']
+            var latest = r['results']['status'];
             if (g.getUnixTime() - latest > 120)
             {
                 self.updateRunState(false, "运行状态: 停止");
