@@ -196,7 +196,7 @@ avg(d.Pressure) as Pressure,
 avg(d.Windspeed) as Windspeed,
 avg(d.Raingauge) as Raingauge,
 avg(d.Direction) as Direction,
-FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
+FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time
 from weather as d
 where d.station=$station and d.time>'$start' and d.time<'$end' group by time
 PHQL;
@@ -218,10 +218,12 @@ avg(d.doserate) as doserate,
 avg(d.battery) as battery,
 avg(d.highvoltage) as highvoltage,
 avg(d.temperature) as temperature,
-FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
+FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time
 from hpic as d
 where d.station=$station and d.time>'$start' and d.time<'$end' group by time
 PHQL;
+
+        //echo $interval;
 
         $data = $this->modelsManager->executeQuery($phql);
         $items = array();
@@ -243,7 +245,7 @@ avg(d.BatteryHours) as BatteryHours,
 avg(d.IfSmoke) as IfSmoke,
 avg(d.IfWater) as IfWater,
 avg(d.IfDoorOpen) as IfDoorOpen,
-FROM_UNIXTIME(CEILING(UNIX_TIMESTAMP(d.time) / $interval) * $interval)  as time
+FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time
 from Environment as d
 where d.station=$station and d.time>'$start' and d.time<'$end' group by time
 PHQL;

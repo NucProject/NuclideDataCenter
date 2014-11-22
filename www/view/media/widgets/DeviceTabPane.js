@@ -182,6 +182,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     },
 
     shiftIntervalView: function(sender, page) {
+        console.log(1);
         if (sender.hasClass('m5')) {
             this.fillList5min(page);
         } else if (sender.hasClass('s30')) {
@@ -189,9 +190,11 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         } else if (sender.hasClass('h1')) {
             this.fillList1Hour(page);
         }else if (sender.hasClass('d1')) {
+            console.log(2);
             this.fillList1Day(page);
         }
         else {
+            console.log(3);
             this.fillListDefault(page);
         }
     },
@@ -255,17 +258,27 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         var endTime = new Date(payload['end'].replace(/-/g,"\/"));
         console.log("相差时间：" + (endTime - beginTime));
 
-        if(endTime - beginTime <= 4 * 24 * 3600 * 1000){
+        var diff = endTime - beginTime;
+        if(diff <= 4 * 24 * 3600 * 1000){
             console.log("少于三天");
             payload['interval'] = 30;
             this._step = 30 * 1000;
             this._chartInterval = 30 * 1000;
         }
-        else{
+        else if (diff > 4 && diff <= 8)
+        {
             payload['interval'] = 3600;
             this._step = 3600 * 1000;
             this._chartInterval = 3600 * 1000;
         }
+        else if (diff > 8)
+        {
+            payload['interval'] = 3600 * 24;
+            this._step = 24 * 3600 * 1000;
+            this._chartInterval = 24 * 3600 * 1000;
+        }
+
+
         var this_ = this;
         var currentStationId = g.getCurrentStationId();
 
@@ -293,8 +306,35 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         }
     },
 
-    updateIntervalButtons: function(interval) {
+    updateIntervalButtons1: function(interval) {
+        console.log(222)
+        this._domNode.find('.chart-interval a').removeClass('red');
+        if (interval == 30 * 1000) {
+            this._domNode.find('.interval a.s30').css('display', '');
+            this._domNode.find('.interval a.m5').css('display', '');
+            this._domNode.find('.interval a.s30').addClass('red');
 
+        } else if (interval == 300 * 1000) {
+            this._domNode.find('.interval a.m5').addClass('red');
+
+        } else if (interval == 3600 * 1000) {
+            console.log(33);
+            this._domNode.find('.interval a.s30').css('display', 'none');
+            this._domNode.find('.interval a.m5').css('display', 'none');
+            var a = this._domNode.find('.chart-interval a.h1').addClass('red');
+
+        }
+        else if (interval == 24 * 3600 * 1000) {
+            this._domNode.find('.interval a.s30').css('display', 'none');
+            this._domNode.find('.interval a.m5').css('display', 'none');
+            this._domNode.find('.interval a.h1').css('display', 'none');
+            var a = this._domNode.find('.interval a.d1').addClass('red');
+
+        }
+    },
+
+    updateIntervalButtons2: function(interval) {
+        console.log(222)
         this._domNode.find('.chart-interval a').removeClass('red');
         if (interval == 30 * 1000) {
             this._domNode.find('.chart-interval a.s30').css('display', '');
@@ -311,7 +351,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             var a = this._domNode.find('.chart-interval a.h1').addClass('red');
 
         }
-        else if (interval == 24*3600 * 1000) {
+        else if (interval == 24 * 3600 * 1000) {
             this._domNode.find('.chart-interval a.s30').css('display', 'none');
             this._domNode.find('.chart-interval a.m5').css('display', 'none');
             this._domNode.find('.chart-interval a.h1').css('display', 'none');
@@ -473,6 +513,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             if (m == '00' && s == '00') {
                 if (gv) {
                     this._dataListView.addValue(gv.getValue(), params);
+                    gv.clearValues();
                 }
 
                 gv = new GroupValue({'time': key});
@@ -490,20 +531,52 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     },
 
     fillList1Day: function() {
+
+        var value = null;
+        var start = false;
+        var count = 0;
         var params = this._dataListView.clearValues();
 
         var keys = Object.keys(this._dict);
+
         keys.sort().reverse();
         var gv = null;
         for (var i in keys) {
-            var key = keys[i];
-            gv = new GroupValue({'time': key});
-            value = this._dict[key];
-            gv && gv.addValue(value);
-        }
-        this._dataListView.addValue(gv.getValue(), params);
 
-        this.updatePageBar(1)
+
+            var key = keys[i];
+            var h = key.substr(11, 2);
+            var m = key.substr(14, 2);
+            var s = key.substr(17, 2);
+
+            if (h == '00' && m == '00' && s == '00')
+            {
+                console.log(key);
+                if (gv)
+                {
+                    var v = gv.getValue();
+                    v['time'] = key.substr(0, 10);
+                    console.log(v);
+                    this._dataListView.addValue(v, params);
+                }
+            }
+            else
+            {
+                if (!gv)
+                {
+                    gv = new GroupValue({'time': key});
+
+                }
+                value = this._dict[key];
+                gv.addValue(value);
+            }
+
+
+        }
+
+
+        this.updatePageBar(12)
+
     },
 
     dateRangeChanged: function(range) {
@@ -538,9 +611,12 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             this.onDataStatisitcTabShown();
         } else if (tabItem.hasClass('charts')) {
             this._onChartsPage = true;
-            this.updateIntervalButtons(this._chartInterval);
+            this.updateIntervalButtons1(this._chartInterval);
+            this.updateIntervalButtons2(this._chartInterval);
             this.showChartsTab && this.showChartsTab();
         } else if (tabItem.hasClass('data')) {
+            this.updateIntervalButtons1(this._chartInterval);
+            this.updateIntervalButtons2(this._chartInterval);
             this.onShow();
         } else if (tabItem.hasClass('alerts')) {
             this.onAlertPageShow();
