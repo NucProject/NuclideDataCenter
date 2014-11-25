@@ -684,8 +684,9 @@ var Index = function () {
                     var diff = end.getTime() - start.getTime();
                     var f = 'yyyy年MM月dd日';
 
-                    if (diff > 86400000 * 30)
+                    if (diff > 86400000 * 60)
                     {// ZM:     时间跨度限制
+                        console.log(111222212121)
                         return false;
                     }
 
