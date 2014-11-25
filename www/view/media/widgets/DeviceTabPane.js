@@ -190,11 +190,11 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         } else if (sender.hasClass('h1')) {
             this.fillList1Hour(page);
         }else if (sender.hasClass('d1')) {
-            console.log(2);
+            // console.log(2);
             this.fillList1Day(page);
         }
         else {
-            console.log(3);
+            // console.log(3);
             this.fillListDefault(page);
         }
     },
@@ -258,20 +258,26 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         var endTime = new Date(payload['end'].replace(/-/g,"\/"));
         console.log("相差时间：" + (endTime - beginTime));
 
-        var diff = endTime - beginTime;
-        if(diff <= 4 * 24 * 3600 * 1000){
+        var diff = (endTime - beginTime) / 1000 / 3600 / 24;
+        if(diff <= 3){
             console.log("少于三天");
             payload['interval'] = 30;
             this._step = 30 * 1000;
             this._chartInterval = 30 * 1000;
         }
-        else if (diff > 4 && diff <= 8)
+        else if (diff > 3 && diff <= 6)
+        {
+            payload['interval'] = 300;
+            this._step = 300 * 1000;
+            this._chartInterval = 300 * 1000;
+        }
+        else if (diff > 6 && diff <= 10)
         {
             payload['interval'] = 3600;
             this._step = 3600 * 1000;
             this._chartInterval = 3600 * 1000;
         }
-        else if (diff > 8)
+        else if (diff > 10)
         {
             payload['interval'] = 3600 * 24;
             this._step = 24 * 3600 * 1000;
@@ -280,16 +286,18 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
 
         var this_ = this;
+        this.updateIntervalButtons1(this._chartInterval);
+        this.updateIntervalButtons2(this._chartInterval);
         var currentStationId = g.getCurrentStationId();
 
         if (currentStationId)
         {
             var api = "data/fetch/" + currentStationId + "/" + this._deviceType;
 
-            console.log(payload)
+            // console.log(payload)
             this.ajax(api, payload, function(data){
                 var $r = eval("(" + data + ")");
-                console.log($r);
+                // console.log($r);
                 var items = $r.results.items;
                 this_._items = items;
                 // Fetch today data and has data.
@@ -306,58 +314,43 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         }
     },
 
-    updateIntervalButtons1: function(interval) {
-        console.log(222)
-        this._domNode.find('.chart-interval a').removeClass('red');
+    updateIntervalButtons: function(interval, csscls) {
+        // console.log(interval);
+        var n = this._domNode.find(csscls);
+        this._domNode.find(csscls).find('a').removeClass('red');
         if (interval == 30 * 1000) {
-            this._domNode.find('.interval a.s30').css('display', '');
-            this._domNode.find('.interval a.m5').css('display', '');
-            this._domNode.find('.interval a.s30').addClass('red');
+            n.find('a.s30').css('display', '').addClass('red');
+            n.find('a.m5').css('display', '');
+            n.find('a.h1').css('display', '');
+            n.find('a.d1').css('display', '');
 
         } else if (interval == 300 * 1000) {
-            this._domNode.find('.interval a.m5').addClass('red');
+            n.find('a.s30').css('display', 'none');
+            n.find('a.m5').css('display', '').addClass('red');
+            n.find('a.h1').css('display', '');
+            n.find('a.d1').css('display', '');
 
         } else if (interval == 3600 * 1000) {
-            console.log(33);
-            this._domNode.find('.interval a.s30').css('display', 'none');
-            this._domNode.find('.interval a.m5').css('display', 'none');
-            var a = this._domNode.find('.chart-interval a.h1').addClass('red');
 
+            n.find('a.s30').css('display', 'none');
+            n.find('a.m5').css('display', 'none');
+            n.find('a.h1').css('display', '').addClass('red');
+            n.find('a.d1').css('display', '');
         }
         else if (interval == 24 * 3600 * 1000) {
-            this._domNode.find('.interval a.s30').css('display', 'none');
-            this._domNode.find('.interval a.m5').css('display', 'none');
-            this._domNode.find('.interval a.h1').css('display', 'none');
-            var a = this._domNode.find('.interval a.d1').addClass('red');
-
+            n.find('a.s30').css('display', 'none');
+            n.find('a.m5').css('display', 'none');
+            n.find('a.h1').css('display', 'none');
+            n.find('a.d1').css('display', '').addClass('red');
         }
     },
 
+    updateIntervalButtons1: function (interval) {
+        this.updateIntervalButtons(interval, '.interval');
+    },
+
     updateIntervalButtons2: function(interval) {
-        console.log(222)
-        this._domNode.find('.chart-interval a').removeClass('red');
-        if (interval == 30 * 1000) {
-            this._domNode.find('.chart-interval a.s30').css('display', '');
-            this._domNode.find('.chart-interval a.m5').css('display', '');
-            this._domNode.find('.chart-interval a.s30').addClass('red');
-
-        } else if (interval == 300 * 1000) {
-            this._domNode.find('.chart-interval a.m5').addClass('red');
-
-        } else if (interval == 3600 * 1000) {
-            console.log(33);
-            this._domNode.find('.chart-interval a.s30').css('display', 'none');
-            this._domNode.find('.chart-interval a.m5').css('display', 'none');
-            var a = this._domNode.find('.chart-interval a.h1').addClass('red');
-
-        }
-        else if (interval == 24 * 3600 * 1000) {
-            this._domNode.find('.chart-interval a.s30').css('display', 'none');
-            this._domNode.find('.chart-interval a.m5').css('display', 'none');
-            this._domNode.find('.chart-interval a.h1').css('display', 'none');
-            var a = this._domNode.find('.chart-interval a.d1').addClass('red');
-
-        }
+        this.updateIntervalButtons(interval, '.chart-interval');
     },
 
     renderData: function()
@@ -543,7 +536,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         var gv = null;
         for (var i in keys) {
 
-
             var key = keys[i];
             var h = key.substr(11, 2);
             var m = key.substr(14, 2);
@@ -551,12 +543,10 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
             if (h == '00' && m == '00' && s == '00')
             {
-                console.log(key);
                 if (gv)
                 {
                     var v = gv.getValue();
                     v['time'] = key.substr(0, 10);
-                    console.log(v);
                     this._dataListView.addValue(v, params);
                 }
             }
