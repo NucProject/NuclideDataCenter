@@ -315,7 +315,7 @@ PHQL;
 
         $modelName = $device . 'Alert';
 
-        $alerts =  $modelName::find(array($condition));
+        $alerts =  $modelName::find(array($condition, 'order' => 'time desc'));
         $ret = array();
         foreach ($alerts as $alert)
         {

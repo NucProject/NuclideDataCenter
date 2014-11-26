@@ -170,7 +170,7 @@
 
 
         // TODO: Move to each station-devices;
-        /*
+
         setInterval(function(){
             // header_notification_bar
             $.ajax({
@@ -178,12 +178,13 @@
                 url: "alert/count",
                 data: {},
 
+
                 success: function(data){
+                    console.log(data);
                     var d = eval("(" + data + ")")
                     if(d.errorCode == 0){
                         g.setAlerts(d.results);
 
-                        // $('#header_notification_bar span.badge').text(d.results.count)
 
                         $('#hpic_alert_a span.badge').text(d.results.hpic);
                         $('#weather_alert_a span.badge').text(d.results.weather);
@@ -198,7 +199,7 @@
             });
         }, 10 * 1000);
 
-        */
+
     });
 </script>
 <!-- END JAVASCRIPTS -->
