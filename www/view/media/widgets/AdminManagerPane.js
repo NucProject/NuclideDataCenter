@@ -45,7 +45,7 @@ $class("AdminManagerPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                     this_._userListView.addEntry({
                         id: user.user_id,
                         username: user.username,
-                        handle: handle,
+                        handle: handle
 
                     });
                 }
