@@ -125,6 +125,10 @@ $class("LabrDevice", DeviceBase,
 
                 }
             );
+
+            // console.log(this_._domNode.find('#li_labr_chart_energy'))
+
+            this_._domNode.find('#li_labr_chart_energy').trigger("click")
         });
     },
 
@@ -153,13 +157,13 @@ $class("LabrDevice", DeviceBase,
                 text: ''
             },
             xAxis: {
-                tickInterval:100,
+                tickInterval:200,
                 tickPixelInterval:100
             },
             yAxis: {
                 title: {
                     text: p.ytitle
-                },
+                }
                 //maxZoom: 0.1,
                 //max: p.max,
                 //min: p.min
@@ -168,15 +172,8 @@ $class("LabrDevice", DeviceBase,
                 formatter: function() {
 
                     var point = this.points[0];
-
-                    /*return '<b>'+ point.series.name +'</b><br/>'+
-                     Highcharts.dateFormat('%A %B %e %Y', this.x) + ':<br/>'+
-                     '1 USD = '+ Highcharts.numberFormat(point.y, 2) +' EUR';*/
-                    //return '<b>' + point.series.name;
-                    return '<b>' + Highcharts.numberFormat(point.y, 2) + '</b><br/>' +
-                    this.x;
-
-
+                    // [能量:{0}（keV） 计数:{1}]
+                    return '[能量:<b>' + this.x + '</b> 计数:<b>' +  point.y + '</b>]';
                 },
                 shared: true
             },
@@ -190,7 +187,7 @@ $class("LabrDevice", DeviceBase,
                         states: {
                             hover: {
                                 enabled: true,
-                                radius: 3
+                                radius: 2
                             }
                         }
                     }

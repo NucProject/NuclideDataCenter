@@ -182,7 +182,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     },
 
     shiftIntervalView: function(sender, page) {
-        console.log(1);
+        // console.log(1);
         if (sender.hasClass('m5')) {
             this.fillList5min(page);
         } else if (sender.hasClass('s30')) {
