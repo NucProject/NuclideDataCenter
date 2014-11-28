@@ -44,6 +44,10 @@ class DownloadController extends ApiController
 
                 $datas = explode(' ', $specs->ChannelData);
                 $params = $specs->Calibration[1]->Equation->Coefficients;
+                if (!$params)
+                {
+                    $params = $specs->Calibration->Equation->Coefficients;
+                }
                 list($c, $b, $a) = explode(' ', $params);
                 echo implode(',', $this->getPoints($datas, $a, $b, $c));
             }
