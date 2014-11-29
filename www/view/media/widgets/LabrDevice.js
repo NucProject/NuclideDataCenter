@@ -27,7 +27,7 @@ $class("LabrDevice", DeviceBase,
         var this_ = this;
         this._dataListView._domNode.delegate('a', 'click', function () {
             var tr = $(this).parent().parent();
-            this_.showEnergyChart(tr);
+            this_.showEnergyChartFromList(tr);
         });
 
     },
@@ -82,10 +82,23 @@ $class("LabrDevice", DeviceBase,
             max:max,
             min:min,
             interval: interval,
-            filter: kx.bind(this_, 'filter')
+            filter: kx.bind(this_, 'filter'),
+            tooltip: kx.bind(this_, 'tooltip')
         });
+    },
+
+    tooltip: function(x, y)
+    {
+        var this_ = this;
+        var time = Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', x);
+        f1 = function() {
+            this_.showEnergyChartByTime(time);
+        };
+
+        var text = '<b>' + Highcharts.numberFormat(y, 2) + '</b>' + '&nbsp;<a href="javascript:void(0)" onclick="f1()" class="show-energy-charts">显示能谱图</a>' + '<br/>' + time;
 
 
+        return text;
     },
 
     onChartIntervalChanged: function(sender) {
@@ -104,39 +117,48 @@ $class("LabrDevice", DeviceBase,
 
     },
 
-    showEnergyChart: function (tr) {
-        var href = tr.find('td.download a').attr('href');
+    showEnergyChartByTime: function (time) {
         var this_ = this;
-        this.ajax('download/energy' + href, {'path': href}, function (data) {
-            var items = data.split(';');
-            var datas = [];
-            for (var i in items)
-            {
-                var p = items[i];
-                var d = p.split(',');
-                var x = parseFloat(d[0]);
-                var y = parseInt(d[1]);
-                datas.push([x, y]);
-            }
-            this_._domNode.find('#li_labr_chart_energy').trigger("click");
-            this_.createEnergy(this._domNode,
-                {
-                    selector: "div.charts-energy",
-                    title: "能谱图",
-                    ytitle: "",
-                    start: 0,
-                    end: 3000,
-                    data:datas
-
-                }
-            );
-
-            // console.log(this_._domNode.find('#li_labr_chart_energy'))
-
-            this_._domNode.find('#li_labr_chart_energy').trigger("click")
+        this.ajax('download/energy2/' + g.getCurrentStationId() , {'time': time}, function (data) {
+            console.log(data);
+            this_.showEnergyChart(data);
         });
     },
 
+    showEnergyChartFromList: function (tr) {
+        var href = tr.find('td.download a').attr('href');
+        var this_ = this;
+        this.ajax('download/energy' + href, {'path': href}, function (data) {
+           this_.showEnergyChart(data);
+        });
+    },
+
+    showEnergyChart: function (data) {
+        var this_ = this;
+        var items = data.split(';');
+        var datas = [];
+        for (var i in items)
+        {
+            var p = items[i];
+            var d = p.split(',');
+            var x = parseFloat(d[0]);
+            var y = parseInt(d[1]);
+            datas.push([x, y]);
+        }
+        this_._domNode.find('#li_labr_chart_energy').trigger("click");
+        this_.createEnergy(this._domNode,
+            {
+                selector: "div.charts-energy",
+                title: "能谱图",
+                ytitle: "",
+                start: 0,
+                end: 3000,
+                data:datas
+
+            }
+        );
+        this_._domNode.find('#li_labr_chart_energy').trigger("click")
+    },
 
     createEnergy: function(domNode, p) {
         var this_ = this;

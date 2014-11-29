@@ -54,6 +54,25 @@ class DownloadController extends ApiController
         }
     }
 
+    public function energy2Action($station)
+    {
+        $time = $this->request->getPost('time');
+        if ($time)
+        {
+            $data = Labr::find(array("time = '$time' and station=$station", 'limit' => 1));
+            if (count($data) > 0)
+            {
+
+                $item = $data[0];
+
+                $args = explode('/', $item->N42path);
+
+                call_user_func_array(array($this, 'energyAction'), array_slice($args, 1));
+            }
+
+        }
+    }
+
     private function getPoints($datas, $a, $b, $c)
     {
         $a = floatval($a);
