@@ -108,11 +108,15 @@ $class("LabrDevice", DeviceBase,
         var href = tr.find('td.download a').attr('href');
         var this_ = this;
         this.ajax('download/energy' + href, {'path': href}, function (data) {
-            var items = data.split(',');
-
+            var items = data.split(';');
+            var datas = [];
             for (var i in items)
             {
-                items[i] = parseInt(items[i]);
+                var p = items[i];
+                var d = p.split(',');
+                var x = parseFloat(d[0]);
+                var y = parseInt(d[1]);
+                datas.push([x, y]);
             }
             this_.createEnergy(this._domNode,
                 {
@@ -121,7 +125,7 @@ $class("LabrDevice", DeviceBase,
                     ytitle: "",
                     start: 0,
                     end: 3000,
-                    data:items
+                    data:datas
 
                 }
             );
@@ -145,7 +149,8 @@ $class("LabrDevice", DeviceBase,
                 reflow: true,
                 marginLeft: 70,
                 marginRight: 20,
-                turboThreshold: 0
+                turboThreshold: 0,
+                zoomType:"x"
             },
             credits: {
                 enabled: false
@@ -186,7 +191,7 @@ $class("LabrDevice", DeviceBase,
                         enabled: false,
                         states: {
                             hover: {
-                                enabled: true,
+                                enabled: false,
                                 radius: 2
                             }
                         }

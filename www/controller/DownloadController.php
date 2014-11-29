@@ -49,7 +49,7 @@ class DownloadController extends ApiController
                     $params = $specs->Calibration->Equation->Coefficients;
                 }
                 list($c, $b, $a) = explode(' ', $params);
-                echo implode(',', $this->getPoints($datas, $a, $b, $c));
+                echo implode(';', $this->getPoints($datas, $a, $b, $c));
             }
         }
     }
@@ -61,20 +61,17 @@ class DownloadController extends ApiController
         $c = floatval($c);
 
         $n = array();
-        $lastEx = 0;
 
         for ($j = 1; $j <= 2048; $j++)
         {
-            $ex = (int)($a * $j * $j + $b * $j + $c);
-            if ($ex < 0)
-                $ex = 0;
+            $r = $j + 0.5;
+            $ex = round($a * $r * $r + $b * $r + $c, 2);
+
+            $v = $datas[$j - 1];
+            $n[] = "$ex, $v";
             if ($ex >= 3200)
                 break;
-            for ($p = $lastEx; $p <= $ex; $p++)
-            {
-                $n[$p] = $datas[$j - 1];
-            }
-            $lastEx = $ex;
+
         }
         return $n;
     }
