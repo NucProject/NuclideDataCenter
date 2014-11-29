@@ -118,6 +118,7 @@ $class("LabrDevice", DeviceBase,
                 var y = parseInt(d[1]);
                 datas.push([x, y]);
             }
+            this_._domNode.find('#li_labr_chart_energy').trigger("click");
             this_.createEnergy(this._domNode,
                 {
                     selector: "div.charts-energy",
@@ -138,8 +139,6 @@ $class("LabrDevice", DeviceBase,
 
 
     createEnergy: function(domNode, p) {
-
-
         var this_ = this;
         var items = p.data;
         var selector = p.selector;
@@ -178,7 +177,7 @@ $class("LabrDevice", DeviceBase,
 
                     var point = this.points[0];
                     // [能量:{0}（keV） 计数:{1}]
-                    return '[能量:<b>' + this.x + '</b> 计数:<b>' +  point.y + '</b>]';
+                    return '[能量:<b>' + this.x + 'keV</b> 计数:<b>' +  point.y + '</b>]';
                 },
                 shared: true
             },
