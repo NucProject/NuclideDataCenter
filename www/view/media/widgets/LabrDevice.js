@@ -20,8 +20,16 @@ $class("LabrDevice", DeviceBase,
             {'key':'starttime', 'name':'开始时间'},
             {'key':'endtime', 'name':'结束时间'},
             {'key':'refnuclidefound', 'name':"找到参考核素", 'type': 'bool'},
-            {'key':'N42path', 'name':'链接', 'type': 'url'}]
+            {'key':'N42path', 'name':'链接', 'type': 'url', class: 'download'},
+            {'key':'handle', 'name':'操作', 'type': 'url'}]
         );
+
+        var this_ = this;
+        this._dataListView._domNode.delegate('a', 'click', function () {
+            var tr = $(this).parent().parent();
+            this_.showEnergyChart(tr);
+        });
+
     },
 
     showChartsTab: function() {
@@ -40,6 +48,13 @@ $class("LabrDevice", DeviceBase,
 
     fillListDefault: function(page) {
         this.fillList(page)
+
+    },
+
+    decorateList: function ()
+    {
+        var t = '<a class="btn blue show" style="word-break: keep-all;white-space: nowrap">显示</a>';
+        this._dataListView.addColumnData('td:last', t);
     },
 
     /*
@@ -86,6 +101,115 @@ $class("LabrDevice", DeviceBase,
         }
 
         this.updateCharts();
+
+    },
+
+    showEnergyChart: function (tr) {
+        var href = tr.find('td.download a').attr('href');
+        var this_ = this;
+        this.ajax('download/energy' + href, {'path': href}, function (data) {
+            var items = data.split(';');
+            var datas = [];
+            for (var i in items)
+            {
+                var p = items[i];
+                var d = p.split(',');
+                var x = parseFloat(d[0]);
+                var y = parseInt(d[1]);
+                datas.push([x, y]);
+            }
+            this_._domNode.find('#li_labr_chart_energy').trigger("click");
+            this_.createEnergy(this._domNode,
+                {
+                    selector: "div.charts-energy",
+                    title: "能谱图",
+                    ytitle: "",
+                    start: 0,
+                    end: 3000,
+                    data:datas
+
+                }
+            );
+
+            // console.log(this_._domNode.find('#li_labr_chart_energy'))
+
+            this_._domNode.find('#li_labr_chart_energy').trigger("click")
+        });
+    },
+
+
+    createEnergy: function(domNode, p) {
+        var this_ = this;
+        var items = p.data;
+        var selector = p.selector;
+        this.detailsChart = domNode.find(selector).css('width', '100%').highcharts({
+            chart: {
+                marginBottom: 80,
+                reflow: true,
+                marginLeft: 70,
+                marginRight: 20,
+                turboThreshold: 0,
+                zoomType:"x"
+            },
+            credits: {
+                enabled: false
+            },
+            title: {
+                text: p.title
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {
+                tickInterval:200,
+                tickPixelInterval:100
+            },
+            yAxis: {
+                title: {
+                    text: p.ytitle
+                }
+                //maxZoom: 0.1,
+                //max: p.max,
+                //min: p.min
+            },
+            tooltip: {
+                formatter: function() {
+
+                    var point = this.points[0];
+                    // [能量:{0}（keV） 计数:{1}]
+                    return '[能量:<b>' + this.x + 'keV</b> 计数:<b>' +  point.y + '</b>]';
+                },
+                shared: true
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+                    marker: {
+                        enabled: false,
+                        states: {
+                            hover: {
+                                enabled: false,
+                                radius: 2
+                            }
+                        }
+                    }
+                },
+
+                area:{ turboThreshold: 10000}
+            },
+            series: [{
+                name: '',
+                data: items,
+                turboThreshold: 0
+
+            }],
+
+            exporting: {
+                enabled: false
+            }
+        }).highcharts();
 
     }
 });

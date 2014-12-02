@@ -182,7 +182,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     },
 
     shiftIntervalView: function(sender, page) {
-        console.log(1);
+        // console.log(1);
         if (sender.hasClass('m5')) {
             this.fillList5min(page);
         } else if (sender.hasClass('s30')) {
@@ -230,6 +230,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             var sender = this_._domNode.find('div.interval a.red');
             this_.shiftIntervalView(sender, data - 1);
         });
+
+        this.decorateList && this.decorateList();
     },
 
     fetchAlerts: function() {
@@ -412,7 +414,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         keys.sort().reverse();
         for (var i in keys) {
 
-            console.log(keys[i])
+            // console.log(keys[i])
             if (count >= from) {
                 start = true;
             }

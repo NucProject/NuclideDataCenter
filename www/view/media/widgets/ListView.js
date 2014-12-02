@@ -72,6 +72,15 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
             headers: headers };
     },
 
+    addColumnData: function (clz, item) {
+        
+        var tbody = this._domNode.find("tbody");
+        tbody.find('tr').each(function (row) {
+            console.log(row)
+            $(this).find(clz).html(item);
+        })
+    },
+
     addValue: function(item, params) {
         var tbody = params.tbody;
         var headers = params.headers;
@@ -88,8 +97,12 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
                 id = item[key];
                 continue;
             }
-            cl.push('<td>');
 
+            if (this._headers[j]['class']) {
+                cl.push('<td class="' + this._headers[j]['class'] +'">');
+            } else {
+                cl.push('<td>');
+            }
             var itemType = this._headers[j]['type'];
 
             if (key == 'handle')
@@ -140,6 +153,7 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         tbody.append(tr);
 
     },
+
 
     addEntry: function(item) {
         var tbody = this._domNode.find("tbody");

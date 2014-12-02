@@ -24,4 +24,55 @@ class DownloadController extends ApiController
         Header("Location: /file/$station/labr/$month/$day/$fileName");
         exit;
     }
+
+    public function energyAction($download, $labr, $station, $month, $day, $fileName)
+    {
+        if ($download == 'download' && $labr == 'labr')
+        {
+            $file = "./view/file/$station/labr/$month/$day/$fileName";
+            // echo $file;
+            if (file_exists($file))
+            {
+                $xml = simplexml_load_file($file);
+                $namespaces = $xml->getNameSpaces(true);
+                $prefix     = array_keys($namespaces);
+
+
+                $m = $xml->children($namespaces[$prefix[0]])->Measurement;
+
+                $specs = $m->children($namespaces[$prefix[0]])->Spectrum->children($namespaces[$prefix[0]]);
+
+                $datas = explode(' ', $specs->ChannelData);
+                $params = $specs->Calibration[1]->Equation->Coefficients;
+                if (!$params)
+                {
+                    $params = $specs->Calibration->Equation->Coefficients;
+                }
+                list($c, $b, $a) = explode(' ', $params);
+                echo implode(';', $this->getPoints($datas, $a, $b, $c));
+            }
+        }
+    }
+
+    private function getPoints($datas, $a, $b, $c)
+    {
+        $a = floatval($a);
+        $b = floatval($b);
+        $c = floatval($c);
+
+        $n = array();
+
+        for ($j = 1; $j <= 2048; $j++)
+        {
+            $r = $j + 0.5;
+            $ex = round($a * $r * $r + $b * $r + $c, 2);
+
+            $v = $datas[$j - 1];
+            $n[] = "$ex, $v";
+            if ($ex >= 3200)
+                break;
+
+        }
+        return $n;
+    }
 } 
