@@ -120,7 +120,7 @@ $class("LabrDevice", DeviceBase,
     showEnergyChartByTime: function (time) {
         var this_ = this;
         this.ajax('download/energy2/' + g.getCurrentStationId() , {'time': time}, function (data) {
-            console.log(data);
+            // console.log(data);
             this_.showEnergyChart(data);
         });
     },
@@ -129,12 +129,20 @@ $class("LabrDevice", DeviceBase,
         var href = tr.find('td.download a').attr('href');
         var this_ = this;
         this.ajax('download/energy' + href, {'path': href}, function (data) {
-           this_.showEnergyChart(data);
+            //console.log(data);
+            this_.showEnergyChart(data);
         });
     },
 
-    showEnergyChart: function (data) {
+    showEnergyChart: function (dataStr) {
         var this_ = this;
+        var d = eval('('+dataStr+")");
+        if (d['errorCode'] != 0)
+            return;
+        //console.log(dataStr);
+        var data = d['results']['data'];
+        //console.log(data)
+        var n = d['results']['nuclides'];
         var items = data.split(';');
         var datas = [];
         for (var i in items)
@@ -143,8 +151,40 @@ $class("LabrDevice", DeviceBase,
             var d = p.split(',');
             var x = parseFloat(d[0]);
             var y = parseInt(d[1]);
-            datas.push([x, y]);
+
+            var item = [x, y];
+            datas.push(item);
+
         }
+
+        nuclideArray = []
+        for (var i in n)
+        {
+            var min = n[i]['c1'];
+            var max = n[i]['c2'];
+            console.log(min, max);
+            var start = false;
+            var r = [];
+            for (var j in datas)
+            {
+                if (datas[j][0] == min)
+                {
+                    start = true;
+                }
+                else if (datas[j][0] == max)
+                {
+                    break;
+                }
+
+                if (start)
+                {
+                    r.push(datas[j]);
+                }
+            }
+
+            nuclideArray.push({'nuclide': n[i]['nuclide'], 'data': r});
+        }
+
         this_._domNode.find('#li_labr_chart_energy').trigger("click");
         this_.createEnergy(this._domNode,
             {
@@ -153,7 +193,8 @@ $class("LabrDevice", DeviceBase,
                 ytitle: "",
                 start: 0,
                 end: 3000,
-                data:datas
+                data:datas,
+                nuclides: nuclideArray
 
             }
         );
@@ -164,6 +205,39 @@ $class("LabrDevice", DeviceBase,
         var this_ = this;
         var items = p.data;
         var selector = p.selector;
+
+        var series = [];
+        series.push({
+            name: 'a',
+            data: items,
+            turboThreshold: 0,
+            fillColor: 'rgba(255, 255, 255, 0)'
+
+        });
+
+        var colors = {
+            'Co-60': 'rgba(255, 0, 0, .50)',
+            'I-133': 'rgba(0, 255, 0, .50)',
+            'K-40': 'rgba(0, 255, 0, .50)',
+            '': 'rgba(255, 255, 255, 0)',
+            '': 'rgba(255, 255, 255, 0)',
+            '': 'rgba(255, 255, 255, 0)',
+            '': 'rgba(255, 255, 255, 0)',
+        }
+
+        var nuclides = p.nuclides;
+        for (var i in nuclides)
+        {
+            var n = nuclides[i];
+            var name = n['nuclide'];
+            series.push({
+                name: name,
+                data: n['data'],
+                fillColor: colors[name]
+
+            });
+        }
+
         this.detailsChart = domNode.find(selector).css('width', '100%').highcharts({
             chart: {
                 marginBottom: 80,
@@ -171,7 +245,8 @@ $class("LabrDevice", DeviceBase,
                 marginLeft: 70,
                 marginRight: 20,
                 turboThreshold: 0,
-                zoomType:"x"
+                zoomType:"x",
+                type:'areaspline'
             },
             credits: {
                 enabled: false
@@ -208,25 +283,23 @@ $class("LabrDevice", DeviceBase,
             },
             plotOptions: {
                 series: {
+                    name:'a1',
+                    lineWidth: 1.0,
+
                     marker: {
                         enabled: false,
                         states: {
                             hover: {
-                                enabled: false,
+                                enabled: true,
                                 radius: 2
                             }
                         }
                     }
                 },
-
+                shadow: false,
                 area:{ turboThreshold: 10000}
             },
-            series: [{
-                name: '',
-                data: items,
-                turboThreshold: 0
-
-            }],
+            series: series,
 
             exporting: {
                 enabled: false
