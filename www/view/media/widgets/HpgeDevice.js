@@ -107,7 +107,8 @@ $class("HpgeDevice", DeviceBase,
             var item = items[i];
             if (item.count < 13)
             {
-                item.handle = "<a class='btn blue supp' data=" + item.sid + ">补齐文件</a><a class='btn red remove' data=" + item.sid + ">删除</a>";
+                item.handle = "<a class='btn blue mini' data=" + item.sid + ">补齐文件</a>" +
+                "<a class='btn red mini remove' data=" + item.sid + "><i class='icon-trash'::before</i>  删除</a>";
             }
             this._sumListView.addValue(item, params);
         }

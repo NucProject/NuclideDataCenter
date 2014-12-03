@@ -113,7 +113,25 @@ class Config
             '01000502' => "nuclide",
             '01000503' => "type",
             '01000504' => "active",
-            '01000505' => "err",
+            '01000505' => "err"
+        ),
+
+        'labrfilter' => array(
+            'time' => 'time',
+            '00200201' => "StartTime",
+            '00200202' => "EndTime",
+            '00200203' => "ChannelData",
+            '00200204' => "DoseRate",
+            '00200205' => "Temperature",
+            '00200206' => "HighVoltage"
+        ),
+
+        'labrnuclidefilter' => array(
+            'time' => 'time',
+            '00200301' => "Name",
+            '00200302' => "Activity",
+            '00200303' => "Channel",
+            '00200304' => "Energy"
         )
 
     );
