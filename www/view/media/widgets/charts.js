@@ -46,6 +46,7 @@ $class("Charts", null, {
             }
         });
 
+        var tooltip = p.tooltip;
 
         this.detailsChart = domNode.find(selector).css('width', '100%').highcharts({
             chart: {
@@ -76,9 +77,15 @@ $class("Charts", null, {
                 //min: p.min
             },
             tooltip: {
+                useHTML: (tooltip ? true : false),
                 formatter: function() {
 
                     var point = this.points[0];
+
+                    if (tooltip)
+                    {
+                        return tooltip(this.x, point.y);
+                    }
 
                     /*return '<b>'+ point.series.name +'</b><br/>'+
                         Highcharts.dateFormat('%A %B %e %Y', this.x) + ':<br/>'+

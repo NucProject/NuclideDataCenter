@@ -27,7 +27,7 @@ $class("LabrDevice", DeviceBase,
         var this_ = this;
         this._dataListView._domNode.delegate('a', 'click', function () {
             var tr = $(this).parent().parent();
-            this_.showEnergyChart(tr);
+            this_.showEnergyChartFromList(tr);
         });
 
     },
@@ -82,10 +82,23 @@ $class("LabrDevice", DeviceBase,
             max:max,
             min:min,
             interval: interval,
-            filter: kx.bind(this_, 'filter')
+            filter: kx.bind(this_, 'filter'),
+            tooltip: kx.bind(this_, 'tooltip')
         });
+    },
+
+    tooltip: function(x, y)
+    {
+        var this_ = this;
+        var time = Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', x);
+        f1 = function() {
+            this_.showEnergyChartByTime(time);
+        };
+
+        var text = '<b>' + Highcharts.numberFormat(y, 2) + '</b>' + '&nbsp;<a href="javascript:void(0)" onclick="f1()" class="show-energy-charts">显示能谱图</a>' + '<br/>' + time;
 
 
+        return text;
     },
 
     onChartIntervalChanged: function(sender) {
@@ -104,44 +117,127 @@ $class("LabrDevice", DeviceBase,
 
     },
 
-    showEnergyChart: function (tr) {
-        var href = tr.find('td.download a').attr('href');
+    showEnergyChartByTime: function (time) {
         var this_ = this;
-        this.ajax('download/energy' + href, {'path': href}, function (data) {
-            var items = data.split(';');
-            var datas = [];
-            for (var i in items)
-            {
-                var p = items[i];
-                var d = p.split(',');
-                var x = parseFloat(d[0]);
-                var y = parseInt(d[1]);
-                datas.push([x, y]);
-            }
-            this_._domNode.find('#li_labr_chart_energy').trigger("click");
-            this_.createEnergy(this._domNode,
-                {
-                    selector: "div.charts-energy",
-                    title: "能谱图",
-                    ytitle: "",
-                    start: 0,
-                    end: 3000,
-                    data:datas
-
-                }
-            );
-
-            // console.log(this_._domNode.find('#li_labr_chart_energy'))
-
-            this_._domNode.find('#li_labr_chart_energy').trigger("click")
+        this.ajax('download/energy2/' + g.getCurrentStationId() , {'time': time}, function (data) {
+            // console.log(data);
+            this_.showEnergyChart(data);
         });
     },
 
+    showEnergyChartFromList: function (tr) {
+        var href = tr.find('td.download a').attr('href');
+        var this_ = this;
+        this.ajax('download/energy' + href, {'path': href}, function (data) {
+            //console.log(data);
+            this_.showEnergyChart(data);
+        });
+    },
+
+    showEnergyChart: function (dataStr) {
+        var this_ = this;
+        var d = eval('('+dataStr+")");
+        if (d['errorCode'] != 0)
+            return;
+        //console.log(dataStr);
+        var data = d['results']['data'];
+        //console.log(data)
+        var n = d['results']['nuclides'];
+        var items = data.split(';');
+        var datas = [];
+        for (var i in items)
+        {
+            var p = items[i];
+            var d = p.split(',');
+            var x = parseFloat(d[0]);
+            var y = parseInt(d[1]);
+
+            var item = [x, y];
+            datas.push(item);
+
+        }
+
+        nuclideArray = []
+        for (var i in n)
+        {
+            var min = n[i]['c1'];
+            var max = n[i]['c2'];
+            console.log(min, max);
+            var start = false;
+            var r = [];
+            for (var j in datas)
+            {
+                if (datas[j][0] == min)
+                {
+                    start = true;
+                }
+                else if (datas[j][0] == max)
+                {
+                    break;
+                }
+
+                if (start)
+                {
+                    r.push(datas[j]);
+                }
+            }
+
+            nuclideArray.push({'nuclide': n[i]['nuclide'], 'data': r});
+        }
+
+        this_._domNode.find('#li_labr_chart_energy').trigger("click");
+        this_.createEnergy(this._domNode,
+            {
+                selector: "div.charts-energy",
+                title: "能谱图",
+                ytitle: "",
+                start: 0,
+                end: 3000,
+                data:datas,
+                nuclides: nuclideArray
+
+            }
+        );
+        this_._domNode.find('#li_labr_chart_energy').trigger("click")
+    },
 
     createEnergy: function(domNode, p) {
         var this_ = this;
         var items = p.data;
         var selector = p.selector;
+
+        var series = [];
+        series.push({
+            name: 'a',
+            data: items,
+            turboThreshold: 0,
+            fillColor: 'rgba(255, 255, 255, 0)'
+
+        });
+
+        var colors = {
+            'Co-60': 'rgba(255, 0, 0, .50)',
+            'I-133': 'rgba(0, 255, 0, .50)',
+            'K-40': 'rgba(0, 255, 0, .50)',
+            '': 'rgba(255, 255, 255, 0)',
+            '': 'rgba(255, 255, 255, 0)',
+            '': 'rgba(255, 255, 255, 0)',
+            '': 'rgba(255, 255, 255, 0)',
+        }
+
+        var nuclides = p.nuclides;
+        for (var i in nuclides)
+        {
+            var n = nuclides[i];
+            var name = n['nuclide'];
+            series.push({
+                name: name,
+                data: n['data'],
+                fillColor: colors[name]
+
+            });
+        }
+
         this.detailsChart = domNode.find(selector).css('width', '100%').highcharts({
             chart: {
                 marginBottom: 80,
@@ -149,7 +245,8 @@ $class("LabrDevice", DeviceBase,
                 marginLeft: 70,
                 marginRight: 20,
                 turboThreshold: 0,
-                zoomType:"x"
+                zoomType:"x",
+                type:'areaspline'
             },
             credits: {
                 enabled: false
@@ -186,25 +283,23 @@ $class("LabrDevice", DeviceBase,
             },
             plotOptions: {
                 series: {
+                    name:'a1',
+                    lineWidth: 1.0,
+
                     marker: {
                         enabled: false,
                         states: {
                             hover: {
-                                enabled: false,
+                                enabled: true,
                                 radius: 2
                             }
                         }
                     }
                 },
-
+                shadow: false,
                 area:{ turboThreshold: 10000}
             },
-            series: [{
-                name: '',
-                data: items,
-                turboThreshold: 0
-
-            }],
+            series: series,
 
             exporting: {
                 enabled: false
