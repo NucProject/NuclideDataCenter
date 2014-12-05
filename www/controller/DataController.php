@@ -443,7 +443,7 @@ PHQL;
             return parent::error(Error::BadHttpMethod, '');
         }
 
-        $phql = "select s.sid, s.begintime, s.endtime, barcode, count(h.path) as count, s.flow, s.pressure, s.flowPerHour from CinderellaSum s left join Hpge h on h.sid=s.sid where s.station=$station group by s.sid order by s.begintime DESC";
+        $phql = "select s.sid, s.begintime, s.endtime, barcode, count(h.path) as count, s.flow, s.flowPerHour, s.worktime from CinderellaSum s left join Hpge h on h.sid=s.sid where s.station=$station group by s.sid order by s.begintime DESC";
 
         $data = $this->modelsManager->executeQuery($phql);
         $ret = array();
@@ -482,17 +482,23 @@ PHQL;
 
         $f = $data[0];
         $begin = ApiController::parseTime2($f->BeginTime);
+        $worktime = $f->WorkTime;
         $barcode = $f->barcode;
         $flow = 0.0;
         $flowPerHour = 0.0;
         $pressure = 0.0;
         $end = 0;
+
         foreach ($data as $item)
         {
             $cb = ApiController::parseTime2($item->time);
 
             if ($cb > $end) {
                 $end = $cb;
+            }
+
+            if ($item->WorkTime > $worktime) {
+                $worktime = $item->WorkTime;
             }
 
             if ($item->Flow > $flow)
@@ -508,8 +514,11 @@ PHQL;
         $s->endtime = date('Y-m-d H:i:s', $end);
         $s->barcode = $barcode;
         $s->flow = $flow;
-        $s->pressure = $pressure / $count;
-        $s->flowPerHour = $flowPerHour / $count;
+
+        $s->pressure = 0;
+        $s->flowPerHour = $flow / ((strtotime($worktime, 0) + 8 * 3600) / 3600);
+        $s->worktime = $worktime;
+        // echo ((strtotime($worktime, 0) + 8 * 3600));
 
         return $s->save();
     }
