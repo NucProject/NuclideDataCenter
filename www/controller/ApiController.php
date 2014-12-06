@@ -143,11 +143,11 @@ class ApiController extends \Phalcon\Mvc\Controller
         $specs = $m->children($namespaces[$prefix[0]])->Spectrum->children($namespaces[$prefix[0]]);
         $saras = $m->children($namespaces[$prefix[0]])->Spectrum->children($namespaces[$prefix[1]]);
 
-        $doserate = $m->children($namespaces[$prefix[0]])->CountDoseData[1]->DoseRate;
-        if (!$doserate)
-        {
-            $doserate = $m->children($namespaces[$prefix[0]])->CountDoseData[0]->DoseRate;
-        }
+        $c1 = count($m->children($namespaces[$prefix[0]])->CountDoseData);
+        $c1 -= 1;
+        if ($c1 < 0) $c1 = 0;
+        $doserate = $m->children($namespaces[$prefix[0]])->CountDoseData[$c1 - 1]->DoseRate;
+
         $nuclidefound = $m->AnalysisResults->NuclideAnalysis->children($namespaces[$prefix[1]])->CalibrationNuclideFound;
         $t = $saras->Temperature;
         $v = $saras->HighVoltage;

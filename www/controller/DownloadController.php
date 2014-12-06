@@ -87,11 +87,10 @@ class DownloadController extends ApiController
                 $specs = $m->children($namespaces[$prefix[0]])->Spectrum->children($namespaces[$prefix[0]]);
 
                 $datas = explode(' ', $specs->ChannelData);
-                $params = $specs->Calibration[1]->Equation->Coefficients;
-                if (!$params)
-                {
-                    $params = $specs->Calibration->Equation->Coefficients;
-                }
+
+                $c2 = count($specs->Calibration);
+                $params = $specs->Calibration[$c2 - 1]->Equation->Coefficients;
+
 
                 list($c, $b, $a) = explode(' ', $params);
 
