@@ -8,6 +8,7 @@
 
 class DataController extends ApiController
 {
+    var $aa;
     public function initialize()
     {
         $this->view->disable();
@@ -32,7 +33,7 @@ class DataController extends ApiController
         {
             $data = self::parseData($station, $entry);
             $device = $entry->device;
-            echo json_encode($data);
+            $this->aa = $data;
             if ($data->save() !== false)
             {
                 // ZM:Cinderella设备每到Sid变化了，就对之前的N个一组数据进行Summary汇总（统计数据的由来）
@@ -346,8 +347,11 @@ PHQL;
 
             $data->$item = $value;
         }
-
         return $data;
+    }
+
+    public function echoAction(){
+        echo json_encode($this->aa);
     }
 
     public function countAction($station, $device)
