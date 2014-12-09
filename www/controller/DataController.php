@@ -443,7 +443,7 @@ PHQL;
             return parent::error(Error::BadHttpMethod, '');
         }
 
-        $phql = "select s.sid, s.begintime, s.endtime, barcode, count(h.path) as count, s.flow, s.flowPerHour, s.worktime from CinderellaSum s left join Hpge h on h.sid=s.sid where s.station=$station group by s.sid order by s.begintime DESC";
+        $phql = "select s.sid, s.begintime, s.endtime, barcode, count(distinct h.path) as count, s.flow, s.flowPerHour, s.worktime from CinderellaSum s left join Hpge h on h.sid=s.sid where s.station=$station group by s.sid order by s.begintime DESC";
 
         $data = $this->modelsManager->executeQuery($phql);
         $ret = array();
