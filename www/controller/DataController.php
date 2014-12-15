@@ -8,7 +8,6 @@
 
 class DataController extends ApiController
 {
-    var $aa;
     public function initialize()
     {
         $this->view->disable();
@@ -33,24 +32,19 @@ class DataController extends ApiController
         {
             $data = self::parseData($station, $entry);
             $device = $entry->device;
-            $this->aa = $data;
-            if ($data->save() !== false)
-            {
+            if ($data->save() !== false) {
                 // ZM:Cinderella设备每到Sid变化了，就对之前的N个一组数据进行Summary汇总（统计数据的由来）
-                if ($device == 'cinderelladata')
-                {
+                if ($device == 'cinderelladata') {
 
                     $sid = Cache::getCurrentSid($this->redis, $station);
-                    if ($sid != $data->Sid)
-                    {
+                    if ($sid != $data->Sid) {
                         Cache::setCurrentSid($this->redis, $station, $data->Sid);
 
                         self::summaryCinderellaData($station, $sid);
                     }
                 }
 
-                if (!isset($history))
-                {
+                if (!isset($history)) {
                     Cache::updateLatestTime($this->redis, $station, $device);
                     $check = AlertController::checkAlertRule($this->redis, $station, $device, $data);
 
@@ -349,10 +343,7 @@ PHQL;
         }
         return $data;
     }
-
-    public function echoAction(){
-        echo json_encode($this->aa);
-    }
+    
 
     public function countAction($station, $device)
     {
