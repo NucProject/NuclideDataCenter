@@ -128,10 +128,10 @@ class Config
 
         'labrnuclidefilter' => array(
             'time' => 'time',
-            '00200301' => "Name",
-            '00200302' => "Activity",
-            '00200303' => "Channel",
-            '00200304' => "Energy"
+            '00200302' => "Name",
+            '00200303' => "Activity",
+            '00200304' => "Channel",
+            '00200305' => "Energy"
         )
 
     );
