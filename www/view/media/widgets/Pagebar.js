@@ -5,8 +5,10 @@ $class("Pagebar", [kx.Weblet, kx.EventMixin],
 
 	_currentPage: 1,
 
-	__constructor: function(pageCount) {
-        this._pageCount = pageCount;
+	__constructor: function(p) {
+
+        this._pageCount = p.pageCount;
+        this._page = p.page;
 	},
 
 	onCreated: function(domNode) {
@@ -17,6 +19,8 @@ $class("Pagebar", [kx.Weblet, kx.EventMixin],
         t.removeClass('template');
         var hasPageTextBox = false;
         var left = 8;
+
+
         for (var i = 2; i <= this._pageCount; i += 1) {
             var n = t.clone();
             n.attr('data-lp', i).find('a').text(i);
@@ -51,20 +55,29 @@ $class("Pagebar", [kx.Weblet, kx.EventMixin],
                 f = n;
             }
         }
+
+        this.boldPage(domNode.find('li[data-lp='+ this._page +']'));
 		domNode.find("li").bind("click", kx.bind(this, "pageClicked"));
 	},
 
-	pageClicked: function(e) {
+    boldPage: function(p) {
+        // console.log(p)
+        p.find('a').css('font-weight', 'bold');
+    },
 
-		var page = $(e.delegateTarget).attr('data-lp');
+	pageClicked: function(e) {
+        var p = $(e.delegateTarget);
+
+		var page = p.attr('data-lp');
         if (page == 'text')
         {
             return false;
         }
 
         this._currentPage = page;
+        console.log(this._currentPage);
         this._obj.fireEvent(this._event, this._currentPage);
-
+        return false;
     },
 
     pageChanged: function(p) {

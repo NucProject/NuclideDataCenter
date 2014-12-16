@@ -14,9 +14,9 @@ class ApiController extends \Phalcon\Mvc\Controller
         $this->view->disable();
     }
 
-    public function test1Action($a, $b, $c, $d)
+    public function test1Action($a, $b)
     {
-        echo json_encode($_COOKIE);
+        echo $a * $b;
     }
 
     public function startSession()

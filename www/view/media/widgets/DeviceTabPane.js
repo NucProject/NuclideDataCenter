@@ -182,7 +182,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     },
 
     shiftIntervalView: function(sender, page) {
-        // console.log(1);
+
         if (sender.hasClass('m5')) {
             this.fillList5min(page);
         } else if (sender.hasClass('s30')) {
@@ -212,7 +212,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         })
     },
 
-    updatePageBar: function(itemsCount) {
+    updatePageBar: function(itemsCount, page) {
+
         var pageBarContainer = this._domNode.find('div.pagebar');
         pageBarContainer.empty();
 
@@ -221,17 +222,18 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             this.unbindEvent(this, this.getPageEvent());
         }
 
-        this._pageBar = new Pagebar(Math.floor(itemsCount / this.PageCount) + 1);
+        this._pageBar = new Pagebar({pageCount: Math.floor(itemsCount / this.PageCount) + 1, page: page});
         this._pageBar.create().appendTo(pageBarContainer);
         this._pageBar.setPageEvent(this, this.getPageEvent());
         var this_ = this;
         this.bindEvent(this, this.getPageEvent(), function(e, sender, data){
 
             var sender = this_._domNode.find('div.interval a.red');
-            this_.shiftIntervalView(sender, data - 1);
+            this_.shiftIntervalView(sender, data);
         });
 
         this.decorateList && this.decorateList();
+        return false;
     },
 
     fetchAlerts: function() {
@@ -363,7 +365,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         }
         else
         {
-            this.fillList(0);
+            this.fillList(1);
         }
     },
 
@@ -401,8 +403,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     },
 
     fillList: function(page) {
-        var from = page * this.PageCount;
-        var to = (page + 1) * this.PageCount;
+        var from = (page - 1) * this.PageCount;
+        var to = (page) * this.PageCount;
         d = new Date()
 
         var value = null;
@@ -434,13 +436,13 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             if (count > to)
                 break;
         }
-        this.updatePageBar(keys.length)
-        return;
+        this.updatePageBar(keys.length, page);
+        return false;
     },
 
     fillList5min: function(page) {
-        var from = page * this.PageCount;
-        var to = (page + 1) * this.PageCount;
+        var from = (page - 1)* this.PageCount;
+        var to = (page) * this.PageCount;
         d = new Date()
 
         var value = null;
@@ -485,7 +487,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             if (count > to)
                 break;
         }
-        this.updatePageBar(keys.length / 10)
+        this.updatePageBar(keys.length / 10, page)
     },
 
     fillList1Hour: function() {
@@ -522,7 +524,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             this._dataListView.addValue(gv.getValue(), params);
         }
 
-        this.updatePageBar(12)
+        this.updatePageBar(12, 1)
     },
 
     fillList1Day: function() {
@@ -567,7 +569,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         }
 
 
-        this.updatePageBar(12)
+        this.updatePageBar(12, 1)
 
     },
 

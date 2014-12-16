@@ -97,7 +97,7 @@ $class("StationTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
 
         }
-        return;
+        return false;
     },
 
     f: function() {

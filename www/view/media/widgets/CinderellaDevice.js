@@ -66,7 +66,9 @@ $class("CinderellaDevice", DeviceBase,
     },
 
     fillListDefault: function(page) {
+
         this.fillList(page)
+
     },
 
     createSummaryList: function(domNode) {
