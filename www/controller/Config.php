@@ -118,20 +118,20 @@ class Config
 
         'labrfilter' => array(
             'time' => 'time',
-            '00200201' => "StartTime",
-            '00200202' => "EndTime",
-            '00200203' => "ChannelData",
-            '00200204' => "DoseRate",
-            '00200205' => "Temperature",
-            '00200206' => "HighVoltage"
+            '00200201' => "starttime",
+            '00200202' => "endtime",
+            '00200203' => "channeldata",
+            '00200204' => "doserate",
+            '00200205' => "temperature",
+            '00200206' => "highvoltage"
         ),
 
         'labrnuclidefilter' => array(
             'time' => 'time',
-            '00200301' => "Name",
-            '00200302' => "Activity",
-            '00200303' => "Channel",
-            '00200304' => "Energy"
+            '00200302' => "name",
+            '00200303' => "activity",
+            '00200304' => "channel",
+            '00200305' => "energy"
         )
 
     );
