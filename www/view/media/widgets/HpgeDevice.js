@@ -70,6 +70,7 @@ $class("HpgeDevice", DeviceBase,
             // var sid = $(this).attr('data')
             this_.removeRecord($(this));
         });
+
     },
 
     setCommandForHpgeFiles: function(sid) {
@@ -107,11 +108,13 @@ $class("HpgeDevice", DeviceBase,
             var item = items[i];
             if (item.count < 13)
             {
-                item.handle = "<a class='btn blue mini' data=" + item.sid + ">补齐文件</a>" +
+                item.handle = "<a class='btn blue mini supp' data=" + item.sid + ">补齐文件</a>" +
                 "<a class='btn red mini remove' data=" + item.sid + "><i class='icon-trash'::before</i>  删除</a>";
             }
             this._sumListView.addValue(item, params);
         }
+
+
     },
 
     onSummaryShow: function() {
