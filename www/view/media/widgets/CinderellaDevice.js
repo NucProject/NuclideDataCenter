@@ -95,11 +95,11 @@ $class("CinderellaDevice", DeviceBase,
         this._sumListView.setHeaders([
             {'key':'id', 'type': 'id'},
             {'key':'sid', 'name': '采样ID', 'type': 'link'},
-            {'key':'begintime', 'name':'开始时间'},
+            {'key':'begintime', 'name':'开始时间', 'type': 'string'},
             {'key':'endtime', 'name':'结束时间'},
             {'key':'barcode', 'name':'条码'},
             {'key':'flow', 'name':'累计流量'},
-            {'key':'flowPerHour', 'name':'平均瞬时流量', },
+            {'key':'flowPerHour', 'name':'平均瞬时流量' },
             {'key':'worktime', 'name':'工作时间'},
             {'key':'handle', 'name':'处理'}]);
     },
@@ -107,16 +107,22 @@ $class("CinderellaDevice", DeviceBase,
     onSummaryShow: function() {
         var this_ = this;
 
+
         this.ajax('data/cinderellaSummary2/' + g.getCurrentStationId(), null, function(data){
-            var r = eval("("+data+")");
+
+            var r = eval("(" + data + ")");
             var items = r['results']['items'];
+
+
             this_.updateSummaryList(items);
         });
     },
 
     updateSummaryList: function(items) {
-        var params = this._sumListView.clearValues();
-        for (var i in items) {
+
+        this._sumDict = {};
+        for (var i in items)
+        {
             var item = items[i];
             var sid = item.sid;
             if (!isNaN(item.flowPerHour))
@@ -124,8 +130,19 @@ $class("CinderellaDevice", DeviceBase,
                 item.flowPerHour = parseFloat(item.flowPerHour).toFixed(1);
             }
             item.handle = "<a class='btn red remove' sid='" + sid + "'>删除</a>";
-            this._sumListView.addValue(item, params);
+
+            var time = item.begintime;
+
+            item.begintime = time.toString();
+            this._sumDict[time] = item;
         }
+
+        this.fillSummaryList(1, this._sumDict, this._sumListView);
+    },
+
+    onChangeSumPage: function (page) {
+        // console.log(page);
+        this.fillSummaryList(page, this._sumDict, this._sumListView);
     },
 
     onSidClicked: function(sender) {

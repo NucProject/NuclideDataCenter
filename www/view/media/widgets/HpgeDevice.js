@@ -103,20 +103,25 @@ $class("HpgeDevice", DeviceBase,
     },
 
     updateSummaryList: function(items) {
-        var params = this._sumListView.clearValues();
+        this._sumDict = {};
         for (var i in items) {
             var item = items[i];
             if (item.count < 13)
             {
-
-                item.handle = "<a class='btn blue mini' data=" + item.sid + ">补齐文件</a>";
-                // + "<a class='btn red mini remove' data=" + item.sid + "><i class='icon-trash'::before</i>  删除</a>";
-
+                item.handle = "<a class='btn blue mini supp' data=" + item.sid + ">补齐文件</a>";
             }
-            this._sumListView.addValue(item, params);
+            var time = item.begintime;
+            item.begintime = time.toString();
+            this._sumDict[time] = item;
         }
 
+        this.fillSummaryList(1, this._sumDict, this._sumListView);
+    },
 
+
+    onChangeSumPage: function (page) {
+        // console.log(page);
+        this.fillSummaryList(page, this._sumDict, this._sumListView);
     },
 
     onSummaryShow: function() {
