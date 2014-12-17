@@ -96,11 +96,23 @@ class CommandController extends ApiController
         $type = $payload['type'];
         $device = $payload['device'];
         $content = $payload['content'];
+
+        self::addCommand($this->redis, $station, $type, $device, $content);
+
+        /*
         $queue = Key::StationCommandQueue . $station;
         $this->redis->rPush($queue, json_encode(
             array('type' => $type, 'device' => $device, 'content' => $content)));
+        */
 
         return parent::result(array('post' => true));
+    }
+
+    public static function addCommand($redis, $station, $type, $device, $content)
+    {
+        $queue = Key::StationCommandQueue . $station;
+        $redis->rPush($queue,
+            json_encode(array('type' => $type, 'device' => $device, 'content' => $content)));
     }
 
     public function cinderellaAction($station)

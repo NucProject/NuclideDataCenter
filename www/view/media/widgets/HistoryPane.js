@@ -146,7 +146,7 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 
             this.ajax(
                 'data/check/' + g.getCurrentStationId() + '/' + this._deviceType,
-                {'start':start, 'end':end, 'expect':2880}, function(data) {
+                {'start':start, 'end':end, 'expect':2880, 'set': 0}, function(data) {
                     var d = eval("(" + data + ")");
                     console.log(d);
                     this_.setHistoryCommand(start, end, d['results']['times']);
