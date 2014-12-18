@@ -62,7 +62,7 @@ $class("Pagebar", [kx.Weblet, kx.EventMixin],
 
     boldPage: function(p) {
         // console.log(p)
-        p.find('a').css('font-weight', 'bold');
+        p.find('a').css('font-weight', 'bold').css('text-decoration', 'underline');
     },
 
 	pageClicked: function(e) {

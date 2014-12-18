@@ -40,7 +40,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     },
 
     onAttach: function(domNode) {
-        var dataPane = domNode.find("div.data-pane")
+        var dataPane = domNode.find("div.data-pane");
         // ZM： 每个设备都有List显示数据吧?
         this._dataListView = new ListView();
         var dataListViewDomNode = this._dataListView.create();
@@ -389,7 +389,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     fixValue: function(v) {
         for (var i in v) {
 
-            if (i == 'time' || i == 'starttime' || i == 'endtime' || i == 'BeginTime') {
+            if (i == 'time' || i == 'starttime' || i == 'endtime' || i == 'BeginTime' || i == 'begintime') {
                 continue;
             }
             var f = parseFloat(v[i]);
@@ -686,6 +686,70 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             r.appendTo(this._domNode.find("div.calendar-container"));
 
         }
+    },
+
+
+    fillSummaryList: function(page, dict, listView)
+    {
+
+        var from = (page - 1) * 50;
+        var to = (page) * 50;
+
+        var start = false;
+        var count = 0;
+        var params = listView.clearValues();
+
+        var keys = Object.keys(dict);
+        keys.sort().reverse();
+        // console.log(keys.length, page, from, to)
+        for (var i in keys) {
+
+            if (count >= from) {
+                start = true;
+            }
+
+            var key = keys[i];
+            value = dict[key];
+            if (value)
+            {
+                count += 1;
+                if (start)
+                {
+                    // console.log(count)
+                    value = this.fixValue(value)
+                    listView.addValue(value, params);
+                }
+            }
+
+            if (count > to)
+                break;
+        }
+
+        this.updateSumPageBar(keys.length, page);
+        return false;
+    },
+
+    updateSumPageBar: function(itemsCount, page) {
+
+        var pageBarContainer = this._domNode.find('div.pagebar2');
+        pageBarContainer.empty();
+
+        if (this._sumPageBar)
+        {
+            this.unbindEvent(this, this.getPageEvent());
+        }
+
+        this._sumPageBar = new Pagebar({pageCount: Math.floor(itemsCount / 50) + 1, page: page});
+        this._sumPageBar.create().appendTo(pageBarContainer);
+        this._sumPageBar.setPageEvent(this, this.getPageEvent());
+        var this_ = this;
+        this.bindEvent(this, this.getPageEvent(), function(e, sender, data){
+
+            this_.onChangeSumPage && this_.onChangeSumPage(data);
+        });
+
+        // this.decorateList && this.decorateList();
+        return false;
     }
 
 

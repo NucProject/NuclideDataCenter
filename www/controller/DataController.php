@@ -387,6 +387,7 @@ PHQL;
         $start = $payload['start'];
         $end = $payload['end'];
         $expect = $payload['expect'];
+        $set = $payload['set'];
 
         $data = $device::find(array("station=$station and time >= '$start' and time < '$end'"));
         if (count($data) < $expect)
@@ -404,6 +405,17 @@ PHQL;
             for ($i = $b; $i < $e; $i += 30)
             {
                 array_push($array2, (int)$i);
+            }
+
+            if ($set)
+            {
+                $times = array_values(array_diff($array2, $array));
+                $content = array(
+                    'start' => $start,
+                    'end' => $end,
+                    'times' => implode(',', $times));
+                CommandController::addCommand($this->redis, $station, 'history', $device, $content);
+                return parent::result(array('count' => count($array), 'c' => count($array2)));
             }
 
             return parent::result(array('times' => array_values(array_diff($array2, $array)), 'count' => count($array)));
