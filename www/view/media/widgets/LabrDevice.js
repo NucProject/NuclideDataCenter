@@ -27,7 +27,7 @@ $class("LabrDevice", DeviceBase,
         var this_ = this;
         this._dataListView._domNode.delegate('a', 'click', function () {
             var tr = $(this).parent().parent();
-            this_.showEnergyChartFromList(tr);
+            //this_.showEnergyChartFromList(tr);
         });
 
     },
@@ -92,7 +92,7 @@ $class("LabrDevice", DeviceBase,
         var this_ = this;
         var time = Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', x);
         f1 = function() {
-            this_.showEnergyChartByTime(time);
+            //this_.showEnergyChartByTime(time);
         };
 
         var text = '<b>' + Highcharts.numberFormat(y, 2) + '</b>' + '&nbsp;<a href="javascript:void(0)" onclick="f1()" class="show-energy-charts">显示能谱图</a>' + '<br/>' + time;
