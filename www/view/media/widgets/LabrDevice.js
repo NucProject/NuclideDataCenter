@@ -143,6 +143,7 @@ $class("LabrDevice", DeviceBase,
         var data = d['results']['data'];
         //console.log(data)
         var n = d['results']['nuclides'];
+        console.log(n)
         var items = data.split(';');
         var datas = [];
         for (var i in items)
@@ -162,7 +163,7 @@ $class("LabrDevice", DeviceBase,
         {
             var min = n[i]['c1'];
             var max = n[i]['c2'];
-            console.log(min, max);
+            // console.log(min, max);
             var start = false;
             var r = [];
             for (var j in datas)
@@ -182,7 +183,11 @@ $class("LabrDevice", DeviceBase,
                 }
             }
 
-            nuclideArray.push({'nuclide': n[i]['nuclide'], 'data': r});
+            nuclideArray.push({
+                'nuclide': n[i]['nuclide'],
+                'ind': n[i]['ind'],
+                'doserate': n[i]['doserate'],
+                'data': r});
         }
 
         this_._domNode.find('#li_labr_chart_energy').trigger("click");
@@ -216,13 +221,13 @@ $class("LabrDevice", DeviceBase,
         });
 
         var colors = {
-            'Co-60': 'rgba(255, 0, 0, .50)',
+            'Co-60': 'rgba(200, 0, 0, .50)',
             'I-133': 'rgba(0, 255, 0, .50)',
             'K-40': 'rgba(0, 255, 0, .50)',
             '': 'rgba(255, 255, 255, 0)',
             '': 'rgba(255, 255, 255, 0)',
             '': 'rgba(255, 255, 255, 0)',
-            '': 'rgba(255, 255, 255, 0)',
+            '': 'rgba(255, 255, 255, 0)'
         }
 
         var nuclides = p.nuclides;
@@ -232,12 +237,14 @@ $class("LabrDevice", DeviceBase,
             var name = n['nuclide'];
             series.push({
                 name: name,
-                data: n['data'],
-                fillColor: colors[name]
+                data: n['data']
+                //fillColor: colors[name],
+                //color: colors[name]
 
             });
         }
 
+        var names = [];
         this.detailsChart = domNode.find(selector).css('width', '100%').highcharts({
             chart: {
                 marginBottom: 80,
@@ -247,6 +254,13 @@ $class("LabrDevice", DeviceBase,
                 turboThreshold: 0,
                 zoomType:"x",
                 type:'areaspline'
+                /*
+                events: {
+                        redraw: function() {
+                            this_.updateMark(p);
+                        }
+
+                }*/
             },
             credits: {
                 enabled: false
@@ -279,11 +293,31 @@ $class("LabrDevice", DeviceBase,
                 shared: true
             },
             legend: {
-                enabled: false
+                enabled: true,
+                layout: 'vertical',
+                align: 'left',
+                verticalAlign: 'top',
+                x: 150,
+                y: 100,
+                floating: true,
+                borderWidth: 1,
+                backgroundColor: '#FFFFFF',
+
+                labelFormatter: function () {
+                    if (this.name == 'a') return '';
+
+                    if (names.indexOf(this.name) >= 0) {
+
+                        return this.name + '(2) &nbsp';
+                    }
+                    names.push(this.name)
+                    return this.name + '&nbsp';
+                },
+                useHTML: true
             },
             plotOptions: {
                 series: {
-                    name:'a1',
+                    name:'a',
                     lineWidth: 1.0,
 
                     marker: {
@@ -306,6 +340,88 @@ $class("LabrDevice", DeviceBase,
             }
         }).highcharts();
 
+        this.updateMarkList(p);
+    },
+
+    updateMarkList: function (p) {
+        if (!this._nuclideList) {
+            this._nuclideList = new ListView();
+            this._nuclideList.create().appendTo(this._domNode.find('div.nuclide-list'));
+
+            this._nuclideList.setHeaders([
+                // {'key':'id', 'type': 'id'},
+                {'key':'name', 'name': '核素'},
+                {'key':'doserate', 'name':'剂量率'},
+                {'key':'ind', 'name':'置信度'}
+            ]);
+        }
+
+        var params = this._nuclideList.clearValues();
+
+        var nuclides = p.nuclides;
+        for (var i in nuclides)
+        {
+
+            var n = nuclides[i];
+            console.log(n);
+            var name = n['nuclide'];
+            this._nuclideList.addValue({'name': name, 'ind': n['ind'], 'doserate': n['doserate']}, params)
+        }
+
+    },
+
+    updateMark: function (p) {
+
+
+        /*
+        var nuclides = p.nuclides;
+        for (var i in nuclides)
+        {
+            var n = nuclides[i];
+            var x = n['data'][0][0];
+            var y = n['data'][0][1];
+            this.addNuclideMark(this.detailsChart, x, y, n['nuclide']);
+        }*/
+    },
+
+    // 暂时不做核素区域附近的标注(暂时没有处理好缩放的标注Box删除)
+    addNuclideMark: function(chart, x, y, name)
+    {
+        var px = 0, py = 0;
+        for (var i in chart.series[0].data)
+        {
+            var d = chart.series[0].data[i];
+            if (d['x'] == x)
+            {
+                px = d['plotX'];
+                py = d['plotY'];
+                break;
+            }
+        }
+        // var chart = this.detailsChart;
+
+        var text = chart.renderer.text(
+            name, //获取数据点在X轴对应的刻度值
+            px + 70, py
+            //point.plotX + chart.plotLeft + 10,
+
+            //point.plotY + chart.plotTop - 10
+        ).attr({
+
+                zIndex: 5
+
+            }).add();
+
+        var box = text.getBBox();
+        chart.renderer.rect(box.x - 5, box.y - 5, box.width + 10, box.height + 10, 5)
+            .attr({
+                'fill': '#FFFFEF',
+                'stroke': 'gray',
+                'stroke-width': 1,
+                'zIndex': 4
+            })
+            .add();
     }
+
 });
 

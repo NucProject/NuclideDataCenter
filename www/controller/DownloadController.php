@@ -106,7 +106,7 @@ class DownloadController extends ApiController
                     $nuclide = $ns[$i];
                     $items = $nuclide->children($namespaces[$prefix[0]]);
                     $saras = $nuclide->children($namespaces[$prefix[1]]);
-                    if ($items->NuclideIDConfidenceIndication != 0)
+                    if ("{$items->NuclideIDConfidenceIndication}" != 0)
                     {
                         for ($j = 0; $j < count($saras->Peak); $j += 1)
                         {
@@ -115,7 +115,11 @@ class DownloadController extends ApiController
                             $channel = intval("$channel");
                             $c1 = self::getChannel($channel - 10, $a, $b, $c);
                             $c2 = self::getChannel($channel + 10, $a, $b, $c);
-                            $nuclideRet[] = array('nuclide' => "$items->NuclideName", 'c1' => $c1, 'c2' => $c2);
+                            $nuclideRet[] = array(
+                                'nuclide' => "$items->NuclideName",
+                                'ind' => "{$items->NuclideIDConfidenceIndication}",
+                                'doserate' => "{$saras->DoseRate}",
+                                'c1' => $c1, 'c2' => $c2);
                         }
                     }
                 }

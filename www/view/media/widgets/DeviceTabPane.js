@@ -389,7 +389,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     fixValue: function(v) {
         for (var i in v) {
 
-            if (i == 'time' || i == 'starttime' || i == 'endtime' || i == 'BeginTime' || i == 'begintime') {
+            if (i == 'time' || i == 'starttime' || i == 'endtime' || i == 'BeginTime' || i == 'begintime' || i == 'worktime') {
                 continue;
             }
             var f = parseFloat(v[i]);
