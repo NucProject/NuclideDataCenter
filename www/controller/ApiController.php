@@ -14,9 +14,13 @@ class ApiController extends \Phalcon\Mvc\Controller
         $this->view->disable();
     }
 
-    public function test1Action($a, $b)
+    public function test1Action()
     {
-        echo $a * $b;
+        $d = CinderellaSum::find(array('sid' => 'G201_20141216090100'));
+        foreach ($d as $i)
+        {
+            echo json_encode($i);
+        }
     }
 
     public function startSession()

@@ -25,6 +25,7 @@ class DownloadController extends ApiController
         exit;
     }
 
+
     public static function getEnergyAction()
     {
         $file = "./view/file/128/labr/2014-08/12/sara0292_2014-08-12T15_10_00-5min.n42";

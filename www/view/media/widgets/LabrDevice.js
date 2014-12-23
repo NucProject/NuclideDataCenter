@@ -365,14 +365,13 @@ $class("LabrDevice", DeviceBase,
             var n = nuclides[i];
             console.log(n);
             var name = n['nuclide'];
-            this._nuclideList.addValue({'name': name, 'ind': n['ind'], 'doserate': n['doserate']}, params)
+            var doserate = parseFloat(n['doserate']) * 1000;
+            this._nuclideList.addValue({'name': name, 'ind': n['ind'], 'doserate': doserate}, params)
         }
 
     },
 
     updateMark: function (p) {
-
-
         /*
         var nuclides = p.nuclides;
         for (var i in nuclides)
