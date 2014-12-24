@@ -105,6 +105,11 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             this.onFieldChanged && this.onFieldChanged();
         }));
 
+
+        domNode.find('a.export').click(function () {
+           self.onExport();
+        });
+
         this.initRefreshBar(domNode);
     },
 
@@ -389,7 +394,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     fixValue: function(v) {
         for (var i in v) {
 
-            if (i == 'time' || i == 'starttime' || i == 'endtime' || i == 'BeginTime' || i == 'begintime') {
+            if (i == 'time' || i == 'starttime' || i == 'endtime' || i == 'BeginTime' || i == 'begintime' || i == 'worktime') {
                 continue;
             }
             var f = parseFloat(v[i]);
@@ -750,6 +755,53 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
         // this.decorateList && this.decorateList();
         return false;
+    },
+
+    onExport: function() {
+        var currentStationId = g.getCurrentStationId();
+        if (currentStationId)
+        {
+            var api = "data/download/" + currentStationId + "/" + this._deviceType;
+
+            var payload = {
+                start: g.getBeginTime('yyyy-MM-dd'),
+                end: g.getEndTime('yyyy-MM-dd')
+            };
+
+            var beginTime = new Date(payload['start'].replace(/-/g,"\/"));
+            var endTime = new Date(payload['end'].replace(/-/g,"\/"));
+            // console.log("相差时间：" + (endTime - beginTime));
+
+            var diff = (endTime - beginTime) / 1000 / 3600 / 24;
+            if(diff <= 3){
+                console.log("少于三天");
+                payload['interval'] = 30;
+                this._step = 30 * 1000;
+                this._chartInterval = 30 * 1000;
+            }
+            else if (diff > 3 && diff <= 6)
+            {
+                payload['interval'] = 300;
+                this._step = 300 * 1000;
+                this._chartInterval = 300 * 1000;
+            }
+            else if (diff > 6 && diff <= 10)
+            {
+                payload['interval'] = 3600;
+                this._step = 3600 * 1000;
+                this._chartInterval = 3600 * 1000;
+            }
+            else if (diff > 10)
+            {
+                payload['interval'] = 3600 * 24;
+                this._step = 24 * 3600 * 1000;
+                this._chartInterval = 24 * 3600 * 1000;
+            }
+
+            $.download(api, payload, 'POST');
+        }
+
+
     }
 
 

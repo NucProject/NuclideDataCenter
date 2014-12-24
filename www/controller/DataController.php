@@ -181,6 +181,71 @@ class DataController extends ApiController
         return parent::result(array("items" => $items));
     }
 
+    public function downloadAction($station, $device)
+    {
+        $start = $this->request->getPost('start');
+        $end = $this->request->getPost('end');
+
+        $interval = $this->request->getPost('interval');
+        $interval = $interval?: 30;
+
+        $fileName = "{$device}_{$start}_{$end}.csv";
+        Header("Content-type: application/octet-stream");
+        Header("Accept-Ranges: bytes");
+        Header("Accept-Length:-1");
+        Header("Content-Disposition: attachment; filename=" . $fileName);
+
+        $items = array();
+        if ($interval != 30)
+        {
+            if ($device == 'weather')
+            {
+                $items = $this->fetchWeatherData($station, $start, $end, $interval);
+
+            }
+            else if ($device == 'hpic')
+            {
+                $items = $this->fetchHpicData($station, $start, $end, $interval);
+
+            }
+            else if ($device == 'environment')
+            {
+                $items = $this->fetchEnvironmentData($station, $start, $end, $interval);
+
+            }
+
+            // HpGe and Labr don't follow this rule.
+        }
+        else
+        {
+            $condition = "station=$station";
+
+            if (isset($start) && isset($end)){
+                // echo "$start";
+                $condition .= " and time >= '$start' and time < '$end'";
+            }
+
+            //echo $condition;
+            $items = $device::find(array(
+                $condition,
+            ));
+        }
+
+        foreach ($items as $item)
+        {
+            $a = array();
+            foreach($item as $k => $v)
+            {
+                array_push($a, $v);
+            }
+            echo implode(',', $a), "\n";
+        }
+
+
+        exit;
+    }
+
+
     private function fetchWeatherData($station, $start, $end, $interval)
     {
         $phql = <<<PHQL
@@ -514,9 +579,14 @@ PHQL;
             $pressure += $item->Pressure;
         }
 
-        $s = new CinderellaSum();
-        $s->station = $station;
-        $s->sid = $sid;
+        $s = CinderellaSum::findFirst("sid ='$sid' and station =$station");
+        if (!$s)
+        {
+            $s = new CinderellaSum();
+            $s->sid = $sid;
+            $s->station = $station;
+        }
+
         $s->begintime = date('Y-m-d H:i:s', $begin);
         $s->endtime = date('Y-m-d H:i:s', $end);
         $s->barcode = $barcode;
