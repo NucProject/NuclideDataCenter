@@ -106,7 +106,6 @@ $class("CinderellaDevice", DeviceBase,
 
     onSummaryShow: function() {
         var this_ = this;
-
         this.ajax('data/cinderellaSummary/' + g.getCurrentStationId(), null, function(data){
             var r = eval("("+data+")");
             var items = r['results']['items'];

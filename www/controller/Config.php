@@ -123,7 +123,11 @@ class Config
             '00200203' => "channeldata",
             '00200204' => "doserate",
             '00200205' => "temperature",
-            '00200206' => "highvoltage"
+            '00200206' => "highvoltage",
+            '00200207' => "bgsimilarity",
+            '00200208' => "cps",
+            '00200209' => "k1",
+            '00200210' => "k0"
         ),
 
         'labrnuclidefilter' => array(
@@ -179,6 +183,10 @@ class Config
         ),
 
         'cinderellastatus' => array(
+
+        ),
+
+        'labrfilter' => array(
 
         )
     );
