@@ -4,6 +4,7 @@ $class("LabrFilterDevice", DeviceBase,
     {
         __constructor: function() {
             this._deviceType = "labrfilter";
+
         },
 
         onAttach: function(domNode) {
@@ -17,18 +18,20 @@ $class("LabrFilterDevice", DeviceBase,
                 {'key':'temperature', 'name':'温度'},
                 {'key':'highvoltage', 'name':'高压'},
                 {'key':'bgsimilarity', 'name':'本底相似度'},
-                {'key':'cps', 'name':'cps'}
+                {'key':'cps', 'name':'cps'},
+                {'key':'handle', 'name':'操作', 'type': 'url'}
             ]);
 
-            /*
-             domNode.find('select.chart-field').change(kx.bind(this, function(){
-             this.onFieldChanged();
-             }));
-             */
+            var this_ = this;
+            this._dataListView._domNode.delegate('a', 'click', function () {
+                var tr = $(this).parent().parent();
+                //this_.showEnergyChartFromList(tr);
+            });
         },
 
         showChartsTab: function() {
-
+            this._chartInterval = 30 * 10000;
+            this._step = 30 * 10000;
             this.updateCharts();
         },
 
@@ -36,27 +39,21 @@ $class("LabrFilterDevice", DeviceBase,
             var start = g.getBeginTime().getTime();
             var end = g.getEndTime().getTime();
 
-            var fieldItem = this._domNode.find('select.chart-field');
-
-            var sel = fieldItem.find(":selected");
-            var title = sel.text();
-            var field = fieldItem.val();
-            var min = sel.attr('min');
-            var max = sel.attr('max');
-
+            var max = 10;
+            var min = -10;
             var interval =  this._chartInterval || 30 * 10000;
-
+            var this_ = this;
             this.showCharts(this._domNode,
                 {
                     selector: "div.charts",
-                    title: title,
-                    ytitle: title,
+                    title: "剂量率",
+                    ytitle: "剂量率",
                     start: start,
                     end: end,
                     max:max,
                     min:min,
                     interval: interval,
-                    filter: kx.bind(this, 'filter1')
+                    filter: kx.bind(this_, 'filter1')
                 });
 
             /*
@@ -69,10 +66,35 @@ $class("LabrFilterDevice", DeviceBase,
         },
 
         filter1: function(data) {
-            var currentField = this._domNode.find('select.chart-field').val();
-            return this.chartFilterData(data, currentField, this._chartInterval);
+            this._chartInterval = 30 * 10000;
+            this._step = 30 * 10000;
+            var result =  this.chartFilterData(data, 'doserate', this._chartInterval, this._step);
+            return result;
 
         },
+
+        filter2: function(data){
+            this._chartInterval = 30 * 10000;
+            this._step = 30 * 10000;
+            var result =  this.chartFilterData(data, 'channeldata', this._chartInterval, this._step);
+            return result;
+        },
+
+        showEnergyChart: function(datastr){
+            var this_ = this;
+            var items = datastr.split(' ');
+            var datas = [];
+            console.log(datas);
+
+        },
+
+        decorateList: function ()
+        {
+            var t = '<a class="btn blue show" style="word-break: keep-all;white-space: nowrap">显示能谱</a>';
+            this._dataListView.addColumnData('td:last', t);
+        },
+
+
 
         onChartIntervalChanged: function(sender) {
             if (sender.hasClass('m5')) {
