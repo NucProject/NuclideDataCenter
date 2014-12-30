@@ -80,6 +80,24 @@ $class("LabrFilterDevice", DeviceBase,
             return result;
         },
 
+        filter3: function(data){
+            this._chartInterval = 30 * 10000;
+            this._step = 30 * 10000;
+            var result =  this.chartFilterData(data, 'k1', this._chartInterval, this._step);
+            return result;
+        },
+
+        filter4: function(data){
+            this._chartInterval = 30 * 10000;
+            this._step = 30 * 10000;
+            var result =  this.chartFilterData(data, 'k0', this._chartInterval, this._step);
+            return result;
+        },
+
+        showEnergyChartFromList: function(tr){
+            var href = tr.find('td.download a').attr('href');
+        },
+
         showEnergyChart: function(datastr){
             var this_ = this;
             var items = datastr.split(' ');
