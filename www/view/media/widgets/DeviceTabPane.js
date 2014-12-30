@@ -107,7 +107,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
 
         domNode.find('a.export').click(function () {
-           self.onExport();
+           self.onExport($(this));
         });
 
         this.initRefreshBar(domNode);
@@ -757,7 +757,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         return false;
     },
 
-    onExport: function() {
+    onExport: function(btn) {
         var currentStationId = g.getCurrentStationId();
         if (currentStationId)
         {
@@ -768,34 +768,13 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                 end: g.getEndTime('yyyy-MM-dd')
             };
 
-            var beginTime = new Date(payload['start'].replace(/-/g,"\/"));
-            var endTime = new Date(payload['end'].replace(/-/g,"\/"));
-            // console.log("相差时间：" + (endTime - beginTime));
-
-            var diff = (endTime - beginTime) / 1000 / 3600 / 24;
-            if(diff <= 3){
-                console.log("少于三天");
-                payload['interval'] = 30;
-                this._step = 30 * 1000;
-                this._chartInterval = 30 * 1000;
-            }
-            else if (diff > 3 && diff <= 6)
+            if (btn.hasClass('exp_m5'))
             {
                 payload['interval'] = 300;
-                this._step = 300 * 1000;
-                this._chartInterval = 300 * 1000;
             }
-            else if (diff > 6 && diff <= 10)
-            {
-                payload['interval'] = 3600;
-                this._step = 3600 * 1000;
-                this._chartInterval = 3600 * 1000;
-            }
-            else if (diff > 10)
+            else if (btn.hasClass('exp_d1'))
             {
                 payload['interval'] = 3600 * 24;
-                this._step = 24 * 3600 * 1000;
-                this._chartInterval = 24 * 3600 * 1000;
             }
 
             $.download(api, payload, 'POST');
