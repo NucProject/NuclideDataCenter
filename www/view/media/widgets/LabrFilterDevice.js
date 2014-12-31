@@ -25,7 +25,8 @@ $class("LabrFilterDevice", DeviceBase,
             var this_ = this;
             this._dataListView._domNode.delegate('a', 'click', function () {
                 var tr = $(this).parent().parent();
-                //this_.showEnergyChartFromList(tr);
+
+                this_.showEnergyChartFromList(tr);
             });
         },
 
@@ -95,7 +96,7 @@ $class("LabrFilterDevice", DeviceBase,
         },
 
         showEnergyChartFromList: function(tr){
-            var href = tr.find('td.download a').attr('href');
+            this.showEnergyChart();
         },
 
         showEnergyChart: function(datastr){
