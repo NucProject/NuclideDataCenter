@@ -195,39 +195,21 @@ class DataController extends ApiController
         Header("Content-Disposition: attachment; filename=" . $fileName);
 
         $items = array();
-        if ($interval != 30)
+
+        if ($device == 'weather')
         {
-            if ($device == 'weather')
-            {
-                $items = $this->fetchWeatherData($station, $start, $end, $interval);
+            $items = $this->fetchWeatherData($station, $start, $end, $interval);
 
-            }
-            else if ($device == 'hpic')
-            {
-                $items = $this->fetchHpicData($station, $start, $end, $interval);
-
-            }
-            else if ($device == 'environment')
-            {
-                $items = $this->fetchEnvironmentData($station, $start, $end, $interval);
-
-            }
-
-            // HpGe and Labr don't follow this rule.
         }
-        else
+        else if ($device == 'hpic')
         {
-            $condition = "station=$station";
+            $items = $this->fetchHpicData($station, $start, $end, $interval);
 
-            if (isset($start) && isset($end)){
-                // echo "$start";
-                $condition .= " and time >= '$start' and time < '$end'";
-            }
+        }
+        else if ($device == 'labr')
+        {
+            $items = $this->fetchLabrData($station, $start, $end, $interval);
 
-            //echo $condition;
-            $items = $device::find(array(
-                $condition,
-            ));
         }
 
         foreach ($items as $item)
@@ -255,15 +237,18 @@ avg(d.Pressure) as Pressure,
 avg(d.Windspeed) as Windspeed,
 avg(d.Raingauge) as Raingauge,
 avg(d.Direction) as Direction,
-FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time
+d.time,
+FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
 from weather as d
-where d.station=$station and d.time>'$start' and d.time<'$end' group by time
+where d.station=$station and d.time>'$start' and d.time<'$end' group by time2
 PHQL;
 
         $data = $this->modelsManager->executeQuery($phql);
         $items = array();
         foreach ($data as $item)
         {
+            $item->time = $item->time2;
+            unset($item->time2);
             array_push($items, $item);
         }
         return $items;
@@ -277,9 +262,10 @@ avg(d.doserate) as doserate,
 avg(d.battery) as battery,
 avg(d.highvoltage) as highvoltage,
 avg(d.temperature) as temperature,
-FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time
+d.time,
+FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
 from hpic as d
-where d.station=$station and d.time>'$start' and d.time<'$end' group by time
+where d.station=$station and d.time>'$start' and d.time<'$end' group by time2
 PHQL;
 
         //echo $interval;
@@ -288,6 +274,32 @@ PHQL;
         $items = array();
         foreach ($data as $item)
         {
+            $item->time = $item->time2;
+            unset($item->time2);
+            array_push($items, $item);
+        }
+        return $items;
+    }
+
+    private function fetchLabrData($station, $start, $end, $interval)
+    {
+        $phql = <<<PHQL
+select
+avg(d.doserate) as doserate,
+avg(d.highvoltage) as highvoltage,
+avg(d.temperature) as temperature,
+d.time,
+FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
+from labr as d
+where d.station=$station and d.time>'$start' and d.time<'$end' group by time2
+PHQL;
+
+        $data = $this->modelsManager->executeQuery($phql);
+        $items = array();
+        foreach ($data as $item)
+        {
+            $item->time = $item->time2;
+            unset($item->time2);
             array_push($items, $item);
         }
         return $items;
@@ -304,15 +316,18 @@ avg(d.BatteryHours) as BatteryHours,
 avg(d.IfSmoke) as IfSmoke,
 avg(d.IfWater) as IfWater,
 avg(d.IfDoorOpen) as IfDoorOpen,
-FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time
+d.time,
+FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
 from Environment as d
-where d.station=$station and d.time>'$start' and d.time<'$end' group by time
+where d.station=$station and d.time>'$start' and d.time<'$end' group by time2
 PHQL;
 
         $data = $this->modelsManager->executeQuery($phql);
         $items = array();
         foreach ($data as $item)
         {
+            $item->time = $item->time2;
+            unset($item->time2);
             array_push($items, $item);
         }
         return $items;
