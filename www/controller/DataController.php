@@ -177,7 +177,6 @@ class DataController extends ApiController
             }
             array_push($items, $item);
         }
-
         return parent::result(array("items" => $items));
     }
 
@@ -598,5 +597,67 @@ PHQL;
         // echo ((strtotime($worktime, 0) + 8 * 3600));
 
         return $s->save();
+    }
+
+    public function fetchLabrEnergyDataAction($station){;
+        $time = $_REQUEST['time'];
+        /*if($this->request->isPost()){
+            $payload = $this->request->getPost();
+            $time = $payload['time'];
+        }*/
+        if(isset($time)) {
+
+            $phql = "select l.channeldata, l.k1, l.k0 from LabrFilter l where (l.station=$station) and (l.time = '$time')";
+
+            $data = $this->modelsManager->executeQuery($phql);
+            $channeldata = $data[0]['channeldata'];
+            $k1 = $data[0]['k1'];
+            $k0 = $data[0]['k0'];
+            $channeldata = explode(" ",$channeldata);
+            $energyData = implode(';', $this->getPoints($channeldata, $k0, $k1));
+            //echo json_encode($energyData);
+            //return json_encode($energyData);
+
+        }
+
+            $phql = "select l.name, l.activity, l.channel, l.energy from LabrNuclideFilter l where (l.station=$station) and (l.time = '$time')";
+            $data = $this->modelsManager->executeQuery($phql);
+
+            foreach($data as $item){
+                $nuclideRet[] = array(
+                    'name' => "$item->name",
+                    'activity' => "$item->activity",
+                    'channel' => "$item->channel",
+                    'energy' => "$item->energy"
+                );
+            }
+
+        $result = array(
+            'data' => $energyData,
+            'nuclide' => $nuclideRet
+        );
+        echo json_encode($result);
+
+    }
+
+    private function getPoints($datas, $k0, $k1)
+    {
+        $k0 = floatval($k0);
+        $k1 = floatval($k1);
+
+        $n = array();
+
+        for ($j = 1; $j <= 1024; $j++)
+        {
+            $r = $j + 0.5;
+            $ex = round($k1 * $r + $k0, 2);
+
+            $v = $datas[$j - 1];
+            $n[] = "$ex, $v";
+            if ($ex >= 3200)
+                break;
+
+        }
+        return $n;
     }
 }
