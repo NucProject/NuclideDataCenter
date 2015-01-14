@@ -121,6 +121,7 @@ $class("LabrFilterDevice", DeviceBase,
                 data:datas,
                 nuclides: nuclideArray
             });
+            this_._domNode.find('#li_labr_filter_chart_energy').trigger("click");
 
 
 
