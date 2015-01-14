@@ -111,7 +111,7 @@ $class("LabrFilterDevice", DeviceBase,
                     'data': r
                 });
             }
-            this_._domNode.find('#li_labr_filter_chart_energy').trigger("click");
+            this_._domNode.find('#li_labrfilter_chart_energy').trigger("click");
             this_.createEnergy(this._domNode,{
                 selector: "div.charts-energy",
                 title: "能谱图",
@@ -121,7 +121,7 @@ $class("LabrFilterDevice", DeviceBase,
                 data:datas,
                 nuclides: nuclideArray
             });
-            this_._domNode.find('#li_labr_filter_chart_energy').trigger("click");
+            this_._domNode.find('#li_labrfilter_chart_energy').trigger("click");
 
 
 
