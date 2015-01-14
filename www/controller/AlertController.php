@@ -64,8 +64,9 @@ class AlertController extends ApiController
         $c4 = HpgeAlert::count('handled = 0');
         $c5 = EnvironmentAlert::count('handled = 0');
         $c6 = CinderelladataAlert::count('handled = 0');
+        $c7 = LabrFilterAlert::count('handled = 0');
 
-        $count = $c1 + $c2 + $c3 + $c4 + $c5 + $c6;
+        $count = $c1 + $c2 + $c3 + $c4 + $c5 + $c6 +$c7;
         return parent::result(array(
             'hpic' => $c1,
             'weather' => $c2,
@@ -73,6 +74,7 @@ class AlertController extends ApiController
             'hpge' => $c4,
             'environment' => $c5,
             'cinderella' => $c6,
+            'labrfilter' => $c7,
             'count' => $count
         ));
     }
@@ -93,8 +95,9 @@ class AlertController extends ApiController
         $c4 = HpgeAlert::count('handled = 0' . $dateCondition);
         $c5 = EnvironmentAlert::count('handled = 0' . $dateCondition);
         $c6 = CinderelladataAlert::count('handled = 0' . $dateCondition);
+        $c7 = LabrFilterAlert::count('handled = 0' . $dateCondition);
 
-        $count = $c1 + $c2 + $c3 + $c4 + $c5 + $c6;
+        $count = $c1 + $c2 + $c3 + $c4 + $c5 + $c6 + $c7;
         return parent::result(array(
             'hpic' => $c1,
             'weather' => $c2,
@@ -102,6 +105,7 @@ class AlertController extends ApiController
             'hpge' => $c4,
             'environment' => $c5,
             'cinderella' => $c6,
+            'labrfilter' => $c7,
             'count' => $count
         ));
     }
