@@ -772,6 +772,9 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             {
                 payload['interval'] = 300;
             }
+            else if(btm.hasClass('exp_h1')){
+                payload['interval'] = 3600;
+            }
             else if (btn.hasClass('exp_d1'))
             {
                 payload['interval'] = 3600 * 24;
