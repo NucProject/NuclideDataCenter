@@ -9,6 +9,7 @@
 
 class UpdateController extends ApiController
 {
+    //远程更新代码服务端入口
     public function fileAction($filePathBase64str)
     {
         if (!$this->request->isPost())

@@ -180,6 +180,7 @@ class DataController extends ApiController
         return parent::result(array("items" => $items));
     }
 
+    //用户导出设备数据，存储为csv文件
     public function downloadAction($station, $device)
     {
         $start = $this->request->getPost('start');
@@ -423,7 +424,7 @@ PHQL;
         return $data;
     }
     
-
+    //统计某个月获取率（已弃用）
     public function countAction($station, $device)
     {
         if (!$this->request->isPost())
@@ -439,6 +440,7 @@ PHQL;
         return parent::result(array('count' => $count));
     }
 
+    //统计某个月获取率
     public function count2Action($station, $device)
     {
         $start = $this->request->getQuery('start');
@@ -455,6 +457,7 @@ PHQL;
 
     }
 
+    //check lose history data
     public function checkAction($station, $device)
     {
         if (!$this->request->isPost())
@@ -502,6 +505,7 @@ PHQL;
 
     }
 
+    //test in browser
     public function execSummaryAction($station, $sid)
     {
         self::summaryCinderellaData($station, $sid);
@@ -522,6 +526,7 @@ PHQL;
         return parent::result(array('items' => $ret));
     }
 
+    //高纯锗统计调用（网页）
     public function cinderellaSummary2Action($station)
     {
         if (!$this->request->isGet())
@@ -540,6 +545,7 @@ PHQL;
         return parent::result(array('items' => $ret));
     }
 
+    //cinderella删除统计数据（网页）
     public function delCinderellaSummaryAction($station, $sid)
     {
         if (!$this->request->isGet())
@@ -559,6 +565,7 @@ PHQL;
         return parent::error(Error::BadRecord, '');
     }
 
+    //cinderella统计数据（网页）
     private static function summaryCinderellaData($station, $sid)
     {
         $data = CinderellaData::find(array("station=$station and Sid='$sid'"));
@@ -614,6 +621,7 @@ PHQL;
         return $s->save();
     }
 
+    //labrfilter设备获取数据库能谱数据（js）
     public function fetchLabrEnergyDataAction($station){;
         $time = $_REQUEST['time'];
         /*if($this->request->isPost()){

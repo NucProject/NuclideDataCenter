@@ -175,6 +175,7 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         domNode.find("ul.nav li").bind("click", kx.bind(this, "onPaneShow"));
         setInterval(kx.bind(this, "getLatestData"), 10000);
 
+
         this.updateRunState(true, "获取运行状态...");
 
         // For each CSS.
@@ -231,6 +232,7 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
     onPaneShow: function(e)
     {
+        // TODO: Make sure if in use
         if ($(e.target).attr("href").indexOf("_setting") > 0)
         {
             var self = this;

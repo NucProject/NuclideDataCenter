@@ -164,7 +164,7 @@ class ApiController extends \Phalcon\Mvc\Controller
         );
     }
 
-
+    //测试用
     public function envAction($type, $param = null)
     {
         if ($type == 'time')
