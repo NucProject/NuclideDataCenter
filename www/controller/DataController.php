@@ -232,13 +232,13 @@ class DataController extends ApiController
     {
         $phql = <<<PHQL
 select
+d.time,
+avg(d.Raingauge) as Raingauge,
+avg(d.Windspeed) as Windspeed,
+avg(d.Direction) as Direction,
+avg(d.Pressure) as Pressure,
 avg(d.Temperature) as Temperature,
 avg(d.Humidity) as Humidity,
-avg(d.Pressure) as Pressure,
-avg(d.Windspeed) as Windspeed,
-avg(d.Raingauge) as Raingauge,
-avg(d.Direction) as Direction,
-d.time,
 FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
 from weather as d
 where d.station=$station and d.time>'$start' and d.time<'$end' group by time2
