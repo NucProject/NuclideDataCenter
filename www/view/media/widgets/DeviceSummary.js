@@ -15,9 +15,21 @@ $class("SettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 
     onCreated: function(domNode) {
 
+        domNode.find('a.config').bind('click', kx.bind(this, "onClickConfig"));
+
         domNode.find('a.sure').bind('click', kx.bind(this, "onClickModify"))
 
+        this._configAlertListView = new ListView();
+        var configAlertListViewDomNode = this._configAlertListView.create();
+        configAlertListViewDomNode.appendTo(domNode.find("div.configAlert-pane"));
 
+        var this_ = this;
+        this._configAlertListView.setHeaders([
+            {'key':'id', 'type': 'id'},
+            {'key':'field', 'name':'报警字段'},
+            {'key':'value', 'name':'当前报警值'},
+            {'key':'handle', 'name':'修改'},
+        ]);
         /*
         $('#dashboard-report-range2').daterangepicker({
                 ranges: {
@@ -97,11 +109,20 @@ $class("SettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
             var item = $("<option></option>");
             item.val(i).text(alertFields[i].name);
 
-
             selNode.append(item);
         }
         this.fetchValues(_first);
         selNode.bind('change', kx.bind(this, "onSelectChanged"));
+    },
+    setAlertList:function(alertlist){
+
+        var params = this._configAlertListView.clearValues();
+
+        for(var i in alertlist){
+            console.log(alertlist[i].name);
+
+            //fetchValues(item.name);
+        }
     },
 
     onSelectChanged: function()
@@ -121,8 +142,10 @@ $class("SettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
             if (d['errorCode'] == 0)
             {
                 var values = d['results']['values'];
-                this._domNode.find('input.v1').val(values['v1']);
-                this._domNode.find('input.v2').val(values['v2']);
+                console.log('val', values['v1']);
+                console.log('val', values['v2']);
+                //this._domNode.find('input.v1').val(values['v1']);
+                //this._domNode.find('input.v2').val(values['v2']);
             }
         });
     },
@@ -140,6 +163,10 @@ $class("SettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         {
             console.log(data, "Set alert value(s) success")
         });
+    },
+
+    onClickConfig:function(){
+
     },
 
     onClickModify: function()

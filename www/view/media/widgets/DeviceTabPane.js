@@ -62,6 +62,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
         ]);
 
+
         // 每个设备都能响应时间变化而改变数据内容呈现吧？
         $('body').bind('transfer-selected-time', function(event, startTime, endTime) {
             this_.dateRangeChanged && this_.dateRangeChanged(startTime, endTime);
@@ -80,7 +81,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                 var dn = self._alertSettingPane.create();
 
                 dn.appendTo(self._domNode.find('div.config'));
-                self._alertSettingPane.setAlertFields(fc['results'])
+                self._alertSettingPane.setAlertFields(fc['results']);
+                self._alertSettingPane.setAlertList(fc['results']);
 
             });
         }

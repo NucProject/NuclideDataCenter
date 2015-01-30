@@ -13,7 +13,8 @@ class AlertController extends ApiController
         $field = $this->request->getQuery("f");
 
         $values = AlertRule::getAlertValue($this->redis, $station, $device, $field);
-        return parent::result(array('values' => $values));
+        //return parent::result(array('values' => $values));
+        echo(json_encode($station));
     }
 
     public function setAction($station, $device)

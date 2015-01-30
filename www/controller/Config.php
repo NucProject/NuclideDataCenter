@@ -133,13 +133,13 @@ class Config
         ),
 
         'weather' => array(
-           'Temperature' => array('rule' => 0, 'level' => 2),
-           'Humidity' => array('rule' => 0, 'level' => 2),
-           'Pressure' => array('rule' => 0, 'level' => 2),
-           'Windspeed' => array('rule' => 0, 'level' => 2),
-           'Direction' => array('rule' => 0, 'level' => 2),
-           'Rainspeed' => array('rule' => 0, 'level' => 2),
-           'IfRain' => array('rule' => 1, 'level' => 1)
+           'Temperature' => array('rule' => 0, 'level' => 2, 'name' => '温度'),
+           'Humidity' => array('rule' => 0, 'level' => 2, 'name' => '湿度'),
+           'Pressure' => array('rule' => 0, 'level' => 2, 'name' => '压力'),
+           'Windspeed' => array('rule' => 0, 'level' => 2, 'name' => '风速'),
+           'Direction' => array('rule' => 0, 'level' => 2, 'name' => '风向'),
+           'Rainspeed' => array('rule' => 0, 'level' => 2, 'name' => '雨速'),
+           'IfRain' => array('rule' => 1, 'level' => 1, 'name' => '是否下雨')
         ),
 
         'environment' => array(
