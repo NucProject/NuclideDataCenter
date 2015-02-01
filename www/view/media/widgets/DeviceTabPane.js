@@ -576,8 +576,10 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         var self = this;
         this.ajax("alert/getAllAlert/"+  g._curStationId + "/" + this._deviceType, null, function(data){
                 var fc = eval("(" + data + ")");
-                self._alertSettingPane = new SettingPane(self._deviceType);
-                var dn = self._alertSettingPane.create();
+                if(!self._alertSettingPane){
+                    self._alertSettingPane = new SettingPane(self._deviceType);
+                    var dn = self._alertSettingPane.create();
+                }
 
                 dn.appendTo(self._domNode.find('div.config'));
                 //self._alertSettingPane.setAlertFields(fc['results']);
