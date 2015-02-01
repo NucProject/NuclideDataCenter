@@ -72,9 +72,9 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         // ZM: 在设备派生类里面,如果_noAlertData不是true，那么在基类里面就能初始化报警的代码。
         // 注意_noAlertData是放到派生类里面。只有设备才知道哪些设备要报警，哪些不需要。
         // 但是统一都在基类一份代码干了。大不了不做。
-        if (!this._noAlertData)
+        /*if (!this._noAlertData)
         {
-            this.ajax("alert/config/" + this._deviceType, null, function(data){
+            this.ajax("alert/config/"+ this._deviceType, null, function(data){
                 var fc = eval("(" + data + ")");
 
                 self._alertSettingPane = new SettingPane(self._deviceType);
@@ -85,7 +85,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                 self._alertSettingPane.setAlertList(fc['results']);
 
             });
-        }
+        }*/
 
         this._alertListView._domNode.delegate('td a.handle', 'click', function(){
             var a = $(this);
@@ -496,6 +496,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         for (var i in items) {
             var item = items[i];
             var t = item['time'];
+            item['Raingauge'] = 0;
             dict[t] = item;
         }
         this._dict = dict;
@@ -517,6 +518,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             this.onAlertPageShow();
         } else if (tabItem.hasClass('summary')) {
             this.onSummaryShow();
+        }else if (tabItem.hasClass('config')){
+            this.onConfigShow();
         }
 
         // Device
@@ -567,6 +570,19 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         {
             this.fetchAlerts();
         }
+    },
+
+    onConfigShow: function(){
+        var self = this;
+        this.ajax("alert/getAllAlert/"+  g._curStationId + "/" + this._deviceType, null, function(data){
+                var fc = eval("(" + data + ")");
+                self._alertSettingPane = new SettingPane(self._deviceType);
+                var dn = self._alertSettingPane.create();
+
+                dn.appendTo(self._domNode.find('div.config'));
+                //self._alertSettingPane.setAlertFields(fc['results']);
+                self._alertSettingPane.setAlertList(fc['results']);
+        });
     },
 
     onDataStatisitcTabShown: function() {

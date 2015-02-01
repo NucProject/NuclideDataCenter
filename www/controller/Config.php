@@ -31,7 +31,7 @@ class Config
             '0901040103' => 'Pressure',
             '0901040106' => 'Windspeed',
             '0901040105' => 'Direction',
-            '0901040104' => 'Rainspeed',
+            '0901040104' => 'Raingauge',
             '0901040107' => 'IfRain',
             'time' => 'time'
             ),
@@ -126,6 +126,34 @@ class Config
             'highvoltage' => array('rule' => 0, 'level' => 2, 'name' => '高压'),
             'temperature' => array('rule' => 0, 'level' => 2, 'name' => '温度')
         ),
+
+        'bai9125' => array(
+            'γ计数率' => array('rule' => 0, 'level' => 2, 'name' => 'γ计数率'),
+            'betacps' => array('rule' => 0, 'level' => 2, 'name' => 'β计数率'),
+        ),
+
+        'bai9850' => array(
+            'alpha' => array('rule' => 0, 'level' => 2, 'name' => 'α比活度'),
+            'beta' => array('rule' => 0, 'level' => 2, 'name' => 'β比活度'),
+            'i131' => array('rule' => 0, 'level' => 2, 'name' => '碘131比活度'),
+        ),
+
+        'mds' => array(
+            'doserate' => array('rule' => 0, 'level' => 2, 'name' => '剂量率'),
+            'doserateex' => array('rule' => 0, 'level' => 2, 'name' => '扩展剂量率'),
+        ),
+
+        'inspector1000' => array(
+            'doserate' => array('rule' => 0, 'level' => 2, 'name' => '当前剂量率'),
+        ),
+
+        'radeye' => array(
+            'doserate' => array('rule' => 0, 'level' => 2, 'name' => '剂量率'),
+        ),
+
+
+
+
 
         /* TODO: Need parse .N42 file.*/
         'labr' => array(

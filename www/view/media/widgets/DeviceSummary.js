@@ -17,7 +17,9 @@ $class("SettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 
         domNode.find('a.config').bind('click', kx.bind(this, "onClickConfig"));
 
-        domNode.find('a.sure').bind('click', kx.bind(this, "onClickModify"))
+        domNode.find('a.sure').bind('click', kx.bind(this, "onClickSure"));
+
+        domNode.delegate('a.modify', 'click', kx.bind(this, "onClickModify"));
 
         this._configAlertListView = new ListView();
         var configAlertListViewDomNode = this._configAlertListView.create();
@@ -25,11 +27,13 @@ $class("SettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 
         var this_ = this;
         this._configAlertListView.setHeaders([
-            {'key':'id', 'type': 'id'},
+            //{'key':'id', 'type': 'id'},
             {'key':'field', 'name':'报警字段'},
             {'key':'value', 'name':'当前报警值'},
             {'key':'handle', 'name':'修改'},
         ]);
+
+
         /*
         $('#dashboard-report-range2').daterangepicker({
                 ranges: {
@@ -114,28 +118,39 @@ $class("SettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         this.fetchValues(_first);
         selNode.bind('change', kx.bind(this, "onSelectChanged"));
     },
-    setAlertList:function(alertlist){
-
+    setAlertList:function(alertlist) {
         var params = this._configAlertListView.clearValues();
 
-        for(var i in alertlist){
-            console.log(alertlist[i].name);
+        items = alertlist['values'];
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
 
-            //fetchValues(item.name);
+            var dict= {
+                'field': item['field'],
+                'value': item['v1'] +  '/' + item['v2'],
+                'handle': '<a class="btn blue modify" data-v1="' + item['v1'] + '" data-v2="' + item['v2'] + '" data-field="' + item['field'] + '">修改</a>'
+            };
+
+            console.log("dict", dict);
+            this._configAlertListView.addValue(dict, params);
         }
     },
 
     onSelectChanged: function()
     {
         var field = this._domNode.find("select").val();
-        this.fetchValues(field)
+        this.fetchValues(field);
     },
 
     fetchValues: function(field)
     {
         this._domNode.find('input.v1').val('');
         this._domNode.find('input.v2').val('');
-        var url = "alert/get/" + g.getCurrentStationId() + "/" + this._device;
+        var sidebar = Widget.widgetById("sidebar");
+        console.log(sidebar._currentStationId);
+        console.log("if has curstationid", g._curStationId);
+        console.log(g.hasOwnProperty('_curStationId'));
+        var url = "alert/get/" + g._curStationId + "/" + this._device;
         this.ajax(url + "?f=" + field, null, function(data)
         {
             var d = eval('(' + data + ')');
@@ -150,9 +165,8 @@ $class("SettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         });
     },
 
-    setValues: function(v1, v2)
+    setValues: function(field, v1, v2)
     {
-        var field = this._domNode.find("select").val();
         var url = "alert/set/" + g.getCurrentStationId() + "/" + this._device;
         var payload = {
             'f': field,
@@ -169,8 +183,9 @@ $class("SettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 
     },
 
-    onClickModify: function()
+    onClickSure: function()
     {
+        var field = this._domNode.find('input.field').val();
         var v1 = this._domNode.find('input.v1').val();
         var v2 = this._domNode.find('input.v2').val();
         if (isNaN(v1))
@@ -181,7 +196,24 @@ $class("SettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         {
             return false;
         }
-        this.setValues(v1, v2);
+        this.setValues(field, v1, v2);
+
+        var api = "alert/getAllAlert/"+  g._curStationId + "/" + this._device;
+        //this._configAlertListView.refresh(api);
+        this._domNode.find('.modify-alert').hide();
+    },
+
+    onClickModify: function(e) {
+        var node = $(e.srcElement);
+        var field = node.attr('data-field');
+        var v1 = node.attr('data-v1');
+        var v2 = node.attr('data-v2');
+
+        this._domNode.find('input.field').val(field);
+        this._domNode.find('input.v1').val(v1);
+        this._domNode.find('input.v2').val(v2);
+
+        $('.modify-alert').show();
     }
 
 });
@@ -299,19 +331,24 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             var self = this;
             if (!self._alertSettingPane)
             {
-                self.ajax("alert/config/" + self._deviceType, null, function(data){
-                    var fc = eval("(" + data + ")");
-
-
-                    self._alertSettingPane = new AlertSettingPane(self._deviceType);
-                    var dn = self._alertSettingPane.create();
-
-                    dn.appendTo(self._domNode.find('div.config'));
-                    self._alertSettingPane.setAlertFields(fc['results'])
-
-                });
+                self.refreshAlertList();
             }
         }
+    },
+
+    refreshAlertList: function() {
+        var self = this;
+        self.ajax("alert/config/" + self._deviceType, null, function(data){
+            var fc = eval("(" + data + ")");
+
+
+            self._alertSettingPane = new AlertSettingPane(self._deviceType);
+            var dn = self._alertSettingPane.create();
+
+            dn.appendTo(self._domNode.find('div.config'));
+            self._alertSettingPane.setAlertFields(fc['results'])
+
+        });
     }
 });
 
