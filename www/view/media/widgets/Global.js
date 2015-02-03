@@ -178,7 +178,7 @@ $class("Global", Base,
             case "hpic":
                 return "高压电离室";
             case "labr":
-                return "溴化镧能谱仪";
+                return "溴化镧能谱仪（空气）";
             case "cinderella":
                 return "特征核素甄别系统";
             case "cinderelladata":
@@ -199,6 +199,8 @@ $class("Global", Base,
                 return "便携式γ辐射测量仪";
             case "bai9125":
                 return "水质放射性监测系统";
+            case "labrfilter":
+                return "溴化镧能谱仪（滤纸）（测试中）";
         }
     },
 

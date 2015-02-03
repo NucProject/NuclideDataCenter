@@ -254,7 +254,7 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
 DeviceSummaryBase.showDevice = function(deviceType, params)
 {
-    var dt =  ["hpic", "weather", "labr", "environment", "hpge", "cinderella"];
+    var dt =  ["hpic", "weather", "labr", "environment", "hpge", "cinderella", "labrfilter"];
 
     console.log(deviceType);
     for (var i in dt)
@@ -275,7 +275,6 @@ DeviceSummaryBase.showDevice = function(deviceType, params)
             }
             else
             {
-                console.log(1221212)
                 w._domNode.show();
                 Widget.widgetById(deviceType + "-device").onShow(params);
             }
@@ -357,7 +356,7 @@ $class("WeatherSummaryDevice", DeviceSummaryBase,
          });
          return false;
          */
-    },
+    }
 
 });
 
@@ -731,3 +730,22 @@ $class("EnvSummaryDevice", DeviceSummaryBase,
     }
 
 });
+
+$class("LabrFilterSummaryDevice", DeviceSummaryBase,
+    {
+        __constructor: function() {
+            this._stationId = 128;
+        },
+
+        onAttach: function(domNode) {
+            this._deviceType = "labrfilter";
+            this.onAttached(domNode);
+        },
+
+        onSettingPaneShow: function(fieldConfig)
+        {
+            console.log(fieldConfig);
+
+        }
+
+    });

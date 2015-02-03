@@ -99,18 +99,15 @@ $class("CinderellaDevice", DeviceBase,
             {'key':'endtime', 'name':'结束时间'},
             {'key':'barcode', 'name':'条码'},
             {'key':'flow', 'name':'累计流量'},
-            {'key':'flowPerHour', 'name':'平均瞬时流量' },
+            {'key':'flowPerHour', 'name':'平均瞬时流量'},
             {'key':'worktime', 'name':'工作时间'},
             {'key':'handle', 'name':'处理'}]);
     },
 
     onSummaryShow: function() {
         var this_ = this;
-
-
-        this.ajax('data/cinderellaSummary2/' + g.getCurrentStationId(), null, function(data){
-
-            var r = eval("(" + data + ")");
+        this.ajax('data/cinderellaSummary/' + g.getCurrentStationId(), null, function(data){
+            var r = eval("("+data+")");
             var items = r['results']['items'];
 
 
