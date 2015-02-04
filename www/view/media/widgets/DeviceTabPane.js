@@ -497,6 +497,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             var item = items[i];
             var t = item['time'];
             item['Raingauge'] = 0;
+            item['Pressure'] = 101;
             dict[t] = item;
         }
         this._dict = dict;
@@ -547,18 +548,24 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
         var counter = 0;
         var gv = new AverageValue();
-        for (var i = beginTime; i <= endTime; i += step)
-        {
-            //
-            if (counter == count) {
-                counter = 0;
-
-                datas.push( gv.getValue() );
-                gv.clearValues();
+        if(count == 1){
+            for(var i = beginTime;i < endTime; i+= step){
+                datas.push(dict[i]);
             }
+        }
+        else {
+            for (var i = beginTime; i <= endTime; i += step) {
+                //
+                if (counter == count) {
+                    counter = 0;
 
-            counter += 1;
-            gv.addValue(dict[i]);
+                    datas.push(gv.getValue());
+                    gv.clearValues();
+                }
+
+                counter += 1;
+                gv.addValue(dict[i]);
+            }
         }
 
         return {'data': datas};
