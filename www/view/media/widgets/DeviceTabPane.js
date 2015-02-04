@@ -525,6 +525,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             gv && gv.addValue(value);
         }
 
+        // Try
         if (gv) {
             this._dataListView.addValue(gv.getValue(), params);
         }
@@ -788,6 +789,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
 
 });
+
 
 
 
