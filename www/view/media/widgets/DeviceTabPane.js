@@ -54,13 +54,15 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
         var this_ = this;
         this._alertListView.setHeaders([
-            {'key':'id', 'type': 'id'},
+            {'key':'id', 'type': 'id', 'checkbox': true},
             {'key':'time', 'name':'时间'},
             {'key':'field', 'name':'报警字段'},
             {'key':'value', 'name':'报警值'},
-            {'key':'handle', 'name':'处理'},
+            {'key':'handled', 'name':'处理结果'},
 
         ]);
+
+        this._domNode.find('.alert-select').bind('change', kx.bind(this, "onAlertLevelSelectChanged"));
 
         // 每个设备都能响应时间变化而改变数据内容呈现吧？
         $('body').bind('transfer-selected-time', function(event, startTime, endTime) {
@@ -85,12 +87,14 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             });
         }
 
+        /*
         this._alertListView._domNode.delegate('td a.handle', 'click', function(){
             var a = $(this);
             var tr = a.parent().parent();
             var id = tr.attr('data-id');
             self.handleAlert(self._deviceType, id, tr, a.siblings('input').val() )
         });
+        */
 
         // Tab Item Changed!
         domNode.find('ul.nav-tabs li').delegate('a', 'click', function(){
@@ -104,7 +108,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         domNode.find('select.chart-field').change(kx.bind(this, function(){
             this.onFieldChanged && this.onFieldChanged();
         }));
-
 
         domNode.find('a.export').click(function () {
            self.onExport($(this));
@@ -241,11 +244,11 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         return false;
     },
 
-    fetchAlerts: function() {
+    fetchAlerts: function(field, level) {
         var currentStationId = g.getCurrentStationId();
         if (currentStationId)
         {
-            var api = "data/alerts/" + currentStationId + "/" + this._deviceType;
+            var api = "data/alerts/" + currentStationId + "/" + this._deviceType + '/' + field +'/' + level;
             this._alertListView.refresh(api);
         }
     },
@@ -618,7 +621,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             this.updateIntervalButtons2(this._chartInterval);
             this.onShow();
         } else if (tabItem.hasClass('alerts')) {
-            this.onAlertPageShow();
+            // this.onAlertPageShow();
         } else if (tabItem.hasClass('summary')) {
             this.onSummaryShow();
         }
@@ -785,7 +788,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
 
     }
-
 
 });
 

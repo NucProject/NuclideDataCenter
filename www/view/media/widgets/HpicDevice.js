@@ -86,6 +86,18 @@ $class("HpicDevice", DeviceBase,
 
         this.updateCharts();
 
+    },
+
+    onAlertLevelSelectChanged: function(e) {
+        var value = $(e.delegateTarget).val();
+        if (value == 1)
+        {
+            this.fetchAlerts('doserate', 1);
+        }
+        else if (value == 2)
+        {
+            this.fetchAlerts('doserate', 2);
+        }
     }
 
 

@@ -4,7 +4,7 @@ $class("LabrFilterDevice", DeviceBase,
     {
         __constructor: function() {
             this._deviceType = "labrfilter";
-
+            this._noAlertData = true;
         },
 
         onAttach: function(domNode) {

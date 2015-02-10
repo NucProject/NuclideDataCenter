@@ -90,22 +90,22 @@ class AlertController extends ApiController
         }
 
         $c1 = HpicAlert::count('handled = 0' . $dateCondition);
-        $c2 = WeatherAlert::count('handled = 0' . $dateCondition);
+        //$c2 = WeatherAlert::count('handled = 0' . $dateCondition);
         $c3 = LabrAlert::count('handled = 0' . $dateCondition);
         $c4 = HpgeAlert::count('handled = 0' . $dateCondition);
-        $c5 = EnvironmentAlert::count('handled = 0' . $dateCondition);
-        $c6 = CinderelladataAlert::count('handled = 0' . $dateCondition);
-        $c7 = LabrFilterAlert::count('handled = 0' . $dateCondition);
+        //$c5 = EnvironmentAlert::count('handled = 0' . $dateCondition);
+        //$c6 = CinderelladataAlert::count('handled = 0' . $dateCondition);
+        //$c7 = LabrFilterAlert::count('handled = 0' . $dateCondition);
 
-        $count = $c1 + $c2 + $c3 + $c4 + $c5 + $c6 + $c7;
+        $count = $c1 + $c3 + $c4;
         return parent::result(array(
             'hpic' => $c1,
-            'weather' => $c2,
+            //'weather' => $c2,
             'labr' => $c3,
             'hpge' => $c4,
-            'environment' => $c5,
-            'cinderella' => $c6,
-            'labrfilter' => $c7,
+            //'environment' => $c5,
+            //'cinderella' => $c6,
+            //'labrfilter' => $c7,
             'count' => $count
         ));
     }
@@ -120,30 +120,32 @@ class AlertController extends ApiController
         $ret = array();
         foreach ($values as $value)
         {
-            echo json_encode($value);
+            // echo json_encode($value);
             $field = $value->field;
-            $rule = $rules[$field];
-            echo json_encode($rule);
+            $level = $rules[$field]['level'];
 
-            if ($rule['rule'] == 0)
+            if ($level == 2)
             {
-                if ($data->$field > $value->v1)
-                {
-                    $saved = self::addAlertData($station, $device, $data, $field, $value->v1, $value->v2);
+                if ($data->$field > $value->v2) {
+                    $saved = self::addAlertData($station, $device, $data, $field, $value->v1, $value->v2, 2);
+                    array_push($ret, array($field => $saved));
+                } elseif ($data->$field > $value->v1) {
+                    $saved = self::addAlertData($station, $device, $data, $field, $value->v1, $value->v2, 1);
                     array_push($ret, array($field => $saved));
                 }
-
             }
-            else if ($rule->rule == 1)
-            {
-                // TODO:
+            elseif ($level == 1) {
+                if ($data->$field > $value->v1) {
+                    $saved = self::addAlertData($station, $device, $data, $field, $value->v1, $value->v2, 1);
+                    array_push($ret, array($field => $saved));
+                }
             }
 
         }
         return $ret;
     }
 
-    private static function addAlertData($station, $device, $data, $field, $v1, $v2)
+    private static function addAlertData($station, $device, $data, $field, $v1, $v2, $level = 1)
     {
         $modelName = $device . 'Alert';
         $d = new $modelName();
@@ -155,6 +157,7 @@ class AlertController extends ApiController
         $d->v1 = $v1;
         $d->v2 = $v2;
         $d->handled = 0;
+        $d->level = $level;
 
         return $d->save();
     }

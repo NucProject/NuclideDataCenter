@@ -40,11 +40,11 @@ class ApiController extends \Phalcon\Mvc\Controller
     public function getPayload($field = null)
     {
         $payload = json_decode($this->request->getRawBody());
-        if (isset($field))
+        if (isset($field) && array_key_exists($field, $payload))
         {
             return $payload->$field;
         }
-        return $payload;
+        return null;
     }
 
 	// return results

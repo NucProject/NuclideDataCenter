@@ -376,16 +376,9 @@ PHQL;
         return parent::result(array('station' => $station, 'device' => $device, 'status' => $status));
     }
 
-    public function alertsAction($station, $device, $all = false)
+    public function alertsAction($station, $device, $field, $level)
     {
-        if ($all)
-        {
-            $condition = "station_id=$station";
-        }
-        else
-        {
-            $condition = "station_id=$station and handled=0";
-        }
+        $condition = "station_id=$station and handled=0 and field='$field' and level=$level";
 
         $modelName = $device . 'Alert';
 

@@ -9,6 +9,7 @@ $class("CinderellaDevice", DeviceBase,
 
     __constructor: function() {
         this._deviceType = "cinderelladata";
+        this._noAlertData = true;
     },
 
     onAttach: function(domNode) {

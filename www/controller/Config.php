@@ -143,17 +143,20 @@ class Config
     public static $d = array(
 
         'hpic' => array(
-            'doserate' => array('rule' => 0, 'level' => 2, 'name' => '剂量率'),
-            'battery' => array('rule' => 0, 'level' => 2, 'name' => '电池'),
-            'highvoltage' => array('rule' => 0, 'level' => 2, 'name' => '高压'),
-            'temperature' => array('rule' => 0, 'level' => 2, 'name' => '温度')
+            'doserate' => array('level' => 2, 'name' => '剂量率'),
+            //'battery' => array('rule' => 0, 'level' => 2, 'name' => '电池'),
+            //'highvoltage' => array('rule' => 0, 'level' => 2, 'name' => '高压'),
+            //'temperature' => array('rule' => 0, 'level' => 2, 'name' => '温度')
         ),
 
-        /* TODO: Need parse .N42 file.*/
         'labr' => array(
-
+            'doserate' => array('level' => 2, 'name' => '剂量率'),
         ),
 
+        'hpge' => array(
+
+        ),
+        /*
         'weather' => array(
            'Temperature' => array('rule' => 0, 'level' => 2),
            'Humidity' => array('rule' => 0, 'level' => 2),
@@ -188,7 +191,9 @@ class Config
 
         'labrfilter' => array(
 
+
         )
+        */
     );
 
 } 
