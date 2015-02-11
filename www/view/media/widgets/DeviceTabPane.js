@@ -62,6 +62,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
         ]);
 
+
         // 每个设备都能响应时间变化而改变数据内容呈现吧？
         $('body').bind('transfer-selected-time', function(event, startTime, endTime) {
             this_.dateRangeChanged && this_.dateRangeChanged(startTime, endTime);
@@ -71,19 +72,20 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         // ZM: 在设备派生类里面,如果_noAlertData不是true，那么在基类里面就能初始化报警的代码。
         // 注意_noAlertData是放到派生类里面。只有设备才知道哪些设备要报警，哪些不需要。
         // 但是统一都在基类一份代码干了。大不了不做。
-        if (!this._noAlertData)
+        /*if (!this._noAlertData)
         {
-            this.ajax("alert/config/" + this._deviceType, null, function(data){
+            this.ajax("alert/config/"+ this._deviceType, null, function(data){
                 var fc = eval("(" + data + ")");
 
                 self._alertSettingPane = new SettingPane(self._deviceType);
                 var dn = self._alertSettingPane.create();
 
                 dn.appendTo(self._domNode.find('div.config'));
-                self._alertSettingPane.setAlertFields(fc['results'])
+                self._alertSettingPane.setAlertFields(fc['results']);
+                self._alertSettingPane.setAlertList(fc['results']);
 
             });
-        }
+        }*/
 
         this._alertListView._domNode.delegate('td a.handle', 'click', function(){
             var a = $(this);
@@ -494,6 +496,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         for (var i in items) {
             var item = items[i];
             var t = item['time'];
+            item['Raingauge'] = 0;
+            item['Pressure'] = 101;
             dict[t] = item;
         }
         this._dict = dict;
@@ -515,6 +519,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             this.onAlertPageShow();
         } else if (tabItem.hasClass('summary')) {
             this.onSummaryShow();
+        }else if (tabItem.hasClass('config')){
+            this.onConfigShow();
         }
 
         // Device
@@ -542,18 +548,24 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
         var counter = 0;
         var gv = new AverageValue();
-        for (var i = beginTime; i <= endTime; i += step)
-        {
-            //
-            if (counter == count) {
-                counter = 0;
-
-                datas.push( gv.getValue() );
-                gv.clearValues();
+        if(count == 1){
+            for(var i = beginTime;i < endTime; i+= step){
+                datas.push(dict[i]);
             }
+        }
+        else {
+            for (var i = beginTime; i <= endTime; i += step) {
+                //
+                if (counter == count) {
+                    counter = 0;
 
-            counter += 1;
-            gv.addValue(dict[i]);
+                    datas.push(gv.getValue());
+                    gv.clearValues();
+                }
+
+                counter += 1;
+                gv.addValue(dict[i]);
+            }
         }
 
         return {'data': datas};
@@ -565,6 +577,21 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         {
             this.fetchAlerts();
         }
+    },
+
+    onConfigShow: function(){
+        var self = this;
+        this.ajax("alert/getAllAlert/"+  g._curStationId + "/" + this._deviceType, null, function(data){
+                var fc = eval("(" + data + ")");
+                if(!self._alertSettingPane){
+                    self._alertSettingPane = new SettingPane(self._deviceType);
+                    var dn = self._alertSettingPane.create();
+                }
+
+                dn.appendTo(self._domNode.find('div.config'));
+                //self._alertSettingPane.setAlertFields(fc['results']);
+                self._alertSettingPane.setAlertList(fc['results']);
+        });
     },
 
     onDataStatisitcTabShown: function() {

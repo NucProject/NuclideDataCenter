@@ -56,6 +56,8 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         li.css('background', '#575757')
 
         var currentStationId = li.attr("station_id")
+        this._currentStationId = currentStationId;
+        console.log("点击站点",currentStationId);
         g.setCurrentStationId(currentStationId)
         this._currentStationName = li.find("a").text();
         g.setCurrentStationName(this._currentStationName);

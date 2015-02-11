@@ -13,7 +13,7 @@ $class("WeatherDevice", DeviceBase,
 
         this._dataListView.setHeaders([
             {'key':'time', 'name':'时间'},
-            {'key':'Rainspeed', 'name':'雨量(mm)'},
+            {'key':'Raingauge', 'name':'雨量(mm)'},
             {'key':'Windspeed', 'name':'风速(m/s)'},
             {'key':'Direction', 'name':'风向(°)'},
             {'key':'Pressure', 'name':'气压(kPa)'},

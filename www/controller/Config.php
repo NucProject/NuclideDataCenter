@@ -31,7 +31,7 @@ class Config
             '0901040103' => 'Pressure',
             '0901040106' => 'Windspeed',
             '0901040105' => 'Direction',
-            '0901040104' => 'Rainspeed',
+            '0901040104' => 'Raingauge',
             '0901040107' => 'IfRain',
             'time' => 'time'
             ),
@@ -127,19 +127,47 @@ class Config
             'temperature' => array('rule' => 0, 'level' => 2, 'name' => '温度')
         ),
 
+        'bai9125' => array(
+            'γ计数率' => array('rule' => 0, 'level' => 2, 'name' => 'γ计数率'),
+            'betacps' => array('rule' => 0, 'level' => 2, 'name' => 'β计数率'),
+        ),
+
+        'bai9850' => array(
+            'alpha' => array('rule' => 0, 'level' => 2, 'name' => 'α比活度'),
+            'beta' => array('rule' => 0, 'level' => 2, 'name' => 'β比活度'),
+            'i131' => array('rule' => 0, 'level' => 2, 'name' => '碘131比活度'),
+        ),
+
+        'mds' => array(
+            'doserate' => array('rule' => 0, 'level' => 2, 'name' => '剂量率'),
+            'doserateex' => array('rule' => 0, 'level' => 2, 'name' => '扩展剂量率'),
+        ),
+
+        'inspector1000' => array(
+            'doserate' => array('rule' => 0, 'level' => 2, 'name' => '当前剂量率'),
+        ),
+
+        'radeye' => array(
+            'doserate' => array('rule' => 0, 'level' => 2, 'name' => '剂量率'),
+        ),
+
+
+
+
+
         /* TODO: Need parse .N42 file.*/
         'labr' => array(
 
         ),
 
         'weather' => array(
-           'Temperature' => array('rule' => 0, 'level' => 2),
-           'Humidity' => array('rule' => 0, 'level' => 2),
-           'Pressure' => array('rule' => 0, 'level' => 2),
-           'Windspeed' => array('rule' => 0, 'level' => 2),
-           'Direction' => array('rule' => 0, 'level' => 2),
-           'Rainspeed' => array('rule' => 0, 'level' => 2),
-           'IfRain' => array('rule' => 1, 'level' => 1)
+           'Temperature' => array('rule' => 0, 'level' => 2, 'name' => '温度'),
+           'Humidity' => array('rule' => 0, 'level' => 2, 'name' => '湿度'),
+           'Pressure' => array('rule' => 0, 'level' => 2, 'name' => '压力'),
+           'Windspeed' => array('rule' => 0, 'level' => 2, 'name' => '风速'),
+           'Direction' => array('rule' => 0, 'level' => 2, 'name' => '风向'),
+           'Rainspeed' => array('rule' => 0, 'level' => 2, 'name' => '雨速'),
+           'IfRain' => array('rule' => 1, 'level' => 1, 'name' => '是否下雨')
         ),
 
         'environment' => array(
