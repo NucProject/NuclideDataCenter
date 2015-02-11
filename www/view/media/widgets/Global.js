@@ -200,7 +200,7 @@ $class("Global", Base,
             case "bai9125":
                 return "水质放射性监测系统";
             case "labrfilter":
-                return "溴化镧能谱仪（滤纸）（测试中）";
+                return "溴化镧能谱仪（滤纸）";
         }
     },
 
