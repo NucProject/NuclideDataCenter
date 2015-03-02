@@ -53,10 +53,16 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 
         thead.append($(html));
 
-
+        var this_ = this;
         this._domNode.find('.check-all').change( function () {
-            console.log(2);
+            // console.log(this_._domNode.find('.check-all').attr('checked'));
+            var c = this_._domNode.find('.check-all').attr('checked');
+            this_._domNode.find('.check-one').attr('checked', !!c);
         });
+    },
+
+    getCheckedItems: function () {
+        return this._domNode.find('.check-one:checked');
     },
 
     dataReceived: function(data) {
@@ -122,7 +128,7 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
             }
             else if (key == 'checkbox')
             {
-                var cb = '<input type="checkbox" item-id="' + item['id'] + '"/>';
+                var cb = '<input type="checkbox" class="check-one" item-id="' + item['id'] + '"/>';
                 cl.push(cb);
             }
             else if (itemType == 'url')
@@ -251,7 +257,7 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
                 if (this._headers[j]['type'] == 'id')
                 {
                     id = item[key];
-                    var cb = '<input type="checkbox" item-id="' + id + '"/>';
+                    var cb = '<input type="checkbox" class="check-one" item-id="' + id + '"/>';
                     cl.push(cb);
 
                     continue;

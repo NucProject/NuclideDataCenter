@@ -58,7 +58,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             {'key':'time', 'name':'时间'},
             {'key':'field', 'name':'报警字段'},
             {'key':'value', 'name':'报警值'},
-            {'key':'handled', 'name':'处理结果'},
+            // {'key':'handled', 'name':'处理结果'},
 
         ]);
 
@@ -87,14 +87,22 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             });
         }
 
-        /*
-        this._alertListView._domNode.delegate('td a.handle', 'click', function(){
+
+        this._domNode.delegate('a.handle', 'click', function(){
             var a = $(this);
-            var tr = a.parent().parent();
-            var id = tr.attr('data-id');
-            self.handleAlert(self._deviceType, id, tr, a.siblings('input').val() )
+
+            var c = self._alertListView.getCheckedItems();
+
+            var idList = [];
+            var trList = [];
+            c.each(function(i, a){
+                idList.push($(a).attr('item-id'));
+                trList.push($(a).parent().parent());
+            } );
+
+            self.handleAlert(self._deviceType, idList.join(','), trList, a.siblings('input').val() )
         });
-        */
+
 
         // Tab Item Changed!
         domNode.find('ul.nav-tabs li').delegate('a', 'click', function(){
@@ -207,15 +215,17 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         }
     },
 
-    handleAlert: function(deviceType, id, tr, content) {
-        console.log(deviceType, id, content);
-        this.ajax("alert/handle", {'device': deviceType, 'id': id, 'comment': content}, function(data) {
+    handleAlert: function(deviceType, idList, trList, content) {
+
+        this.ajax("alert/handle", {'device': deviceType, 'idList': idList}, function(data) {
             var $r = eval("(" + data + ")");
+            // console.log(data);
             if ($r.errorCode == 0) {
-                tr.find('td').css('background-color', 'yellow');
-                setTimeout(function(){
-                    tr.slideUp();
-                }, 500);
+                for (var i in trList)
+                {
+                    trList[i].find('td').css('background-color', '#99CC99');
+                }
+
             }
         })
     },
@@ -248,7 +258,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         var currentStationId = g.getCurrentStationId();
         if (currentStationId)
         {
-            var api = "data/alerts/" + currentStationId + "/" + this._deviceType + '/' + field +'/' + level;
+            var api = "data/alerts/" + currentStationId + "/" + this._deviceType +'/' + level;
             this._alertListView.refresh(api);
         }
     },

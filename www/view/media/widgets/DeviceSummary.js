@@ -118,6 +118,7 @@ $class("SettingPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         this.ajax(url + "?f=" + field, null, function(data)
         {
             var d = eval('(' + data + ')');
+            console.log(data);
             if (d['errorCode'] == 0)
             {
                 var values = d['results']['values'];
