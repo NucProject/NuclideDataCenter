@@ -123,7 +123,7 @@ class AlertController extends ApiController
         $ret = array();
         foreach ($values as $value)
         {
-            // echo json_encode($value);
+            echo json_encode($values);
             $field = $value->field;
             $level = $rules[$field]['level'];
 

@@ -190,7 +190,7 @@ class ApiController extends \Phalcon\Mvc\Controller
             AlertController::checkAlertRule($redis, $station, 'labr', $data);
         }
     }
-    
+
     public function envAction($type, $param = null)
     {
         if ($type == 'time')

@@ -107,12 +107,64 @@ class DataController extends ApiController
                     File::recordHpGeFile($station, $filePath, $fileName, $folder, $folder2);
                     Cache::updateLatestStat($this->redis, $station, $fileType, $folder, 3600 * 8);
                     Cache::updateLatestTime($this->redis, $station, 'hpge');
+
+                    $p = explode(',', $folder2);
+                    self::doHpgeAlerts($filePath, $station, $p[2], $this->redis);
                 }
             }
 
             return parent::result(array('upload' => $isUploaded, 'station' => $station, 'fileType' => $fileType));
         }
         return parent::error(Error::BadPayload, '');
+    }
+
+    public function hpgeParseAction()
+    {
+        self::doHpgeAlerts('d:\\download\\samplereport24_2015_03_02T11_08_08.rpt', 128, '', $this->redis);
+    }
+
+    private static function doHpgeAlerts($filePath, $station, $time, $redis)
+    {
+        $a = file($filePath);
+        $start1 = false;
+        $start2 = false;
+        foreach($a as $line => $content)
+        {
+            //echo $content;
+            if (strpos($content, 'S U M M A R Y   O F   N U C L I D E S   I N   S A M P L E') > 0)
+            {
+                $start1 = true; continue;
+            }
+
+            if ($start1)
+            {
+                if (strpos($content, '___________________________________') > 0)
+                {
+                    $start2 = true; continue;
+                }
+            }
+
+            if ($start2)
+            {
+                $line = trim($content) ;
+                if ($line == '')
+                {
+                    break;
+                }
+                $a = @split("[ ]+", $line);
+                // print_r( $a );
+
+                if ($a[1] == '<')
+                    continue;
+
+                $data = new stdClass();
+                $data->time = $time;
+                $data->field = $a[0];
+                $data->value = $a[1] != '#' ?: $a[2];
+                $data->is_nuclide = true;
+                AlertController::checkAlertRule($redis, $station, 'hpge', $data);
+            }
+        }
     }
 
     // Fetch data by { device, start, end, station }
