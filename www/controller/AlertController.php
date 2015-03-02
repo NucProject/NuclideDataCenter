@@ -25,7 +25,7 @@ class AlertController extends ApiController
         return parent::result(array('set' => true));
     }
 
-
+    // TODO:
     public function configAction($device)
     {
         return parent::result(Config::$d[$device]);

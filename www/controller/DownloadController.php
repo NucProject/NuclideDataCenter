@@ -25,7 +25,7 @@ class DownloadController extends ApiController
         exit;
     }
 
-
+    //测试
     public static function getEnergyAction()
     {
         $file = "./view/file/128/labr/2014-08/12/sara0292_2014-08-12T15_10_00-5min.n42";
@@ -69,7 +69,7 @@ class DownloadController extends ApiController
     }
 
 
-
+    //labr设备的能谱数据下载（文件）
     public function energyAction($download, $labr, $station, $month, $day, $fileName)
     {
         if ($download == 'download' && $labr == 'labr')
@@ -135,6 +135,7 @@ class DownloadController extends ApiController
         }
     }
 
+    //用时间来查文件路径，再调用energyAction
     public function energy2Action($station)
     {
         $time = $this->request->getPost('time');
@@ -147,6 +148,8 @@ class DownloadController extends ApiController
                 $item = $data[0];
 
                 $args = explode('/', $item->N42path);
+
+                // $this->energyAction($args[1], )
 
                 call_user_func_array(array($this, 'energyAction'), array_slice($args, 1));
             }

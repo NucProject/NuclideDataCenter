@@ -66,12 +66,14 @@ class CommandController extends ApiController
         return parent::result($command);
     }
 
+    //对应网页上自动站“在线”
     public function onlineAction($station)
     {
         $time = $this->redis->hGet(Key::KeepAlive, $station);
         return parent::result(array('diff' => (time() - $time), 'time' => $time));
     }
 
+    //自动站是否网络连通（对应网页上的“状态”）
     public function aliveAction($station)
     {
         $items = ConnAlert::find(array("station = $station", 'order' => 'id desc', 'limit' => 10));
@@ -115,6 +117,7 @@ class CommandController extends ApiController
             json_encode(array('type' => $type, 'device' => $device, 'content' => $content)));
     }
 
+    //cinderella设备仪器状态的设置（C#）与获取（网页）
     public function cinderellaAction($station)
     {
         if ($this->request->isPost())
