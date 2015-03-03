@@ -420,6 +420,29 @@ $class("LabrDevice", DeviceBase,
                 'zIndex': 4
             })
             .add();
+    },
+
+    onAlertLevelSelectChanged: function(e) {
+
+        var value = $(e.delegateTarget).val();
+        console.log(value)
+        if (value == 1)
+        {
+            this.fetchAlerts(value, 1);
+        }
+        else if (value == 2)
+        {
+            this.fetchAlerts(value, 2);
+        }
+    },
+
+    onTabChanged: function(tabItem) {
+        if (tabItem.hasClass('alerts'))
+        {
+            var w = this._domNode.find('.alert-select');
+            w.val(1);
+            w.trigger('change');
+        }
     }
 
 });

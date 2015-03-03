@@ -40,11 +40,11 @@ class ApiController extends \Phalcon\Mvc\Controller
     public function getPayload($field = null)
     {
         $payload = json_decode($this->request->getRawBody());
-        if (isset($field))
+        if (isset($field) && array_key_exists($field, $payload))
         {
             return $payload->$field;
         }
-        return $payload;
+        return null;
     }
 
 	// return results
@@ -128,17 +128,16 @@ class ApiController extends \Phalcon\Mvc\Controller
     public function testN42Action()
     {
 
-        $f = "sara0316_2014-07-24t23_00_00-5min.n42";
+        $f = "d:\\download\\sara0285_2015-03-02T21_35_00-5min.n42";
 
         $xml = simplexml_load_file($f);
-
-        $data = $this->getN42Data($xml);
+        $data = $this->getN42Data($xml, 128, $this->redis);
 
         echo json_encode($data);
     }
 
     // ZM:解析Xml数据为PHP data
-    public static function getN42Data($xml)
+    public static function getN42Data($xml, $station, $redis)
     {
         $namespaces = $xml->getNameSpaces(true);
         $prefix     = array_keys($namespaces);
@@ -157,6 +156,20 @@ class ApiController extends \Phalcon\Mvc\Controller
         $v = $saras->HighVoltage;
         $startTime = $specs->StartTime;
         $endTime = $saras->EndTime;
+
+        $nuclideArray = array();
+        $nuclides = $m->AnalysisResults->NuclideAnalysis->Nuclide;
+        foreach ($nuclides as $nuclide)
+        {
+            $dr = $nuclide->children($namespaces[$prefix[1]])->DoseRate;
+            if ($dr)
+            {
+                $name = "{$nuclide->NuclideName}";
+                $nuclideArray[$name] = "$dr";
+            }
+        }
+
+        self::doLabrAlerts($nuclideArray, $station, self::parseTime( (string)$endTime), $redis );
         return array(
             'doserate' => (double)$doserate, 'temperature' => (double)$t, 'highvoltage' => (double)$v,
             'nuclidefound' => (string)$nuclidefound == 'true',
@@ -164,7 +177,20 @@ class ApiController extends \Phalcon\Mvc\Controller
         );
     }
 
-    //测试用
+
+    private static function doLabrAlerts($nuclideArray, $station, $time, $redis)
+    {
+        foreach ($nuclideArray as $name => $nuclide)
+        {
+            $data = new stdClass();
+            $data->time = $time;
+            $data->field = $name;
+            $data->value = $nuclide;
+            $data->is_nuclide = true;
+            AlertController::checkAlertRule($redis, $station, 'labr', $data);
+        }
+    }
+
     public function envAction($type, $param = null)
     {
         if ($type == 'time')

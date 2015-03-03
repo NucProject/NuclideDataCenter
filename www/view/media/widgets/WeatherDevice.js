@@ -6,6 +6,7 @@ $class("WeatherDevice", DeviceBase,
 {
     __constructor: function() {
         this._deviceType = "weather";
+        this._noAlertData = true;
     },
 
     onAttach: function(domNode) {

@@ -53,8 +53,13 @@ $class("HpicDevice", DeviceBase,
         return this.chartFilterData(data, currentField, this._chartInterval, this._step);
     },
 
-    onTabChanged: function() {
-
+    onTabChanged: function(tabItem) {
+        if (tabItem.hasClass('alerts'))
+        {
+            var w = this._domNode.find('.alert-select');
+                w.val(2);
+                w.trigger('change');
+        }
     },
 
     onIntervalChanged: function(sender) {
@@ -86,6 +91,18 @@ $class("HpicDevice", DeviceBase,
 
         this.updateCharts();
 
+    },
+
+    onAlertLevelSelectChanged: function(e) {
+        var value = $(e.delegateTarget).val();
+        if (value == 1)
+        {
+            this.fetchAlerts('doserate', 1);
+        }
+        else if (value == 2)
+        {
+            this.fetchAlerts('doserate', 2);
+        }
     }
 
 

@@ -37,7 +37,13 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         for (var i in headers)
         {
             if (headers[i]['type'] == 'id')
+            {
+                if (headers[i]['checkbox'])
+                {
+                    cl.push('<td style="width: 20px"><input type="checkbox" class="check-all"/></td>');
+                }
                 continue;
+            }
 
             cl.push('<td>');
             cl.push(headers[i]['name']);
@@ -46,6 +52,17 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         var html = cl.join("");
 
         thead.append($(html));
+
+        var this_ = this;
+        this._domNode.find('.check-all').change( function () {
+            // console.log(this_._domNode.find('.check-all').attr('checked'));
+            var c = this_._domNode.find('.check-all').attr('checked');
+            this_._domNode.find('.check-one').attr('checked', !!c);
+        });
+    },
+
+    getCheckedItems: function () {
+        return this._domNode.find('.check-one:checked');
     },
 
     dataReceived: function(data) {
@@ -108,6 +125,11 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
             if (key == 'handle')
             {
                 cl.push(item['handle']);
+            }
+            else if (key == 'checkbox')
+            {
+                var cb = '<input type="checkbox" class="check-one" item-id="' + item['id'] + '"/>';
+                cl.push(cb);
             }
             else if (itemType == 'url')
             {
@@ -217,7 +239,6 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
             headers.push(this._headers[j]['key']);
         }
 
-
         for (var i in items)
         {
             if (i < this._currentPart * 120)
@@ -232,13 +253,16 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
             for (var j in headers)
             {
                 var key = headers[j];
-
+                cl.push('<td>');
                 if (this._headers[j]['type'] == 'id')
                 {
                     id = item[key];
+                    var cb = '<input type="checkbox" class="check-one" item-id="' + id + '"/>';
+                    cl.push(cb);
+
                     continue;
                 }
-                cl.push('<td>');
+
 
                 if (key == 'handle')
                 {

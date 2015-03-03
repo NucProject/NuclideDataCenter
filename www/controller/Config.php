@@ -143,17 +143,43 @@ class Config
     public static $d = array(
 
         'hpic' => array(
-            'doserate' => array('rule' => 0, 'level' => 2, 'name' => '剂量率'),
-            'battery' => array('rule' => 0, 'level' => 2, 'name' => '电池'),
-            'highvoltage' => array('rule' => 0, 'level' => 2, 'name' => '高压'),
-            'temperature' => array('rule' => 0, 'level' => 2, 'name' => '温度')
+            'doserate' => array('level' => 2, 'name' => '剂量率'),
+            //'battery' => array('rule' => 0, 'level' => 2, 'name' => '电池'),
+            //'highvoltage' => array('rule' => 0, 'level' => 2, 'name' => '高压'),
+            //'temperature' => array('rule' => 0, 'level' => 2, 'name' => '温度')
         ),
 
-        /* TODO: Need parse .N42 file.*/
         'labr' => array(
-
+            'doserate' => array('level' => 2, 'name' => '剂量率'),
+            'Co-60' => array('level' => 1, 'name' => 'Co-60'),
+            'Am-241' => array('level' => 1, 'name' => 'Am-241'),
+            'Ba-140' => array('level' => 1, 'name' => 'Ba-140'),
+            'Cs-134' => array('level' => 1, 'name' => 'Cs-134'),
+            'Cs-137' => array('level' => 1, 'name' => 'Cs-137'),
+            'I-133' => array('level' => 1, 'name' => 'I-133'),
+            'K-40' => array('level' => 1, 'name' => 'K-40'),
+            'Mo-99' => array('level' => 1, 'name' => 'Mo-99'),
+            'Rh-106m' => array('level' => 1, 'name' => 'Rh-106m'),
+            'Ru-103' => array('level' => 1, 'name' => 'Ru-103'),
+            'Te-129' => array('level' => 1, 'name' => 'Te-129'),
+            'Te-132' => array('level' => 1, 'name' => 'Te-132'),
         ),
 
+        'hpge' => array(
+            'Co-60' => array('level' => 1, 'name' => 'Co-60'),
+            'Am-241' => array('level' => 1, 'name' => 'Am-241'),
+            'Ba-140' => array('level' => 1, 'name' => 'Ba-140'),
+            'Cs-134' => array('level' => 1, 'name' => 'Cs-134'),
+            'Cs-137' => array('level' => 1, 'name' => 'Cs-137'),
+            'I-133' => array('level' => 1, 'name' => 'I-133'),
+            'K-40' => array('level' => 1, 'name' => 'K-40'),
+            'Mo-99' => array('level' => 1, 'name' => 'Mo-99'),
+            'Rh-106m' => array('level' => 1, 'name' => 'Rh-106m'),
+            'Ru-103' => array('level' => 1, 'name' => 'Ru-103'),
+            'Te-129' => array('level' => 1, 'name' => 'Te-129'),
+            'Te-132' => array('level' => 1, 'name' => 'Te-132'),
+        ),
+        /*
         'weather' => array(
            'Temperature' => array('rule' => 0, 'level' => 2),
            'Humidity' => array('rule' => 0, 'level' => 2),
@@ -188,7 +214,9 @@ class Config
 
         'labrfilter' => array(
 
+
         )
+        */
     );
 
 } 

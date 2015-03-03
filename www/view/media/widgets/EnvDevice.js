@@ -5,6 +5,7 @@ $class("EnvironmentDevice", DeviceBase,
 {
     __constructor: function() {
         this._deviceType = "environment";
+        this._noAlertData = true;
     },
 
     onAttach: function(domNode) {
