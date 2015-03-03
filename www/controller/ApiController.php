@@ -169,16 +169,16 @@ class ApiController extends \Phalcon\Mvc\Controller
             }
         }
 
-        self::doLabrAlerts($nuclideArray, $station, self::parseTime( (string)$endTime), $redis );
+        //self::doLabrAlerts($nuclideArray, $station, self::parseTime( (string)$endTime), $redis );
         return array(
             'doserate' => (double)$doserate, 'temperature' => (double)$t, 'highvoltage' => (double)$v,
             'nuclidefound' => (string)$nuclidefound == 'true',
-            'starttime' => self::parseTime( (string)$startTime), 'endtime' => self::parseTime( (string)$endTime)
+            'starttime' => self::parseTime( (string)$startTime), 'endtime' => self::parseTime( (string)$endTime),
+            'nuclides' => $nuclideArray
         );
     }
 
-
-    private static function doLabrAlerts($nuclideArray, $station, $time, $redis)
+    public static function doLabrAlerts($nuclideArray, $station, $time, $redis)
     {
         foreach ($nuclideArray as $name => $nuclide)
         {
