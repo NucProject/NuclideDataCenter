@@ -686,7 +686,8 @@ var Index = function () {
 
                     if (diff > 86400000 * 60)
                     {
-                        return false;
+                        console.log('Longer than 2 Months')
+                        //return false;
                     }
 
                     if (diff <= 86400000) {

@@ -234,10 +234,15 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
         var pageBarContainer = this._domNode.find('div.pagebar');
         pageBarContainer.empty();
-
         if (this._pageBar)
         {
             this.unbindEvent(this, this.getPageEvent());
+        }
+
+        if (page == 0)
+        {
+            console.log('page is 0!')
+            return;
         }
 
         this._pageBar = new Pagebar({pageCount: Math.floor(itemsCount / this.PageCount) + 1, page: page});
@@ -330,7 +335,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                 }
                 this_.makeDataDict(items);
 
-                this_.renderData();
+                this_.renderData(this_._chartInterval);
 
             });
         }
@@ -375,7 +380,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         this.updateIntervalButtons(interval, '.chart-interval');
     },
 
-    renderData: function()
+    renderData: function(_chartInterval)
     {
         if (this._onChartsPage)
         {
@@ -384,6 +389,16 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         else
         {
             this.fillList(1);
+            return;
+
+            if (_chartInterval == 24 * 3600 * 1000)
+            {
+                this.fillList1Day(1);
+            }
+            else
+            {
+                this.fillList(1);
+            }
         }
     },
 
@@ -421,6 +436,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     },
 
     fillList: function(page) {
+        console.log('fillList')
         var from = (page - 1) * this.PageCount;
         var to = (page) * this.PageCount;
         d = new Date()
@@ -553,12 +569,14 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             this._dataListView.addValue(gv.getValue(), params);
         }
 
-        this.updatePageBar(12, 1)
+        this.updatePageBar(0, 0)
     },
 
-    fillList1Day: function() {
+    fillList1Day: function(page) {
 
         var value = null;
+        var from = (page - 1)* this.PageCount;
+        var to = (page) * this.PageCount;
         var start = false;
         var count = 0;
         var params = this._dataListView.clearValues();
@@ -595,9 +613,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             }
         }
 
-
-        this.updatePageBar(12, 1)
-
+        this.updatePageBar(0, 0)
     },
 
     dateRangeChanged: function(range) {
