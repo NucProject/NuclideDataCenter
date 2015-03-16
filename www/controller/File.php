@@ -24,11 +24,11 @@ class File
         return $sid;
     }
 
-    public static function recordN42File($station, $filePath, $month, $day, $fileName)
+    public static function recordN42File($station, $filePath, $month, $day, $fileName, $redis)
     {
         $xml = simplexml_load_file($filePath);
 
-        $data = ApiController::getN42Data($xml, $station);
+        $data = ApiController::getN42Data($xml, $station, $redis);
 
         $n42Path = "/download/labr/$station/$month/$day/$fileName";
 
@@ -42,6 +42,9 @@ class File
         $d->refnuclidefound = $data['nuclidefound'];
         $d->N42path = $n42Path;
         $d->save();
+
+
+        ApiController::doLabrAlerts($data['nuclides'], $station, $data['endtime'], $redis );
     }
 
     public static function checkPath($station, $fileType, $folder, $folder2)

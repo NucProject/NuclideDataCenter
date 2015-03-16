@@ -99,7 +99,7 @@ class DataController extends ApiController
 
                 if ($fileType == 'labr')
                 {
-                    File::recordN42File($station, $filePath, $folder, $folder2, $fileName);
+                    File::recordN42File($station, $filePath, $folder, $folder2, $fileName, $this->redis);
                     Cache::updateLatestTime($this->redis, $station, 'labr');
                 }
                 else if ($fileType == 'hpge')
