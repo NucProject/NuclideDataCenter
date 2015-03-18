@@ -15,8 +15,8 @@ $class("EnvironmentDevice", DeviceBase,
         // 现在设备自己的代码就少了，因为大量工作在基类了。
         this._dataListView.setHeaders([
             {'key':'time', 'name':'时间'},
-            {'key':'Temperature', 'name':'温度'},
-            {'key':'Humidity', 'name':'湿度'},
+            {'key':'Temperature', 'name':'温度(℃)'},
+            {'key':'Humidity', 'name':'湿度(%rh)'},
             {'key':'BatteryHours', 'name':'电池时间'},
             {'key':'IfMainPowerOff', 'name':"电源"},
             {'key':'IfSmoke', 'name':'烟感'},
