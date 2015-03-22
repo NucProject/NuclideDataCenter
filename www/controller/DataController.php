@@ -728,4 +728,13 @@ PHQL;
         }
         return $n;
     }
+
+    public function recentAction($modelName)
+    {
+        $r = $modelName::find(array("order" => "time desc", 'limit' => 10));
+        foreach ($r as $i)
+        {
+            echo json_encode($i);
+        }
+    }
 }
