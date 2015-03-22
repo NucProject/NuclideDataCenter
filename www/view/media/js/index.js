@@ -680,7 +680,10 @@ var Index = function () {
 
                 function (start, end) {
                     // ZM: 时间选择器的入口
+                    console.log(start, end);
+                    var end0 = end.clone();
                     var end = end.clone().addHours(24);
+
                     var diff = end.getTime() - start.getTime();
                     var f = 'yyyy年MM月dd日';
 
@@ -694,7 +697,7 @@ var Index = function () {
                         // if time is short as one day, show a day, instead of a range of days
                         $('#dashboard-report-range').html("&nbsp;&nbsp;" + start.toString(f) + "&nbsp;&nbsp;");
                     } else {
-                        $('#dashboard-report-range').html("&nbsp;&nbsp;" + start.toString(f) + " - " + end.toString(f) + "&nbsp;&nbsp;");
+                        $('#dashboard-report-range').html("&nbsp;&nbsp;" + start.toString(f) + " - " + end0.toString(f) + "&nbsp;&nbsp;");
                     }
 
                     var time = {'start': start.clone() , 'end': end.clone() };
