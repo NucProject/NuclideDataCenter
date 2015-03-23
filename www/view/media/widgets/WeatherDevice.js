@@ -92,5 +92,5 @@ $class("WeatherDevice", DeviceBase,
 
         this.updateCharts();
 
-    },
+    }
 });

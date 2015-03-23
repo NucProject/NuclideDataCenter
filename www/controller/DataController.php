@@ -285,12 +285,12 @@ class DataController extends ApiController
         $phql = <<<PHQL
 select
 d.time,
-avg(d.Raingauge) as Raingauge,
-avg(d.Windspeed) as Windspeed,
-avg(d.Direction) as Direction,
-avg(d.Pressure) as Pressure,
-avg(d.Temperature) as Temperature,
-avg(d.Humidity) as Humidity,
+sum(d.Rainspeed) as Rainspeed,
+round(avg(d.Windspeed), 1) as Windspeed,
+round(avg(d.Direction), 1) as Direction,
+round(avg(d.Pressure), 1) as Pressure,
+round(avg(d.Temperature), 1) as Temperature,
+round(avg(d.Humidity), 1) as Humidity,
 FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
 from weather as d
 where d.station=$station and d.time>'$start' and d.time<'$end' group by time2
@@ -311,10 +311,10 @@ PHQL;
     {
         $phql = <<<PHQL
 select
-avg(d.doserate) as doserate,
-avg(d.battery) as battery,
-avg(d.highvoltage) as highvoltage,
-avg(d.temperature) as temperature,
+round(avg(d.doserate), 1) as doserate,
+round(avg(d.battery), 1) as battery,
+round(avg(d.highvoltage), 1) as highvoltage,
+round(avg(d.temperature), 1) as temperature,
 d.time,
 FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
 from hpic as d
@@ -338,9 +338,9 @@ PHQL;
     {
         $phql = <<<PHQL
 select
-avg(d.doserate) as doserate,
-avg(d.highvoltage) as highvoltage,
-avg(d.temperature) as temperature,
+round(avg(d.doserate), 1) as doserate,
+round(avg(d.highvoltage), 1) as highvoltage,
+round(avg(d.temperature), 1) as temperature,
 d.time,
 FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
 from labr as d

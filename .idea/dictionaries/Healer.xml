@@ -4,13 +4,17 @@
       <w>cinderelladata</w>
       <w>doserate</w>
       <w>doserateex</w>
+      <w>highvoltage</w>
       <w>hpge</w>
       <w>hpic</w>
       <w>labr</w>
       <w>ndcdb</w>
       <w>nuclide</w>
       <w>nuclides</w>
+      <w>raingauge</w>
+      <w>rainspeed</w>
       <w>saras</w>
+      <w>windspeed</w>
     </words>
   </dictionary>
 </component>

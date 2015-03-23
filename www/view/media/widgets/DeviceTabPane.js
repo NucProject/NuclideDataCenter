@@ -327,6 +327,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                 var $r = eval("(" + data + ")");
                 var items = $r.results.items;
                 this_._items = items;
+                console.log(data);
                 // Fetch today data and has data.
                 console.log(items.length, this_._today);
                 if (items.length > 0 && this_._today)
