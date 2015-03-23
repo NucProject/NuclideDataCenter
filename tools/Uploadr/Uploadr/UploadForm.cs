@@ -142,17 +142,15 @@ namespace Uploadr
             this.debugTextBox.Items.Clear();
             string fileName = Path.Combine(this.rootPathText.Text, "view/file/diff/files.md5");
 
-            if (!File.Exists(fileName))
+            if (File.Exists(fileName))
             {
-                using (Process p = Process.Start(this.md5Command))
-                {
-                    p.WaitForExit();
-                    this.AppendText("生成全部文件的MD5列表");
-                }
+                File.Delete(fileName);
             }
-            else
+            
+            using (Process p = Process.Start(this.md5Command))
             {
-                this.AppendText("全部文件的MD5列表已存在");
+                p.WaitForExit();
+                this.AppendText("生成全部文件的MD5列表");
             }
 
             int tryTimes = 0;

@@ -84,15 +84,19 @@ $class("StationTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
     fillList: function(items) {
         var params = this._connList.clearValues();
+        console.log(items);
         for (var i in items) {
             var item = items[i];
               if (item['begintime'] != item['endtime'])
                   this._connList.addValue(item, params);
               else
               {
-                  //如果endtime-now<120,不显示或者显示为正常
-                    item['endtime'] = "断线中";
-                    this._connList.addValue(item, params);
+                  // 如果endtime - now < 120,不显示或者显示为正常
+                  var endTime = +Date.parse(item['endtime']);
+                  if ((endTime - Date.now()) / 1000 > 120) {
+                      item['endtime'] = "断线中";
+                      this._connList.addValue(item, params);
+                  }
               }
 
 
