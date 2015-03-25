@@ -3,7 +3,6 @@
 // Device Table Pane
 $class("DeviceTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 {
-
 	__constructor: function(secret) {
 
     },
@@ -206,11 +205,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         } else if (sender.hasClass('h1')) {
             this.fillList1Hour(page);
         }else if (sender.hasClass('d1')) {
-            // console.log(2);
             this.fillList1Day(page);
-        }
-        else {
-            // console.log(3);
+        } else {
             this.fillListDefault(page);
         }
     },
@@ -225,7 +221,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                 {
                     trList[i].find('td').css('background-color', '#99CC99');
                 }
-
             }
         })
     },
@@ -404,7 +399,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     },
 
     onHide: function() {
-
     },
 
     // ---------------------------------------------------------
@@ -660,6 +654,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             // this.onAlertPageShow();
         } else if (tabItem.hasClass('summary')) {
             this.onSummaryShow();
+        } else if (tabItem.hasClass('settings')) {
+            this.onSettingPageShow();
         }
 
         // Device
@@ -823,6 +819,82 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         }
 
 
+    },
+
+    // ====================================================================
+    // Config settings
+    onSettingPageShow: function() {
+        this.fetchAlertSettingValues(this._deviceType);
+    },
+
+    fetchAlertSettingValues: function(device)
+    {
+        console.log('fetch', device, 'alert-settings');
+        var url = "alert/get/" + g.getCurrentStationId() + "/" + device;
+        var this_ = this;
+        this.ajax(url, null, function(data)
+        {
+            var d = eval('(' + data + ')');
+            console.log(data);
+            if (d['errorCode'] == 0)
+            {
+                var values = d['results']['values'];
+
+                var domNode = this_._domNode.find('.tab-pane.config div');
+                this_.fillAlertSettingList(domNode, values);
+
+            }
+        });
+    },
+
+    fillAlertSettingList: function (domNode, values) {
+        domNode.empty();
+
+        this._settingsListView = new ListView();
+        var dataListViewDomNode = this._settingsListView.create();
+        dataListViewDomNode.appendTo(domNode);
+
+        this._settingsListView.setHeaders([
+            {'key':'id', 'type': 'id'},
+
+            {'key':'field', 'name':'报警字段'},
+            {'key':'value', 'name':'报警值', type: 'input'},
+            {'key':'operator', 'name':'操作', type: 'button'}
+        ]);
+
+        for (var i in values)
+        {
+            var d = (values[i]);
+            if (d['config']['level'] == 2)
+            {
+                var v1 = (!!d['value']['v1']) ? d['value']['v1'] : '未设置';
+                var v2 = (!!d['value']['v2']) ? d['value']['v2'] : '未设置';
+                console.log(d['value']['v2']);
+                var item1 = {
+                    'field': d['config']['name'] + '(低级报警)',
+                    'value': v1,
+                    'operator': '修改'
+                };
+                this._settingsListView.addEntry(item1);
+
+                var item2 = {
+                    'field': d['config']['name'] + '(高级报警)',
+                    'value': v2,
+                    'operator': '修改'
+                };
+                this._settingsListView.addEntry(item2);
+            }
+            else
+            {
+                var v1 = (!!d['value']['v1']) ? d['value']['v1'] : '未设置';
+                var item1 = {
+                    'field': d['config']['name'] + '(高级报警)',
+                    'value': v1,
+                    'operator': '修改'
+                };
+                this._settingsListView.addEntry(item1);
+            }
+        }
     }
 
 });

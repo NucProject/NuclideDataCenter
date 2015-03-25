@@ -98,8 +98,6 @@ $class("StationTabPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
                       this._connList.addValue(item, params);
                   }
               }
-
-
         }
         return false;
     },

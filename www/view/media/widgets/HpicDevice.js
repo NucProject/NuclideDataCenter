@@ -1,7 +1,7 @@
 /**
  * Created by Healer on 14-8-23.
  */
-$class("HpicDevice", DeviceBase,
+$class("HpicDevice", [DeviceBase, SettingPane],
 {
     __constructor: function() {
         this._deviceType = "hpic";
@@ -10,6 +10,7 @@ $class("HpicDevice", DeviceBase,
     onAttach: function(domNode) {
         this.__super(DeviceBase.prototype.onAttach, [domNode]);
 
+        this.setDevice(this._deviceType);
         this._dataListView.setHeaders([
             {'key':'time', 'name':'时间'},
             {'key':'doserate', 'name':'剂量率(nGy/h)', type: 'num'},

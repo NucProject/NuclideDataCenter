@@ -208,6 +208,14 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
             {
                 cl.push("<a href=" + item[key] + ">链接</a>");
             }
+            else if (this._headers[j]['type'] == 'input')
+            {
+                cl.push("<input value='" + item[key] + "'/>");
+            }
+            else if (this._headers[j]['type'] == 'button')
+            {
+                cl.push("<a class='btn red mini'>" + item[key] + "</a>");
+            }
             else
             {
                 cl.push(item[key]);

@@ -10,9 +10,15 @@ class AlertController extends ApiController
 {
     public function getAction($station, $device)
     {
-        $field = $this->request->getQuery("f");
+        $items = Config::$d[$device];
+        $values = array();
+        foreach ($items as $key => $config )
+        {
+            $value = AlertRule::getAlertValue($this->redis, $station, $device, $key);
 
-        $values = AlertRule::getAlertValue($this->redis, $station, $device, $field);
+            $values[$key] = array('config' => $config, 'value' => $value);
+        }
+
         return parent::result(array('values' => $values));
     }
 

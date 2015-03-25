@@ -327,7 +327,15 @@ PHQL;
         $items = array();
         foreach ($data as $item)
         {
-            $item->time = $item->time2;
+            if ($interval != 3600 * 24)
+            {
+                $item->time = $item->time2;
+            }
+            else
+            {
+                $item->time = date('Y-m-d H:i:s', ApiController::parseTime2($item->time2) - $interval);
+            }
+
             unset($item->time2);
             array_push($items, $item);
         }
@@ -736,5 +744,19 @@ PHQL;
         {
             echo json_encode($i);
         }
+    }
+
+    public function testAction($station, $a, $b, $interval)
+    {
+
+        $a = $this->fetchWeatherData($station, $a, $b, $interval);
+        echo json_encode($a);
+    }
+
+    public function timeAction()
+    {
+        $phql = "select UNIX_TIMESTAMP('1970-01-01 08:01:01') as a;";
+        $a = $this->modelsManager->executeQuery($phql);
+        echo json_encode( $a );
     }
 }

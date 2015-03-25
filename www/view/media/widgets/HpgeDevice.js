@@ -6,7 +6,6 @@ $class("HpgeDevice", DeviceBase,
 {
     __constructor: function() {
         this._deviceType = "hpge";
-        this._noAlertData = true;
     },
 
     onAttach: function(domNode) {

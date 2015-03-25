@@ -155,7 +155,6 @@ $class("LabrDevice", DeviceBase,
 
             var item = [x, y];
             datas.push(item);
-
         }
 
         nuclideArray = []
