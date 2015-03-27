@@ -69,7 +69,7 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         var results = eval("(" + data + ")")['results'];
         var items = results['items']
         this._items = items;
-
+        // console.log(data);
         this.fillItems(this._items);
     },
 
@@ -198,7 +198,15 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
                 id = item[key];
                 continue;
             }
-            cl.push('<td>');
+            var css = this._headers[j]['css'];
+            if (!css)
+            {
+                cl.push('<td>');
+            }
+            else
+            {
+                cl.push('<td class="' + css + '">');
+            }
 
             if (key == 'handle')
             {
@@ -214,7 +222,8 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
             }
             else if (this._headers[j]['type'] == 'button')
             {
-                cl.push("<a class='btn red mini'>" + item[key] + "</a>");
+                var bindType = this._headers[j]['bind'];
+                cl.push("<a class='btn red mini' bind='" + item[bindType]+ "'>" + item[key] + "</a>");
             }
             else
             {
@@ -234,6 +243,7 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
             tr.attr('data-id', id);
         }
         tbody.append(tr);
+        return tr;
     },
 
     fillItems: function(items) {

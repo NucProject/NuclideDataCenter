@@ -187,6 +187,7 @@ class ApiController extends \Phalcon\Mvc\Controller
             $data->field = $name;
             $data->value = $nuclide;
             $data->is_nuclide = true;
+
             AlertController::checkAlertRule($redis, $station, 'labr', $data);
         }
     }

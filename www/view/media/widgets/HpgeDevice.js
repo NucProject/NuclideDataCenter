@@ -185,5 +185,12 @@ $class("HpgeDevice", DeviceBase,
 
             });
         }
+    },
+
+    onAlertLevelSelectChanged: function(e) {
+        var level = $(e.delegateTarget).val();
+
+        this.fetchAlerts(level);
+
     }
 });

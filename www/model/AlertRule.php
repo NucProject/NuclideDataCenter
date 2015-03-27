@@ -8,14 +8,16 @@
 
 class AlertRule extends \Phalcon\Mvc\Model
 {
-    public static function setAlertValue($redis, $station, $device, $field, $v1, $v2 = null)
+    public static function setAlertValue($redis, $station, $device, $field, $value, $level = 2)
     {
         $condition = "station=$station and device='$device' and field='$field'";
         $alert = AlertRule::findFirst(array($condition));
         if ($alert !== false)
         {
-            $alert->v1 = $v1;
-            $alert->v2 = $v2;
+            if ($level == 1)
+                $alert->v1 = $value;
+            else if($level == 2)
+                $alert->v2 = $value;
             $alert->save();
 
         }
@@ -25,11 +27,11 @@ class AlertRule extends \Phalcon\Mvc\Model
             $alert->station = $station;
             $alert->device = $device;
             $alert->field = $field;
-            $alert->v1 = $v1;
-            $alert->v2 = $v2;
+            if ($level == 1)
+                $alert->v1 = $value;
+            else if($level == 2)
+                $alert->v2 = $value;
             $alert->save();
-
-            echo "eee";
         }
 
         $key = Key::StationDeviceFieldRule . "[$station][$device]";

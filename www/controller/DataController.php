@@ -46,6 +46,7 @@ class DataController extends ApiController
 
                 if (!isset($history)) {
                     Cache::updateLatestTime($this->redis, $station, $device);
+
                     $check = AlertController::checkAlertRule($this->redis, $station, $device, $data);
 
                     array_push($alerts, $check);
@@ -120,7 +121,7 @@ class DataController extends ApiController
 
     public function hpgeParseAction()
     {
-        self::doHpgeAlerts('d:\\download\\samplereport24_2015_03_02T11_08_08.rpt', 128, '', $this->redis);
+        self::doHpgeAlerts('d:\\download\\samplereport24_2015_03_02T11_08_08.rpt', 128, '2015-03-26 10:10:10', $this->redis);
     }
 
     private static function doHpgeAlerts($filePath, $station, $time, $redis)
@@ -160,7 +161,7 @@ class DataController extends ApiController
                 $data = new stdClass();
                 $data->time = $time;
                 $data->field = $a[0];
-                $data->value = $a[1] != '#' ?: $a[2];
+                $data->value = $a[1] != '#' ? floatval($a[1]) : floatval($a[2]);
                 $data->is_nuclide = true;
                 AlertController::checkAlertRule($redis, $station, 'hpge', $data);
             }
@@ -472,6 +473,7 @@ PHQL;
             if ($value === false)
                 $value = 0;
 
+            //$item = strtoupper($item);
             $data->$item = $value;
         }
         return $data;
@@ -748,15 +750,22 @@ PHQL;
 
     public function testAction($station, $a, $b, $interval)
     {
-
         $a = $this->fetchWeatherData($station, $a, $b, $interval);
         echo json_encode($a);
     }
 
-    public function timeAction()
+    public function delHpicAlertsAction()
     {
-        $phql = "select UNIX_TIMESTAMP('1970-01-01 08:01:01') as a;";
-        $a = $this->modelsManager->executeQuery($phql);
-        echo json_encode( $a );
+        $hpicAlerts = HpicAlert::find();
+        foreach ($hpicAlerts as $item)
+        {
+            $item->delete();
+        }
+
+    }
+
+    public function flushdbAction()
+    {
+        $this->redis->flushdb();
     }
 }

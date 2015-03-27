@@ -424,15 +424,8 @@ $class("LabrDevice", DeviceBase,
     onAlertLevelSelectChanged: function(e) {
 
         var value = $(e.delegateTarget).val();
-        console.log(value)
-        if (value == 1)
-        {
-            this.fetchAlerts(value, 1);
-        }
-        else if (value == 2)
-        {
-            this.fetchAlerts(value, 2);
-        }
+        this.fetchAlerts(value);
+
     },
 
     onTabChanged: function(tabItem) {

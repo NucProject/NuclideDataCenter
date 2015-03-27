@@ -25,9 +25,9 @@ class AlertController extends ApiController
     public function setAction($station, $device)
     {
         $field = $this->request->getPost("f");
-        $value1 = $this->request->getPost("v1");
-        $value2 = $this->request->getPost("v2");
-        AlertRule::setAlertValue($this->redis, $station, $device, $field, $value1, $value2);
+        $value = $this->request->getPost("v");
+        $level = $this->request->getPost("l");
+        AlertRule::setAlertValue($this->redis, $station, $device, $field, $value, $level);
         return parent::result(array('set' => true));
     }
 
@@ -122,6 +122,7 @@ class AlertController extends ApiController
 
     public static function checkAlertRule($redis, $station, $device, $data)
     {
+
         $values = AlertRule::getAlertValues($redis, $station, $device);
 
         $rules = Config::$d[$device];
@@ -129,9 +130,10 @@ class AlertController extends ApiController
         $ret = array();
         foreach ($values as $value)
         {
-            echo json_encode($values);
             $field = $value->field;
-            $level = $rules[$field]['level'];
+            $fieldUpper = strtoupper($field);
+            $fieldLower = strtolower($field);
+            $level = $rules[$fieldUpper]['level'];
 
             if (array_key_exists('is_nuclide', $data))
             {
@@ -141,22 +143,29 @@ class AlertController extends ApiController
                 }
             }
 
-            $dataValue = array_key_exists('is_nuclide', $data) ? $data->value : $data->$field;
+            $fieldValue = 0;
+            if (array_key_exists($fieldUpper, $data)) {
+                $fieldValue = $data->$fieldUpper;
+            } else if (array_key_exists($fieldLower, $data)) {
+                $fieldValue = $data->$fieldLower;
+            }
+
+            $dataValue = array_key_exists('is_nuclide', $data) ? $data->value : $fieldValue;
 
             if ($level == 2)
             {
-                if ($dataValue > $value->v2) {
-                    $saved = self::addAlertData($station, $device, $data, $field, $dataValue, $value->v1, $value->v2, 2);
-                    array_push($ret, array($field => $saved));
-                } elseif ($dataValue > $value->v1) {
+                if ($dataValue > $value->v1) {
                     $saved = self::addAlertData($station, $device, $data, $field, $dataValue, $value->v1, $value->v2, 1);
+                    array_push($ret, array($field => $saved));
+                } elseif ($dataValue > $value->v2) {
+                    $saved = self::addAlertData($station, $device, $data, $field, $dataValue, $value->v1, $value->v2, 2);
                     array_push($ret, array($field => $saved));
                 }
             }
             elseif ($level == 1) {
-                if ($dataValue > $value->v1) {
+                if ($dataValue > $value->v2) {
 
-                    $saved = self::addAlertData($station, $device, $data, $field, $dataValue, $value->v1, $value->v2, 1);
+                    $saved = self::addAlertData($station, $device, $data, $field, $dataValue, null, $value->v2, 2);
                     array_push($ret, array($field => $saved));
                 }
             }
@@ -169,7 +178,8 @@ class AlertController extends ApiController
     {
         $modelName = $device . 'Alert';
         $d = new $modelName();
-
+        // print_r($data);
+        // echo $station, $data->time, $field, $value, '~',$v1, '~',$v2, '~',$level,'~';
         $d->time = $data->time;
         $d->station_id = $station;
         $d->field = $field;
@@ -179,6 +189,7 @@ class AlertController extends ApiController
         $d->handled = 0;
         $d->level = $level;
 
-        return $d->save();
+        $result = $d->save();
+        return $result;
     }
 } 

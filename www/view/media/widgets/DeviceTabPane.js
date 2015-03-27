@@ -254,11 +254,12 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         return false;
     },
 
-    fetchAlerts: function(field, level) {
+    fetchAlerts: function(level) {
         var currentStationId = g.getCurrentStationId();
         if (currentStationId)
         {
             var api = "data/alerts/" + currentStationId + "/" + this._deviceType +'/' + level;
+            console.log(api);
             this._alertListView.refresh(api);
         }
     },
@@ -856,10 +857,10 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
         this._settingsListView.setHeaders([
             {'key':'id', 'type': 'id'},
-
-            {'key':'field', 'name':'报警字段'},
-            {'key':'value', 'name':'报警值', type: 'input'},
-            {'key':'operator', 'name':'操作', type: 'button'}
+            {'key':'name', 'name':'报警字段名称'},
+            {'key':'field', 'name':'报警字段', css:'field' },
+            {'key':'value', 'name':'报警值', type: 'input', css:'input'},
+            {'key':'operator', 'name':'操作', type: 'button', bind: 'id'}
         ]);
 
         for (var i in values)
@@ -871,30 +872,50 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                 var v2 = (!!d['value']['v2']) ? d['value']['v2'] : '未设置';
                 console.log(d['value']['v2']);
                 var item1 = {
-                    'field': d['config']['name'] + '(低级报警)',
+                    'field': i,
+                    'name': d['config']['name'] + '(一级报警)',
                     'value': v1,
                     'operator': '修改'
                 };
-                this._settingsListView.addEntry(item1);
+                var entry = this._settingsListView.addEntry(item1);
+                entry.addClass('serious');
 
                 var item2 = {
-                    'field': d['config']['name'] + '(高级报警)',
+                    'field': i,
+                    'name': d['config']['name'] + '(二级报警)',
                     'value': v2,
                     'operator': '修改'
                 };
                 this._settingsListView.addEntry(item2);
+
             }
             else
             {
                 var v1 = (!!d['value']['v1']) ? d['value']['v1'] : '未设置';
                 var item1 = {
-                    'field': d['config']['name'] + '(高级报警)',
+                    'field': i,
+                    'name': d['config']['name'] + '(二级报警)',
                     'value': v1,
                     'operator': '修改'
                 };
                 this._settingsListView.addEntry(item1);
             }
         }
+
+        var this_ = this;
+        dataListViewDomNode.delegate('a', 'click', function(a){
+            var tr = $(a.target).parent().parent();
+            var fieldName = tr.find('td.field').text();
+            var fieldValue = tr.find('td.input input').val();
+            console.log(fieldName, fieldValue);
+
+            var level = tr.hasClass('serious') ? 1 : 2;
+            this_.ajax('alert/set/' + g.getCurrentStationId() + '/' + this_._deviceType, {
+                f: fieldName, v: fieldValue, l: level
+            }, function(data){
+                console.log(data)
+            });
+        })
     }
 
 });
