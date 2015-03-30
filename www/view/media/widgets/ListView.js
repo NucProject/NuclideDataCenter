@@ -20,12 +20,21 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 
     },
 
+    setPage: function(page) {
+        this._currentPage = page;
+    },
+
+    getPage: function(page) {
+        return this._currentPage;
+    },
+
     setPageEvent: function(event) {
         var this_ = this;
     },
 
-    refresh: function(api, payload) {
-        this.ajax(api, payload, kx.bind(this, "dataReceived"));
+    refresh: function(api, payload, handler) {
+        // kx.bind(this, "dataReceived")
+        this.ajax(api, payload, handler);
     },
 
     setHeaders: function(headers) {
@@ -65,11 +74,12 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         return this._domNode.find('.check-one:checked');
     },
 
+    ///////////////////////////////////////////////////////////
     dataReceived: function(data) {
+        console.log('No use now!!!')
         var results = eval("(" + data + ")")['results'];
         var items = results['items']
         this._items = items;
-        // console.log(data);
         this.fillItems(this._items);
     },
 
@@ -246,8 +256,8 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         return tr;
     },
 
-    fillItems: function(items) {
-
+    fillItems: function(items, pageCount) {
+        pageCount = pageCount || 50;
         var tbody = this._domNode.find("tbody");
         tbody.empty();
 
@@ -257,12 +267,13 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
             headers.push(this._headers[j]['key']);
         }
 
+        var index = this._currentPage - 1;
         for (var i in items)
         {
-            if (i < this._currentPart * 120)
+            if (i < index * pageCount)
                 continue;
 
-            if (i > (this._currentPart + 1) * 120)
+            if (i >= (index + 1) * pageCount)
                 break;
 
             var cl = ["<tr>"];

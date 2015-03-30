@@ -178,14 +178,21 @@ class ApiController extends \Phalcon\Mvc\Controller
         );
     }
 
-    public static function doLabrAlerts($nuclideArray, $station, $time, $redis)
+    public static function doLabrAlerts($doserate, $nuclideArray, $station, $time, $redis)
     {
+        // For DoseRate
+        $data = new stdClass();
+        $data->time = $time;
+        $data->doserate = $doserate;
+        AlertController::checkAlertRule($redis, $station, 'labr', $data);
+
+        // For nuclides
         foreach ($nuclideArray as $name => $nuclide)
         {
             $data = new stdClass();
             $data->time = $time;
             $data->field = $name;
-            $data->value = $nuclide;
+            $data->value = $nuclide * 1000;
             $data->is_nuclide = true;
 
             AlertController::checkAlertRule($redis, $station, 'labr', $data);

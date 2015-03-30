@@ -30,12 +30,16 @@ class AlertRule extends \Phalcon\Mvc\Model
             if ($level == 1)
                 $alert->v1 = $value;
             else if($level == 2)
+            {
+                $alert->v1 = 99999999.9;
                 $alert->v2 = $value;
-            $alert->save();
+            }
+            $r = $alert->save();
+            // echo json_encode($r);
         }
 
         $key = Key::StationDeviceFieldRule . "[$station][$device]";
-        $redis->hSet($key, $field, json_encode($alert));
+        $redis->hSet($key, strtoupper($field), json_encode($alert));
     }
 
     public static function getAlertValue($redis, $station, $device, $field)
@@ -77,7 +81,8 @@ class AlertRule extends \Phalcon\Mvc\Model
             foreach ($alerts as $alert)
             {
                 array_push($ret, $alert);
-                $redis->hSet($key, $alert->field, json_encode($alert));
+                $fieldUpper = strtoupper($alert->field);
+                $redis->hSet($key, $fieldUpper, json_encode($alert));
             }
             return $ret;
         }

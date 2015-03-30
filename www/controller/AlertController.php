@@ -150,8 +150,14 @@ class AlertController extends ApiController
                 $fieldValue = $data->$fieldLower;
             }
 
-            $dataValue = array_key_exists('is_nuclide', $data) ? $data->value : $fieldValue;
+            // 此处特殊处理
+            if ($device == 'labr' && $fieldLower == 'doserate')
+            {
+                $fieldValue *= 1000;
+            }
 
+            $dataValue = array_key_exists('is_nuclide', $data) ? $data->value : $fieldValue;
+            // echo "{$value->v1}{$value->v2}-";
             if ($level == 2)
             {
                 if ($dataValue > $value->v1) {

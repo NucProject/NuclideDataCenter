@@ -32,14 +32,23 @@
     cursor: default;
 }
 
-<<<<<<< HEAD
 .header .navbar-inner
 {
     height: 50px;
 }
-=======
+
 .online{
     font-size: 10px;
     color: lightgray;
 }
->>>>>>> zhh
+
+.list-input input
+{
+    color:gray;
+}
+
+
+.list-input input:focus
+{
+    color:black;
+}

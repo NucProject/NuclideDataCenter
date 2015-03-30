@@ -96,7 +96,7 @@ $class("HpicDevice", [DeviceBase, SettingPane],
 
     onAlertLevelSelectChanged: function(e) {
         var value = $(e.delegateTarget).val();
-        this.fetchAlerts(value);
+        this.fetchAlerts(value, 1);
 
     }
 

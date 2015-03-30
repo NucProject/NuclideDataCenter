@@ -29,6 +29,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
     PageCount: 100,
 
+    AlertPageCount: 50,
+
     __constructor: function() {
         // the date picker show today as default.
         this._today = true;
@@ -36,6 +38,10 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
     getPageEvent: function() {
         return this.widgetId() + "-pager";
+    },
+
+    getAlertPageEvent: function() {
+        return this.widgetId() + "-alert-pager";
     },
 
     onAttach: function(domNode) {
@@ -46,6 +52,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         dataListViewDomNode.appendTo(dataPane);
 
         $('<div class="pagebar"></div>').appendTo(dataPane.parent());
+
+        // var alertPagePane = domNode.find('div.alert-pane-page');
 
         this._alertListView = new ListView();
         var alertListViewDomNode = this._alertListView.create();
@@ -254,14 +262,26 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         return false;
     },
 
-    fetchAlerts: function(level) {
+    fetchAlerts: function(level, page) {
         var currentStationId = g.getCurrentStationId();
         if (currentStationId)
         {
             var api = "data/alerts/" + currentStationId + "/" + this._deviceType +'/' + level;
             console.log(api);
-            this._alertListView.refresh(api);
+            this._alertListView.setPage(page);
+            this._alertListView.refresh(api, null, kx.bind(this, 'onAlertsDataReceived'));
         }
+    },
+
+    onAlertsDataReceived: function(data) {
+        var results = eval("(" + data + ")")['results'];
+        var items = results['items']
+        this._items = items;
+        var count = items.length;
+        console.log(count);
+        this._alertListView.fillItems(this._items, this.AlertPageCount);
+
+        this.updateAlertPageBar( count, this._alertListView.getPage() );
     },
 
     fetchData: function(payload)
@@ -859,22 +879,27 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             {'key':'id', 'type': 'id'},
             {'key':'name', 'name':'报警字段名称'},
             {'key':'field', 'name':'报警字段', css:'field' },
-            {'key':'value', 'name':'报警值', type: 'input', css:'input'},
+            {'key':'value', 'name':'报警值', type: 'input', css:'list-input'},
             {'key':'operator', 'name':'操作', type: 'button', bind: 'id'}
         ]);
 
         for (var i in values)
         {
+            var n = 1;
+
             var d = (values[i]);
+            if (d['config']['name'].indexOf('-') > 0)
+                n = 2;
+
             if (d['config']['level'] == 2)
             {
                 var v1 = (!!d['value']['v1']) ? d['value']['v1'] : '未设置';
                 var v2 = (!!d['value']['v2']) ? d['value']['v2'] : '未设置';
-                console.log(d['value']['v2']);
+
                 var item1 = {
                     'field': i,
                     'name': d['config']['name'] + '(一级报警)',
-                    'value': v1,
+                    'value': parseFloat(v1).toFixed(n),
                     'operator': '修改'
                 };
                 var entry = this._settingsListView.addEntry(item1);
@@ -883,7 +908,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                 var item2 = {
                     'field': i,
                     'name': d['config']['name'] + '(二级报警)',
-                    'value': v2,
+                    'value': parseFloat(v2).toFixed(n),
                     'operator': '修改'
                 };
                 this._settingsListView.addEntry(item2);
@@ -891,11 +916,11 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             }
             else
             {
-                var v1 = (!!d['value']['v1']) ? d['value']['v1'] : '未设置';
+                var v2 = (!!d['value']['v2']) ? d['value']['v2'] : '未设置';
                 var item1 = {
                     'field': i,
                     'name': d['config']['name'] + '(二级报警)',
-                    'value': v1,
+                    'value': parseFloat(v2).toFixed(n),
                     'operator': '修改'
                 };
                 this._settingsListView.addEntry(item1);
@@ -906,17 +931,50 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         dataListViewDomNode.delegate('a', 'click', function(a){
             var tr = $(a.target).parent().parent();
             var fieldName = tr.find('td.field').text();
-            var fieldValue = tr.find('td.input input').val();
+            var fieldValue = tr.find('td.list-input input').val();
             console.log(fieldName, fieldValue);
 
             var level = tr.hasClass('serious') ? 1 : 2;
             this_.ajax('alert/set/' + g.getCurrentStationId() + '/' + this_._deviceType, {
                 f: fieldName, v: fieldValue, l: level
             }, function(data){
-                console.log(data)
+                var d = eval('(' + data + ')');
+                if (d['errorCode'] == 0)
+                    alert('修改成功');
             });
         })
+
+    },
+
+    updateAlertPageBar: function(itemsCount, page) {
+
+        var pageBarContainer = this._domNode.find('div.alert-pane-page');
+        pageBarContainer.empty();
+        if (this._pageBar)
+        {
+            this.unbindEvent(this, this.getAlertPageEvent());
+        }
+
+        if (page == 0)
+        {
+            console.log('page is 0!')
+            return;
+        }
+
+        this._pageBar = new Pagebar({pageCount: Math.floor(itemsCount / this.AlertPageCount), page: page});
+        this._pageBar.create().appendTo(pageBarContainer);
+        this._pageBar.setPageEvent(this, this.getAlertPageEvent());
+        var this_ = this;
+        this.bindEvent(this, this.getAlertPageEvent(), function(e, sender, data){
+
+            var level = this_._domNode.find('.alert-select').val();
+            console.log('Page:', data, 'level:', level);
+            this_.fetchAlerts(level, data);
+        });
+
+        return false;
     }
+
 
 });
 

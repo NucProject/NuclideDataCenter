@@ -190,7 +190,7 @@ $class("HpgeDevice", DeviceBase,
     onAlertLevelSelectChanged: function(e) {
         var level = $(e.delegateTarget).val();
 
-        this.fetchAlerts(level);
+        this.fetchAlerts(level, 1);
 
     }
 });

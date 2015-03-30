@@ -133,8 +133,6 @@ $class("LabrFilterDevice", DeviceBase,
             this._dataListView.addColumnData('td:last', t);
         },
 
-
-
         onChartIntervalChanged: function(sender) {
             if (sender.hasClass('m5')) {
                 this._chartInterval = 30 * 10000;

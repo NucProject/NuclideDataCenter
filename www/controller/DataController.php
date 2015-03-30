@@ -748,7 +748,7 @@ PHQL;
         }
     }
 
-    public function testAction($station, $a, $b, $interval)
+    public function fetchWeatherAction($station, $a, $b, $interval)
     {
         $a = $this->fetchWeatherData($station, $a, $b, $interval);
         echo json_encode($a);
@@ -762,6 +762,12 @@ PHQL;
             $item->delete();
         }
 
+    }
+
+    public function simLabrFileAction()
+    {
+        File::recordN42File(128, "D:\\Projects\\NuclideDataCenter\\www\\view\\file\\128\\labr\\2015-03\\28\\sara0285_2015-03-28T22_10_00-5min.n42",
+            '2015-03', '28', 'sara0285_2015-03-28T22_10_00-5min.n42', $this->redis);
     }
 
     public function flushdbAction()

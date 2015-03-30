@@ -29,7 +29,7 @@ class File
         $xml = simplexml_load_file($filePath);
 
         $data = ApiController::getN42Data($xml, $station, $redis);
-
+print_r($data);
         $n42Path = "/download/labr/$station/$month/$day/$fileName";
 
         $d = new Labr();
@@ -43,8 +43,7 @@ class File
         $d->N42path = $n42Path;
         $d->save();
 
-
-        ApiController::doLabrAlerts($data['nuclides'], $station, $data['endtime'], $redis );
+        ApiController::doLabrAlerts($data['doserate'], $data['nuclides'], $station, $data['endtime'], $redis );
     }
 
     public static function checkPath($station, $fileType, $folder, $folder2)
