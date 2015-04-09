@@ -63,17 +63,6 @@ $class("HpicDevice", [DeviceBase, SettingPane],
         }
     },
 
-    onIntervalChanged: function(sender) {
-        /*
-        if (sender.hasClass('m5')) {
-            this.fillList5min(this._items, 0);
-        } else if (sender.hasClass('s30')) {
-            this.fillList(this._items, 0);
-        } else if (sender.hasClass('h1')) {
-            this.fillList1Hour(this._items, 0);
-        }
-        */
-    },
 
     onChartIntervalChanged: function(sender) {
         if (sender.hasClass('m5')) {
@@ -92,15 +81,7 @@ $class("HpicDevice", [DeviceBase, SettingPane],
 
         this.updateCharts();
 
-    },
-
-    onAlertLevelSelectChanged: function(e) {
-        var value = $(e.delegateTarget).val();
-        this.fetchAlerts(value, 1);
-
     }
-
-
 
 });
 

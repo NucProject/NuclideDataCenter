@@ -11,7 +11,7 @@ $class("Charts", null, {
         // console.log(new Date(p.start), new Date(p.end))
         if (p.filter)
         {
-            var array = p.filter(this._items);
+            var array = p.filter(this._detailItems);
             this.chartsData = [];
             for (var i in array.data)
             {

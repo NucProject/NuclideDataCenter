@@ -110,8 +110,6 @@ $class("Bai9850Device", DeviceBase,
 
         },
 
-        onIntervalChanged: function(sender) {
-        },
 
         onChartIntervalChanged: function(sender) {
             if (sender.hasClass('m5')) {

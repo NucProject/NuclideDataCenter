@@ -1,4 +1,3 @@
-
 <?php
 // ZM:所有的Controller的基类
 class ApiController extends \Phalcon\Mvc\Controller

@@ -5,7 +5,6 @@
  * Date: 14-6-5
  * Time: 下午9:08
  */
-
 class DataController extends ApiController
 {
     public function initialize()
@@ -188,22 +187,22 @@ class DataController extends ApiController
         $interval = isset($interval) ? $interval : 30;
 
         // ZM: BigData: 当interval不是30的时候的一种补充, 走最新的SQL（区分设备）
-        if ($interval != 30)
+        if (true)
         {
             if ($device == 'weather')
             {
                 $items = $this->fetchWeatherData($station, $start, $end, $interval);
-                return parent::result(array("items" => $items));
+                return parent::result(array("items" => $items, 'interval' => $interval));
             }
             else if ($device == 'hpic')
             {
                 $items = $this->fetchHpicData($station, $start, $end, $interval);
-                return parent::result(array("items" => $items));
+                return parent::result(array("items" => $items, 'interval' => $interval));
             }
             else if ($device == 'environment')
             {
                 $items = $this->fetchEnvironmentData($station, $start, $end, $interval);
-                return parent::result(array("items" => $items));
+                return parent::result(array("items" => $items, 'interval' => $interval));
             }
 
             // HpGe and Labr don't follow this rule.
@@ -230,7 +229,7 @@ class DataController extends ApiController
             }
             array_push($items, $item);
         }
-        return parent::result(array("items" => $items));
+        return parent::result(array("items" => $items, 'interval' => $interval));
     }
 
     //用户导出设备数据，存储为csv文件
@@ -243,27 +242,36 @@ class DataController extends ApiController
         $interval = $interval?: 30;
 
         $fileName = "{$device}_{$start}_{$end}.csv";
-        Header("Content-type: application/octet-stream");
+        Header("Content-type: application/octet-stream;charset=UTF-8");
         Header("Accept-Ranges: bytes");
         Header("Accept-Length:-1");
         Header("Content-Disposition: attachment; filename=" . $fileName);
+        echo pack('H*','EFBBBF');   // 写入 BOM header for UTF8 files.
 
         $items = array();
-
+        $headers = '';
         if ($device == 'weather')
         {
+            // $i->rainspeed, $i->windspeed, $i->direction, $i->pressure, $i->temperature, $i->humidity)
+            $headers = '时间, 雨量, 风速, 方向, 气压, 温度, 湿度';
             $items = $this->fetchWeatherData($station, $start, $end, $interval);
-
         }
         else if ($device == 'hpic')
         {
+            $headers = '时间, 剂量率, 电池电压(V), 探头电压(V), 探头温度(℃)';
             $items = $this->fetchHpicData($station, $start, $end, $interval);
 
         }
         else if ($device == 'labr')
         {
+            $headers = '时间, 剂量率, 高压, 温度';
             $items = $this->fetchLabrData($station, $start, $end, $interval);
+        }
 
+
+        if ($headers)
+        {
+            echo $headers, "\r\n";
         }
 
         foreach ($items as $item)
@@ -273,11 +281,21 @@ class DataController extends ApiController
             {
                 array_push($a, $v);
             }
-            echo implode(',', $a), "\n";
+            echo implode(',', $a), "\r\n";
         }
-
-
         exit;
+    }
+
+    private static function adjustTime($time, $interval)
+    {
+        if ($interval != 3600 * 24)
+        {
+            return $time;
+        }
+        else
+        {
+            return date('Y-m-d H:i:s', ApiController::parseTime2($time) - $interval);
+        }
     }
 
 
@@ -299,10 +317,17 @@ PHQL;
 
         $data = $this->modelsManager->executeQuery($phql);
         $items = array();
-        foreach ($data as $item)
+        foreach ($data as $i)
         {
-            $item->time = $item->time2;
-            unset($item->time2);
+            $time = self::adjustTime($i->time2, $interval);
+            $item = array(
+                'time' => $time,
+                'Rainspeed' => $i->Rainspeed,
+                'Windspeed' => $i->Windspeed,
+                'Direction' => $i->Direction,
+                'Pressure' => $i->Pressure,
+                'Temperature' => $i->Temperature,
+                'Humidity' => $i->Humidity);
             array_push($items, $item);
         }
         return $items;
@@ -326,19 +351,15 @@ PHQL;
 
         $data = $this->modelsManager->executeQuery($phql);
         $items = array();
-        foreach ($data as $item)
+        foreach ($data as $i)
         {
-            if ($interval != 3600 * 24)
-            {
-                $item->time = $item->time2;
-            }
-            else
-            {
-                $item->time = date('Y-m-d H:i:s', ApiController::parseTime2($item->time2) - $interval);
-            }
-
-            unset($item->time2);
-            array_push($items, $item);
+            $time = self::adjustTime($i->time2, $interval);
+            array_push($items, array(
+                'time' => $time,
+                'doserate' => $i->doserate,
+                'battery' => $i->battery,
+                'highvoltage' => $i->highvoltage,
+                'temperature' => $i->temperature));
         }
         return $items;
     }
@@ -347,7 +368,8 @@ PHQL;
     {
         $phql = <<<PHQL
 select
-round(avg(d.doserate), 1) as doserate,
+FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2,
+round(avg(d.doserate * 1000), 1) as doserate,
 round(avg(d.highvoltage), 1) as highvoltage,
 round(avg(d.temperature), 1) as temperature,
 d.time,
@@ -358,11 +380,14 @@ PHQL;
 
         $data = $this->modelsManager->executeQuery($phql);
         $items = array();
-        foreach ($data as $item)
+        foreach ($data as $i)
         {
-            $item->time = $item->time2;
-            unset($item->time2);
-            array_push($items, $item);
+            $time = self::adjustTime($i->time2, $interval);
+            array_push($items, array(
+                'time' => $time,
+                'doserate' => $i->doserate,
+                'highvoltage' => $i->highvoltage,
+                'temperature' => $i->temperature));
         }
         return $items;
     }

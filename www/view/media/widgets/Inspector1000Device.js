@@ -109,9 +109,6 @@ $class("Inspector1000Device", DeviceBase,
 
     },
 
-    onIntervalChanged: function(sender) {
-    },
-
     onChartIntervalChanged: function(sender) {
         if (sender.hasClass('m5')) {
             this._chartInterval = 30 * 10000;

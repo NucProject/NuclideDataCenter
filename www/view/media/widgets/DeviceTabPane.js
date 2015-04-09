@@ -53,8 +53,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
         $('<div class="pagebar"></div>').appendTo(dataPane.parent());
 
-        // var alertPagePane = domNode.find('div.alert-pane-page');
-
         this._alertListView = new ListView();
         var alertListViewDomNode = this._alertListView.create();
         alertListViewDomNode.appendTo(domNode.find("div.alert-pane"));
@@ -69,7 +67,9 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
         ]);
 
-        this._domNode.find('.alert-select').bind('change', kx.bind(this, "onAlertLevelSelectChanged"));
+        // this._domNode.find('.alert-select').bind('change', kx.bind(this, "onAlertLevelSelectChanged"));
+        this._domNode.find('.level1').bind('click', kx.bind(this, "onAlertLevel1SelectChanged"));
+        this._domNode.find('.level2').bind('click', kx.bind(this, "onAlertLevel2SelectChanged"));
 
         // 每个设备都能响应时间变化而改变数据内容呈现吧？
         $('body').bind('transfer-selected-time', function(event, startTime, endTime) {
@@ -77,24 +77,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         });
 
         var self = this;
-        // ZM: 在设备派生类里面,如果_noAlertData不是true，那么在基类里面就能初始化报警的代码。
-        // 注意_noAlertData是放到派生类里面。只有设备才知道哪些设备要报警，哪些不需要。
-        // 但是统一都在基类一份代码干了。大不了不做。
-        if (!this._noAlertData)
-        {
-            this.ajax("alert/config/" + this._deviceType, null, function(data){
-                var fc = eval("(" + data + ")");
-
-                self._alertSettingPane = new SettingPane(self._deviceType);
-                var dn = self._alertSettingPane.create();
-
-                dn.appendTo(self._domNode.find('div.config'));
-                self._alertSettingPane.setAlertFields(fc['results'])
-
-            });
-        }
-
-
         this._domNode.delegate('a.handle', 'click', function(){
             var a = $(this);
 
@@ -109,7 +91,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
             self.handleAlert(self._deviceType, idList.join(','), trList, a.siblings('input').val() )
         });
-
 
         // Tab Item Changed!
         domNode.find('ul.nav-tabs li').delegate('a', 'click', function(){
@@ -140,6 +121,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             bar.fadeOut();
         });
 
+        // 只有当 当前List试图显示今日数据时，才定时刷新最新的数据提醒
         setInterval(kx.bind(this, function(){
             if (this._today)
             {
@@ -150,8 +132,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     },
 
     hasLatestData: function(bar) {
-        // bar.css('display', '');
-
         var station = g.getCurrentStationId();
         var url = "data/latest/" + station + "/" + this._deviceType;
 
@@ -169,7 +149,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         return true;
     },
 
-
     onFieldChanged: function() {
         this.updateCharts && this.updateCharts();
     },
@@ -183,8 +162,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
             sender.siblings().removeClass('red');
             sender.addClass('red');
-
-            this_.onIntervalChanged && this_.onIntervalChanged($(this));
 
             this_.shiftIntervalView(sender, 1);
         });
@@ -204,18 +181,30 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         });
     },
 
-    shiftIntervalView: function(sender, page) {
+    fetchDataByInterval: function(interval, page) {
+        var payload = {
+            start: g.getBeginTime('yyyy-MM-dd'),
+            end: g.getEndTime('yyyy-MM-dd'),
+            interval: interval
+        };
+        this.fetchData(payload, page);
+    },
 
+    shiftIntervalView: function(sender, page) {
         if (sender.hasClass('m5')) {
-            this.fillList5min(page);
+            this.fetchDataByInterval(300, page);
+            //this.fillList5min(page);
         } else if (sender.hasClass('s30')) {
-            this.fillList(page);
+            this.fetchDataByInterval(30, page);
+            //this.fillList(page);
         } else if (sender.hasClass('h1')) {
-            this.fillList1Hour(page);
+            this.fetchDataByInterval(3600, page);
+            //this.fillList1Hour(page);
         }else if (sender.hasClass('d1')) {
-            this.fillList1Day(page);
+            this.fetchDataByInterval(3600*24, page);
+            // this.fillList1Day(page);
         } else {
-            this.fillListDefault(page);
+            this.fillListDefault();
         }
     },
 
@@ -229,6 +218,11 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                 {
                     trList[i].find('td').css('background-color', '#99CC99');
                 }
+
+                setTimeout(kx.bind(this, function(){
+                    var level = this._domNode.find('.alert-select').val();
+                    this.fetchAlerts(level, 1);
+                }), 500);
             }
         })
     },
@@ -284,11 +278,10 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         this.updateAlertPageBar( count, this._alertListView.getPage() );
     },
 
-    fetchData: function(payload)
+    fetchData: function(payload, page)
     {
         if (this._currentShownDevice != this._deviceType)
             return;
-
         // ZM: BigData:
         // 这里这么处理，如果开始和结束时间差距小，维持以前的处理，把payload['interval'] 设为 30
         // 否则就设为3600先，这样得到的每小时的平均值，数据一下子少了120倍。
@@ -296,37 +289,37 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         // 把曲线的interval也响应的设为3600，曲线也能正确显示了。
         // payload['interval'] = 3600;
 
-        //三天
         var beginTime = new Date(payload['start'].replace(/-/g,"\/"));
         var endTime = new Date(payload['end'].replace(/-/g,"\/"));
-        console.log("相差时间：" + (endTime - beginTime));
 
-        var diff = (endTime - beginTime) / 1000 / 3600 / 24;
-        if(diff <= 3){
-            console.log("少于三天");
-            payload['interval'] = 30;
-            this._step = 30 * 1000;
-            this._chartInterval = 30 * 1000;
-        }
-        else if (diff > 3 && diff <= 6)
+        if ( !payload['interval'] )
         {
-            payload['interval'] = 300;
-            this._step = 300 * 1000;
-            this._chartInterval = 300 * 1000;
+            var diff = (endTime - beginTime) / 1000 / 3600 / 24;
+            console.log("相差时间：" + diff + '天');
+            if(diff <= 3){
+                payload['interval'] = 30;
+                this._step = 30 * 1000;
+                this._chartInterval = 30 * 1000;
+            }
+            else if (diff > 3 && diff <= 6)
+            {
+                payload['interval'] = 300;
+                this._step = 300 * 1000;
+                this._chartInterval = 300 * 1000;
+            }
+            else if (diff > 6 && diff <= 10)
+            {
+                payload['interval'] = 3600;
+                this._step = 3600 * 1000;
+                this._chartInterval = 3600 * 1000;
+            }
+            else if (diff > 10)
+            {
+                payload['interval'] = 3600 * 24;
+                this._step = 24 * 3600 * 1000;
+                this._chartInterval = 24 * 3600 * 1000;
+            }
         }
-        else if (diff > 6 && diff <= 10)
-        {
-            payload['interval'] = 3600;
-            this._step = 3600 * 1000;
-            this._chartInterval = 3600 * 1000;
-        }
-        else if (diff > 10)
-        {
-            payload['interval'] = 3600 * 24;
-            this._step = 24 * 3600 * 1000;
-            this._chartInterval = 24 * 3600 * 1000;
-        }
-
 
         var this_ = this;
         this.updateIntervalButtons1(this._chartInterval);
@@ -336,13 +329,26 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         if (currentStationId)
         {
             var api = "data/fetch/" + currentStationId + "/" + this._deviceType;
-
-            // console.log(payload)
             console.log(payload);
             this.ajax(api, payload, function(data){
                 var $r = eval("(" + data + ")");
                 var items = $r.results.items;
-                this_._items = items;
+                this_._items = items;   // 记录_items, charts需要
+                if (this_._deviceType == 'labr')
+                {
+                    if ($r.results.interval == 300)
+                    {
+                        this_._detailItems = items;   // 记录_items, charts需要
+                    }
+                }
+                else
+                {
+                    if ($r.results.interval == 30)
+                    {
+                        this_._detailItems = items;   // 记录_items, charts需要
+                    }
+                }
+                console.log(this_._items);
                 // console.log(data);
                 // Fetch today data and has data.
                 console.log(items.length, this_._today);
@@ -352,8 +358,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                 }
                 this_.makeDataDict(items);
 
-                this_.renderData(this_._chartInterval);
-
+                this_.renderData(this_._chartInterval, items, page);
             });
         }
     },
@@ -397,7 +402,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         this.updateIntervalButtons(interval, '.chart-interval');
     },
 
-    renderData: function(_chartInterval)
+    renderData: function(_chartInterval, items, page)
     {
         if (this._onChartsPage)
         {
@@ -405,17 +410,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         }
         else
         {
-            this.fillList(1);
-            return;
-
-            if (_chartInterval == 24 * 3600 * 1000)
-            {
-                this.fillList1Day(1);
-            }
-            else
-            {
-                this.fillList(1);
-            }
+            this.fillList(page, items);
         }
     },
 
@@ -432,7 +427,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             start: g.getBeginTime('yyyy-MM-dd'),
             end: g.getEndTime('yyyy-MM-dd')
         };
-        this.fetchData(payload);
+        this.fetchData(payload, 1);
     },
 
     fixValue: function(v) {
@@ -451,34 +446,27 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         return v;
     },
 
-    fillList: function(page) {
-        console.log('fillList')
+    fillList: function(page, items) {
+
         var from = (page - 1) * this.PageCount;
         var to = (page) * this.PageCount;
-        d = new Date()
-
-        var value = null;
         var start = false;
         var count = 0;
         var params = this._dataListView.clearValues();
+        items = items.reverse();
+        for (var i in items) {
 
-        var keys = Object.keys(this._dict);
-        keys.sort().reverse();
-        for (var i in keys) {
-
-            // console.log(keys[i])
             if (count >= from) {
                 start = true;
             }
 
-            var key = keys[i];
-            value = this._dict[key];
+            var value = items[i];
             if (value)
             {
                 count += 1;
                 if (start)
                 {
-                    value = this.fixValue(value)
+                    console.log(value);
                     this._dataListView.addValue(value, params);
                 }
             }
@@ -486,151 +474,151 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             if (count > to)
                 break;
         }
-        this.updatePageBar(keys.length, page);
+        this.updatePageBar(items.length, page);
         return false;
     },
 
-    fillList5min: function(page) {
-        var from = (page - 1)* this.PageCount;
-        var to = (page) * this.PageCount;
-        d = new Date()
-
-        console.log(from, to, page);
-        var value = null;
-        var start = false;
-        var count = 0;
-        var params = this._dataListView.clearValues();
-
-        var keys = Object.keys(this._dict);
-        keys.sort().reverse();
-        var gv = null;
-        for (var i in keys) {
-
-            if (count >= from) {
-                start = true;
-            }
-
-
-
-            var key = keys[i];
-            var m = key.substr(15, 1);//找分钟的位置的数
-            var s = key.substr(17, 2);//找秒数
-
-            value = this._dict[key];
-
-            if ((m == '5' || m == '0') && s == '00') {
-                if (gv) {
-                    count++;
-                    if (start)
-                    {
-                        this._dataListView.addValue(gv.getValue(), params);
-                    }
-                }
-
-                if (value['start'] != null) {
-                    var startTime = value['starttime'];
-                    var endTime = value['endtime'];
-                    gv = new GroupValue({'time': key, 'startTime': startTime, 'endtime': endTime});
-                } else  {
-                    gv = new GroupValue({'time': key});
-                }
-            }
-
-            gv && gv.addValue(value);
-
-            if (count > to) {
-                console.log('Break!')
-                break;
-            }
-        }
-
-        console.log(keys.length / 10)
-        this.updatePageBar(keys.length / 10, page)
-    },
-
-    fillList1Hour: function() {
-
-        var value = null;
-        var start = false;
-        var count = 0;
-        var params = this._dataListView.clearValues();
-
-        var keys = Object.keys(this._dict);
-        keys.sort().reverse();
-        var gv = null;
-        for (var i in keys) {
-
-
-            var key = keys[i];
-            var m = key.substr(14, 2);
-            var s = key.substr(17, 2);
-
-            if (m == '00' && s == '00') {
-                if (gv) {
-                    count++;
-
-                    this._dataListView.addValue(gv.getValue(), params);
-                    gv.clearValues();
-                }
-
-                gv = new GroupValue({'time': key});
-            }
-
-            value = this._dict[key];
-            gv && gv.addValue(value);
-        }
-
-        // Try
-        if (gv) {
-            this._dataListView.addValue(gv.getValue(), params);
-        }
-
-        this.updatePageBar(0, 0)
-    },
-
-    fillList1Day: function(page) {
-
-        var value = null;
-        var from = (page - 1)* this.PageCount;
-        var to = (page) * this.PageCount;
-        var start = false;
-        var count = 0;
-        var params = this._dataListView.clearValues();
-
-        var keys = Object.keys(this._dict);
-
-        keys.sort().reverse();
-        var gv = null;
-        for (var i in keys) {
-
-            var key = keys[i];
-            var h = key.substr(11, 2);
-            var m = key.substr(14, 2);
-            var s = key.substr(17, 2);
-
-            if (h == '00' && m == '00' && s == '00')
-            {
-                if (gv)
-                {
-                    var v = gv.getValue();
-                    v['time'] = key.substr(0, 10);
-                    this._dataListView.addValue(v, params);
-                }
-            }
-            else
-            {
-                if (!gv)
-                {
-                    gv = new GroupValue({'time': key});
-
-                }
-                value = this._dict[key];
-                gv.addValue(value);
-            }
-        }
-
-        this.updatePageBar(0, 0)
-    },
+    //fillList5min: function(page) {
+    //    var from = (page - 1)* this.PageCount;
+    //    var to = (page) * this.PageCount;
+    //    d = new Date()
+    //
+    //    console.log(from, to, page);
+    //    var value = null;
+    //    var start = false;
+    //    var count = 0;
+    //    var params = this._dataListView.clearValues();
+    //
+    //    var keys = Object.keys(this._dict);
+    //    keys.sort().reverse();
+    //    var gv = null;
+    //    for (var i in keys) {
+    //
+    //        if (count >= from) {
+    //            start = true;
+    //        }
+    //
+    //
+    //
+    //        var key = keys[i];
+    //        var m = key.substr(15, 1);//找分钟的位置的数
+    //        var s = key.substr(17, 2);//找秒数
+    //
+    //        value = this._dict[key];
+    //
+    //        if ((m == '5' || m == '0') && s == '00') {
+    //            if (gv) {
+    //                count++;
+    //                if (start)
+    //                {
+    //                    this._dataListView.addValue(gv.getValue(), params);
+    //                }
+    //            }
+    //
+    //            if (value['start'] != null) {
+    //                var startTime = value['starttime'];
+    //                var endTime = value['endtime'];
+    //                gv = new GroupValue({'time': key, 'startTime': startTime, 'endtime': endTime});
+    //            } else  {
+    //                gv = new GroupValue({'time': key});
+    //            }
+    //        }
+    //
+    //        gv && gv.addValue(value);
+    //
+    //        if (count > to) {
+    //            console.log('Break!')
+    //            break;
+    //        }
+    //    }
+    //
+    //    console.log(keys.length / 10)
+    //    this.updatePageBar(keys.length / 10, page)
+    //},
+    //
+    //fillList1Hour: function() {
+    //
+    //    var value = null;
+    //    var start = false;
+    //    var count = 0;
+    //    var params = this._dataListView.clearValues();
+    //
+    //    var keys = Object.keys(this._dict);
+    //    keys.sort().reverse();
+    //    var gv = null;
+    //    for (var i in keys) {
+    //
+    //
+    //        var key = keys[i];
+    //        var m = key.substr(14, 2);
+    //        var s = key.substr(17, 2);
+    //
+    //        if (m == '00' && s == '00') {
+    //            if (gv) {
+    //                count++;
+    //
+    //                this._dataListView.addValue(gv.getValue(), params);
+    //                gv.clearValues();
+    //            }
+    //
+    //            gv = new GroupValue({'time': key});
+    //        }
+    //
+    //        value = this._dict[key];
+    //        gv && gv.addValue(value);
+    //    }
+    //
+    //    // Try
+    //    if (gv) {
+    //        this._dataListView.addValue(gv.getValue(), params);
+    //    }
+    //
+    //    this.updatePageBar(0, 0)
+    //},
+    //
+    //fillList1Day: function(page) {
+    //
+    //    var value = null;
+    //    var from = (page - 1)* this.PageCount;
+    //    var to = (page) * this.PageCount;
+    //    var start = false;
+    //    var count = 0;
+    //    var params = this._dataListView.clearValues();
+    //
+    //    var keys = Object.keys(this._dict);
+    //
+    //    keys.sort().reverse();
+    //    var gv = null;
+    //    for (var i in keys) {
+    //
+    //        var key = keys[i];
+    //        var h = key.substr(11, 2);
+    //        var m = key.substr(14, 2);
+    //        var s = key.substr(17, 2);
+    //
+    //        if (h == '00' && m == '00' && s == '00')
+    //        {
+    //            if (gv)
+    //            {
+    //                var v = gv.getValue();
+    //                v['time'] = key.substr(0, 10);
+    //                this._dataListView.addValue(v, params);
+    //            }
+    //        }
+    //        else
+    //        {
+    //            if (!gv)
+    //            {
+    //                gv = new GroupValue({'time': key});
+    //
+    //            }
+    //            value = this._dict[key];
+    //            gv.addValue(value);
+    //        }
+    //    }
+    //
+    //    this.updatePageBar(0, 0)
+    //},
 
     dateRangeChanged: function(range) {
         var payload = {
@@ -643,7 +631,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         {
             this._today = true;
         }
-        this.fetchData(payload);
+        this.fetchData(payload, 1);
     },
 
     makeDataDict: function(items) {
@@ -672,7 +660,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             this.updateIntervalButtons2(this._chartInterval);
             this.onShow();
         } else if (tabItem.hasClass('alerts')) {
-            // this.onAlertPageShow();
+            this.onAlertPageShow();
         } else if (tabItem.hasClass('summary')) {
             this.onSummaryShow();
         } else if (tabItem.hasClass('settings')) {
@@ -683,6 +671,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         this.onTabChanged && this.onTabChanged(tabItem);
     },
 
+    // 曲线依赖的只是this._items;
     chartFilterData: function(data, field, interval, step) {
 
         var datas = [];
@@ -694,9 +683,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         var count = interval / step;
 
         // Store data in a dict
-        var item = null;
         for (var i in data) {
-            item = data[i];
+            var item = data[i];
             var t = Date.parse(item['time']).getTime();
             dict[t] = item[field];
         }
@@ -727,16 +715,14 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                 gv.addValue(dict[i]);
             }
         }
-
-
+        
         return {'data': datas};
     },
 
     onAlertPageShow: function() {
-        console.log("onAlertPageShow")
         if (!this._noAlertData)
         {
-            this.fetchAlerts();
+            this.fetchAlerts(1);
         }
     },
 
@@ -838,8 +824,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
             $.download(api, payload, 'POST');
         }
-
-
     },
 
     // ====================================================================
@@ -957,7 +941,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
         if (page == 0)
         {
-            console.log('page is 0!')
+            console.log('page can NOT be 0!')
             return;
         }
 
@@ -966,15 +950,25 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         this._pageBar.setPageEvent(this, this.getAlertPageEvent());
         var this_ = this;
         this.bindEvent(this, this.getAlertPageEvent(), function(e, sender, data){
-
-            var level = this_._domNode.find('.alert-select').val();
+            var level = this_._domNode.find('.level1').hasClass('red') ? 1 : 2;
             console.log('Page:', data, 'level:', level);
             this_.fetchAlerts(level, data);
         });
 
         return false;
-    }
+    },
 
+    onAlertLevel1SelectChanged: function(e) {
+        this._domNode.find('.level1').removeClass('blue').addClass('red');
+        this._domNode.find('.level2').removeClass('red').addClass('blue');
+        this.fetchAlerts(1, 1);
+    },
+
+    onAlertLevel2SelectChanged: function(e) {
+        this._domNode.find('.level2').removeClass('blue').addClass('red');
+        this._domNode.find('.level1').removeClass('red').addClass('blue');
+        this.fetchAlerts(2, 1);
+    }
 
 });
 
