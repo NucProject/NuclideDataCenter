@@ -386,7 +386,7 @@ $class("kx.Weblet", kx.Widget, {
 	},
 
 	// return domNode, derived class append it to the parent.
-	create: function()
+	create: function(params)
 	{
 		if (!this._templateString)
 		{
@@ -402,7 +402,7 @@ $class("kx.Weblet", kx.Widget, {
 		}
 
 		this._domNode = $(this._templateString);
-		this.onCreated && this.onCreated(this._domNode);
+		this.onCreated && this.onCreated(this._domNode, params);
 		return this._domNode;
 	},
 

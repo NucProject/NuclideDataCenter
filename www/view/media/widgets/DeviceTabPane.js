@@ -159,9 +159,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         var this_ = this;
         domNode.delegate('a', 'click', function(){
             var sender = $(this);
-
-            sender.siblings().removeClass('red');
-            sender.addClass('red');
+            // sender.siblings().removeClass('red');
+            // sender.addClass('red');
 
             this_.shiftIntervalView(sender, 1);
         });
@@ -206,6 +205,9 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         } else {
             this.fillListDefault();
         }
+
+        sender.siblings().removeClass('red');
+        sender.addClass('red');
     },
 
     handleAlert: function(deviceType, idList, trList, content) {
@@ -219,9 +221,10 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                     trList[i].find('td').css('background-color', '#99CC99');
                 }
 
-                setTimeout(kx.bind(this, function(){
-                    var level = this._domNode.find('.alert-select').val();
+                setTimeout(kx.bind(this, function() {
+                    var level = this._domNode.find('.level1').hasClass('red') ? 1 : 2;
                     this.fetchAlerts(level, 1);
+                    this._alertListView.checkAllItems(false);
                 }), 500);
             }
         })
@@ -322,8 +325,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         }
 
         var this_ = this;
-        this.updateIntervalButtons1(this._chartInterval);
-        this.updateIntervalButtons2(this._chartInterval);
+
         var currentStationId = g.getCurrentStationId();
 
         if (currentStationId)
@@ -348,8 +350,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                         this_._detailItems = items;   // 记录_items, charts需要
                     }
                 }
-                console.log(this_._items);
-                // console.log(data);
+                //console.log(this_._items);
                 // Fetch today data and has data.
                 console.log(items.length, this_._today);
                 if (items.length > 0 && this_._today)
@@ -357,7 +358,9 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                     this_._lastestDataTime = g.getUnixTime();
                 }
                 this_.makeDataDict(items);
-
+                console.log("!!!!!", $r.results.interval);
+                this.updateIntervalButtons1($r.results.interval * 1000);
+                this.updateIntervalButtons2($r.results.interval * 1000);
                 this_.renderData(this_._chartInterval, items, page);
             });
         }
@@ -374,22 +377,22 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             n.find('a.d1').css('display', '');
 
         } else if (interval == 300 * 1000) {
-            n.find('a.s30').css('display', 'none');
+            n.find('a.s30').css('display', '');
             n.find('a.m5').css('display', '').addClass('red');
             n.find('a.h1').css('display', '');
             n.find('a.d1').css('display', '');
 
         } else if (interval == 3600 * 1000) {
 
-            n.find('a.s30').css('display', 'none');
-            n.find('a.m5').css('display', 'none');
+            n.find('a.s30').css('display', '');
+            n.find('a.m5').css('display', '');
             n.find('a.h1').css('display', '').addClass('red');
             n.find('a.d1').css('display', '');
         }
         else if (interval == 24 * 3600 * 1000) {
-            n.find('a.s30').css('display', 'none');
-            n.find('a.m5').css('display', 'none');
-            n.find('a.h1').css('display', 'none');
+            n.find('a.s30').css('display', '');
+            n.find('a.m5').css('display', '');
+            n.find('a.h1').css('display', '');
             n.find('a.d1').css('display', '').addClass('red');
         }
     },
@@ -447,7 +450,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     },
 
     fillList: function(page, items) {
-
         var from = (page - 1) * this.PageCount;
         var to = (page) * this.PageCount;
         var start = false;
@@ -466,7 +468,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                 count += 1;
                 if (start)
                 {
-                    console.log(value);
+                    // console.log(value);
                     this._dataListView.addValue(value, params);
                 }
             }
@@ -722,14 +724,14 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     onAlertPageShow: function() {
         if (!this._noAlertData)
         {
-            this.fetchAlerts(1);
+            this.fetchAlerts(1, 1);
         }
     },
 
     onDataStatisitcTabShown: function() {
         if (!this._calendarPane) {
             this._calendarPane = new HistoryPane(this._deviceType);
-            var r = this._calendarPane.create();
+            var r = this._calendarPane.create({'expect': this._exceptTotal});
             r.appendTo(this._domNode.find("div.calendar-container"));
 
         }

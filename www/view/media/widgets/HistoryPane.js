@@ -12,8 +12,8 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
             this._except = except || 2880;
         },
 
-        onCreated: function(domNode) {
-
+        onCreated: function(domNode, params) {
+            this._except = params['expect'] || 2880;
             var this_ = this;
             var weeks = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
             setTimeout(function(){

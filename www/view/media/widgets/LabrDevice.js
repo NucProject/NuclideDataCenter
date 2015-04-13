@@ -7,6 +7,7 @@ $class("LabrDevice", DeviceBase,
 {
     __constructor: function() {
         this._deviceType = "labr";
+        this._exceptTotal = 288;
     },
 
     onAttach: function(domNode) {
@@ -32,6 +33,19 @@ $class("LabrDevice", DeviceBase,
 
     },
 
+    onShow: function()
+    {
+        this._currentShownDevice = this._deviceType;
+
+        var payload = {
+            start: g.getBeginTime('yyyy-MM-dd'),
+            end: g.getEndTime('yyyy-MM-dd'),
+            interval: 300
+        };
+        console.log(33333333)
+        this.fetchData(payload, 1);
+    },
+
     showChartsTab: function() {
         this._chartInterval = 30 * 10000;
         this._step = 30 * 10000;
@@ -48,7 +62,6 @@ $class("LabrDevice", DeviceBase,
 
     fillListDefault: function(page) {
         this.fillList(page)
-
     },
 
     decorateList: function ()

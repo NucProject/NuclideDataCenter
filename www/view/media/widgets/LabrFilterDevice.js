@@ -34,8 +34,6 @@ $class("LabrFilterDevice", DeviceBase,
             });
         },
 
-
-
         showChartsTab: function() {
             this._chartInterval = 30 * 10000;
             this._step = 30 * 10000;
@@ -122,8 +120,6 @@ $class("LabrFilterDevice", DeviceBase,
                 nuclides: nuclideArray
             });
             this_._domNode.find('#li_labrfilter_chart_energy').trigger("click");
-
-
 
         },
 

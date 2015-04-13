@@ -204,6 +204,12 @@ class DataController extends ApiController
                 $items = $this->fetchEnvironmentData($station, $start, $end, $interval);
                 return parent::result(array("items" => $items, 'interval' => $interval));
             }
+            else if ($device == 'labr' && $interval != 300)
+            {
+                $items = $this->fetchLabrData($station, $start, $end, $interval);
+                return parent::result(array("items" => $items, 'interval' => $interval));
+
+            }
 
             // HpGe and Labr don't follow this rule.
         }
@@ -288,14 +294,15 @@ class DataController extends ApiController
 
     private static function adjustTime($time, $interval)
     {
-        if ($interval != 3600 * 24)
-        {
-            return $time;
-        }
-        else
-        {
-            return date('Y-m-d H:i:s', ApiController::parseTime2($time) - $interval);
-        }
+        return $time;
+//        if ($interval != 3600 * 24)
+//        {
+//            return $time;
+//        }
+//        else
+//        {
+//            return date('Y-m-d H:i:s', ApiController::parseTime2($time) - $interval);
+//        }
     }
 
 
@@ -310,7 +317,7 @@ round(avg(d.Direction), 1) as Direction,
 round(avg(d.Pressure), 1) as Pressure,
 round(avg(d.Temperature), 1) as Temperature,
 round(avg(d.Humidity), 1) as Humidity,
-FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
+FROM_UNIXTIME(FLOOR((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
 from weather as d
 where d.station=$station and d.time>'$start' and d.time<'$end' group by time2
 PHQL;
@@ -342,7 +349,7 @@ round(avg(d.battery), 1) as battery,
 round(avg(d.highvoltage), 1) as highvoltage,
 round(avg(d.temperature), 1) as temperature,
 d.time,
-FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
+FROM_UNIXTIME(FLOOR((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
 from hpic as d
 where d.station=$station and d.time>'$start' and d.time<'$end' group by time2
 PHQL;
@@ -373,7 +380,7 @@ round(avg(d.doserate * 1000), 1) as doserate,
 round(avg(d.highvoltage), 1) as highvoltage,
 round(avg(d.temperature), 1) as temperature,
 d.time,
-FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
+FROM_UNIXTIME(FLOOR((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
 from labr as d
 where d.station=$station and d.time>'$start' and d.time<'$end' group by time2
 PHQL;
@@ -404,7 +411,7 @@ avg(d.IfSmoke) as IfSmoke,
 avg(d.IfWater) as IfWater,
 avg(d.IfDoorOpen) as IfDoorOpen,
 d.time,
-FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
+FROM_UNIXTIME(FLOOR((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
 from Environment as d
 where d.station=$station and d.time>'$start' and d.time<'$end' group by time2
 PHQL;

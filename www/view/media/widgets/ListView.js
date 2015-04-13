@@ -70,6 +70,10 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         });
     },
 
+    checkAllItems: function(check) {
+        this._domNode.find('.check-all').attr('checked', check);
+    },
+
     getCheckedItems: function () {
         return this._domNode.find('.check-one:checked');
     },
@@ -103,7 +107,7 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
         
         var tbody = this._domNode.find("tbody");
         tbody.find('tr').each(function (row) {
-            console.log(row)
+            // console.log(row)
             $(this).find(clz).html(item);
         })
     },
@@ -144,8 +148,12 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
             else if (itemType == 'url')
             {
                 var path = item[key];
-                var fileName = path.substr(path.lastIndexOf('/') + 1);
-                cl.push("<a href=" + item[key] + ">" + fileName + "</a>");
+                if (path) {
+                    var fileName = path.substr(path.lastIndexOf('/') + 1);
+                    cl.push("<a href=" + item[key] + ">" + fileName + "</a>");
+                } else {
+                    cl.push("---");
+                }
             }
             else if (itemType == 'link')
             {
