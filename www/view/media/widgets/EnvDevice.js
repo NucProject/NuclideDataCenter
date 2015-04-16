@@ -29,6 +29,6 @@ $class("EnvironmentDevice", DeviceBase,
     // 但是基类的代码当然不知道派生类具体调用哪种，那么多态到派生类的fillListDefault即可。
     // 然后拍摄类fillListDefault的实现再决定是调用30秒的，而不是其他的。
     fillListDefault: function(page) {
-        this.fillList(page)
+        this.fetchDataByInterval(30, page);
     }
 });

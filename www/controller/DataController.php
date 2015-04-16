@@ -167,6 +167,30 @@ class DataController extends ApiController
         }
     }
 
+    private static function getPagedData($items, $page, $PageCount)
+    {
+        if (!$page || $page == 0)
+            return $items;
+
+        $counter = 0;
+        $start = ($page - 1) * $PageCount;
+        $end = ($page) * $PageCount;
+        $array = array();
+        foreach ($items as $item)
+        {
+            if ($counter >= $start)
+            {
+                array_push($array, $item);
+            }
+            $counter++;
+            if ($counter > $end)
+            {
+                break;
+            }
+        }
+        return $array;
+    }
+
     // Fetch data by { device, start, end, station }
     public function fetchAction($station, $device)
     {
@@ -176,12 +200,16 @@ class DataController extends ApiController
             $start = $payload['start'];
             $end = $payload['end'];
             $interval = $payload['interval'];
+            $page = $payload['page'];
+            $PageCount = $payload['PageCount'];
         }
         else
         {
             $start = $this->request->getQuery('start');
             $end = $this->request->getQuery('end');
             $interval = $this->request->getQuery('interval');
+            $page = $this->request->getQuery('page');
+            $PageCount = $this->request->getQuery('PageCount');
         }
 
         $interval = isset($interval) ? $interval : 30;
@@ -192,22 +220,30 @@ class DataController extends ApiController
             if ($device == 'weather')
             {
                 $items = $this->fetchWeatherData($station, $start, $end, $interval);
-                return parent::result(array("items" => $items, 'interval' => $interval));
+                $count = count($items);
+                $items = self::getPagedData($items, $page, $PageCount);
+                return parent::result(array("items" => $items, 'interval' => $interval, 'count' => $count ));
             }
             else if ($device == 'hpic')
             {
                 $items = $this->fetchHpicData($station, $start, $end, $interval);
-                return parent::result(array("items" => $items, 'interval' => $interval));
+                $count = count($items);
+                $items = self::getPagedData($items, $page, $PageCount);
+                return parent::result(array("items" => $items, 'interval' => $interval, 'count' => $count ));
             }
             else if ($device == 'environment')
             {
                 $items = $this->fetchEnvironmentData($station, $start, $end, $interval);
-                return parent::result(array("items" => $items, 'interval' => $interval));
+                $count = count($items);
+                $items = self::getPagedData($items, $page, $PageCount);
+                return parent::result(array("items" => $items, 'interval' => $interval, 'count' => $count ));
             }
             else if ($device == 'labr' && $interval != 300)
             {
                 $items = $this->fetchLabrData($station, $start, $end, $interval);
-                return parent::result(array("items" => $items, 'interval' => $interval));
+                $count = count($items);
+                $items = self::getPagedData($items, $page, $PageCount);
+                return parent::result(array("items" => $items, 'interval' => $interval, 'count' => $count ));
 
             }
 
@@ -223,19 +259,36 @@ class DataController extends ApiController
 
         //echo $condition;
         $data = $device::find(array(
-            $condition,
+            $condition, 'order' => 'time desc'
         ));
 
         $items = array();
-        foreach ($data as $item)
+        $count = count($data);
+        if ($device == 'labr')
         {
-            if ($device == 'labr')
+            foreach ($data as $item)
             {
                 $item->doserate = floatval($item->doserate) * 1000.0;
+                array_push($items, $item);
             }
-            array_push($items, $item);
         }
-        return parent::result(array("items" => $items, 'interval' => $interval));
+        else
+        {
+
+            if ($page && $PageCount)
+            {
+                $items = self::getPagedData($data, $page, $PageCount);
+            }
+            else
+            {
+                foreach ($data as $item)
+                {
+                    array_push($items, $item);
+                }
+            }
+        }
+
+        return parent::result(array("items" => $items, 'interval' => $interval, 'count' => $count));
     }
 
     //用户导出设备数据，存储为csv文件
@@ -319,7 +372,7 @@ round(avg(d.Temperature), 1) as Temperature,
 round(avg(d.Humidity), 1) as Humidity,
 FROM_UNIXTIME(FLOOR((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
 from weather as d
-where d.station=$station and d.time>'$start' and d.time<'$end' group by time2
+where d.station=$station and d.time>'$start' and d.time<'$end' group by time2 order by time2 DESC
 PHQL;
 
         $data = $this->modelsManager->executeQuery($phql);
@@ -351,7 +404,7 @@ round(avg(d.temperature), 1) as temperature,
 d.time,
 FROM_UNIXTIME(FLOOR((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
 from hpic as d
-where d.station=$station and d.time>'$start' and d.time<'$end' group by time2
+where d.station=$station and d.time>'$start' and d.time<'$end' group by time2  order by time2 DESC
 PHQL;
 
         //echo $interval;
@@ -382,7 +435,7 @@ round(avg(d.temperature), 1) as temperature,
 d.time,
 FROM_UNIXTIME(FLOOR((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
 from labr as d
-where d.station=$station and d.time>'$start' and d.time<'$end' group by time2
+where d.station=$station and d.time>'$start' and d.time<'$end' group by time2 order by time2 DESC
 PHQL;
 
         $data = $this->modelsManager->executeQuery($phql);
@@ -413,7 +466,7 @@ avg(d.IfDoorOpen) as IfDoorOpen,
 d.time,
 FROM_UNIXTIME(FLOOR((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
 from Environment as d
-where d.station=$station and d.time>'$start' and d.time<'$end' group by time2
+where d.station=$station and d.time>'$start' and d.time<'$end' group by time2 order by time2 DESC
 PHQL;
 
         $data = $this->modelsManager->executeQuery($phql);
@@ -457,7 +510,7 @@ PHQL;
             array_push($items, $item);
         }
 
-        return parent::result(array("items" => $items));
+        return parent::result(array("items" => $items, 'count' => count($items)));
     }
 
     // ZM: 界面取最新时间，看设备是否还在上传（设备运行，停止的依据）
@@ -793,7 +846,54 @@ PHQL;
         {
             $item->delete();
         }
+    }
 
+
+    public function alertAction()
+    {
+        $conn = mysql_connect('127.0.0.1', 'root', 'root');
+        mysql_select_db('ndcdb', $conn);
+        $r = mysql_query('ALTER TABLE `ndcdb`.`environment_door`
+CHANGE COLUMN `IfDoorOpen` `IfDoorOpen` TINYINT NULL DEFAULT 0 ;
+', $conn);
+        mysql_close($conn);
+        echo $r;
+    }
+
+    public function showCreateTableAction($tableName)
+    {
+        $conn = mysql_connect('127.0.0.1', 'root', 'root');
+        mysql_select_db('ndcdb', $conn);
+        $r = mysql_query("show create table $tableName;", $conn);
+        print_r( mysql_fetch_row($r) );
+        mysql_close($conn);
+        //echo $r;
+    }
+
+
+    public function doorAction($station, $open)
+    {
+        $r = EnvironmentAlert::find(array("order" => "Time desc", 'limit' => 10));
+        foreach ($r as $i)
+        {
+            echo json_encode($i);
+            if ($station == 0)
+            {
+                $i->delete();
+            }
+        }
+        if ($station == 0)
+        {
+            $this->redis->del('door');
+        }
+
+        if ($open)
+        {
+            $this->redis->hSet('door', $station, $open);
+        }
+        echo "--";
+        echo json_encode( $this->redis->hGetAll('door') );
+        echo "--";
     }
 
     public function simLabrFileAction()

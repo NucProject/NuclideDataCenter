@@ -62,6 +62,11 @@ class AlertRule extends \Phalcon\Mvc\Model
 
     public static function getAlertValues($redis, $station, $device)
     {
+        if ($device == 'environment')
+        {
+            return array(json_encode(array('station' => $station, 'device' => 'environment', 'field' => 'IfDoorOpen', 'v2' => 0.5)));
+        }
+
         $key = Key::StationDeviceFieldRule . "[$station][$device]";
         $values = $redis->hGetAll($key);
         $ret = array();

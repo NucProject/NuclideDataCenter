@@ -44,6 +44,7 @@ $di->set('db', function() {
     ));
 });
 
+
 $di->set('redis', function() {
     require_once("redisproxy.php");
     $redis = new RedisProxy();

@@ -67,9 +67,7 @@ $class("CinderellaDevice", DeviceBase,
     },
 
     fillListDefault: function(page) {
-
-        this.fillList(page)
-
+        this.fetchDataByInterval(30, page);
     },
 
     createSummaryList: function(domNode) {

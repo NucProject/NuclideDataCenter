@@ -30,7 +30,7 @@ $class("HpgeDevice", DeviceBase,
             var t = item['time']; // 不能以time为key，并且排序了.
             t = t + i;
             dict[t] = item;
-            console.log(item)
+            // console.log(item)
         }
         this._dict = dict;
         return this._dict;
@@ -134,7 +134,9 @@ $class("HpgeDevice", DeviceBase,
     },
 
     fillListDefault: function(page) {
-        this.fillList(page)
+        console.log(111);
+        this.fillList(page);
+        console.log(122);
     },
 
     onShow: function(params) {
@@ -175,13 +177,12 @@ $class("HpgeDevice", DeviceBase,
             this.ajax(api, payload, function(data){
                 var $r = eval("(" + data + ")");
 
-                console.log($r);
-
                 var items = $r.results.items;
+                var total = $r.results.count;
                 this_._items = items;
-                this_.makeDataDict(items);
+                // this_.makeDataDict(items);
 
-                this_.renderData();
+                this_.renderData(0, items, 1, total);
 
             });
         }

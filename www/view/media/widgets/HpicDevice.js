@@ -21,12 +21,6 @@ $class("HpicDevice", [DeviceBase, SettingPane],
     },
 
     showChartsTab: function() {
-        //var this_ = this;
-
-        // this._chartInterval = 30 * 10000;
-        //setTimeout(function(){
-            //this_.updateCharts();
-        //}, 0);
         this.updateCharts();
     },
 
@@ -62,7 +56,6 @@ $class("HpicDevice", [DeviceBase, SettingPane],
                 w.trigger('change');
         }
     },
-
 
     onChartIntervalChanged: function(sender) {
         if (sender.hasClass('m5')) {

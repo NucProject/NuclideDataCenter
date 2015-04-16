@@ -119,10 +119,34 @@ class AlertController extends ApiController
         ));
     }
 
+    private static function doEnvAlert($station, $time, $open)
+    {
+        $e = new EnvironmentAlert();
+        $e->Time = $time;
+        $e->station = $station;
+        $e->IfDoorOpen = $open;
+        $e->save();
+    }
 
     public static function checkAlertRule($redis, $station, $device, $data)
     {
+        if ($device == 'environment')
+        {
+            $open = intval($data->IfDoorOpen);
+            $lastDoorStatus = $redis->hGet('door', $station);
+            if ($lastDoorStatus === false)
+            {
+                $redis->hSet('door', $station, 0);
+                $lastDoorStatus = 0;
+            }
 
+            if ($open != $lastDoorStatus)
+            {
+                $redis->hSet('door', $station, $open);
+                self::doEnvAlert($station, $data->time, $open);
+            }
+            return;
+        }
         $values = AlertRule::getAlertValues($redis, $station, $device);
 
         $rules = Config::$d[$device];

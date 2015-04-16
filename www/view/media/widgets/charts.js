@@ -4,14 +4,21 @@
 $class("Charts", null, {
 
     showCharts: function(domNode, p) {
+        this.showChartsData(domNode, p, this._chartsItems)
+        if (!this._chartsItems)
+        {
+            console.log('No data to render');
+        }
+    },
+
+    showChartsData: function(domNode, p, data) {
 
         Highcharts.setOptions({ global: {useUTC: false}});
         this.params = p;
 
-        // console.log(new Date(p.start), new Date(p.end))
         if (p.filter)
         {
-            var array = p.filter(this._detailItems);
+            var array = p.filter(data);
             this.chartsData = [];
             for (var i in array.data)
             {

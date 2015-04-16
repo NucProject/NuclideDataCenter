@@ -8,5 +8,5 @@
 
 class EnvironmentAlert extends \Phalcon\Mvc\Model
 {
-
+    public function getSource(){ return 'environment_door'; }
 }
