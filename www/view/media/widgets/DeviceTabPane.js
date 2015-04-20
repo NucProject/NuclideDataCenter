@@ -291,38 +291,30 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         var beginTime = new Date(payload['start'].replace(/-/g,"\/"));
         var endTime = new Date(payload['end'].replace(/-/g,"\/"));
 
-        if ( !payload['interval'] )
-        {
-            var diff = (endTime - beginTime) / 1000 / 3600 / 24;
-            console.log("相差时间：" + diff + '天');
-            if(diff <= 3){
-                payload['interval'] = 30;
-                this._step = 30 * 1000;
-                this._chartInterval = 30 * 1000;
-            }
-            else if (diff > 3 && diff <= 6)
-            {
-                payload['interval'] = 300;
-                this._step = 300 * 1000;
-                this._chartInterval = 300 * 1000;
-            }
-            else if (diff > 6 && diff <= 10)
-            {
-                payload['interval'] = 3600;
-                this._step = 3600 * 1000;
-                this._chartInterval = 3600 * 1000;
-            }
-            else if (diff > 10)
-            {
-                payload['interval'] = 3600 * 24;
-                this._step = 24 * 3600 * 1000;
-                this._chartInterval = 24 * 3600 * 1000;
-            }
-        }
-
         if (page) {
             payload['page'] = page;
             payload['PageCount'] = this.PageCount;
+        } else {
+            var interval = 300;
+            var diff = (endTime.getTime() - beginTime.getTime()) / 3600000 / 24;
+            console.log(diff);
+            if (diff <= 3)
+            {
+                interval = 300;
+            }
+            else if (diff > 3 && diff <= 10)
+            {
+                interval = 3600;
+            }
+            else if (diff > 10)
+            {
+                interval = 3600 * 24;
+            }
+
+            payload['interval'] = interval;
+            this._step = interval * 1000;
+            this._chartInterval = interval * 1000;
+
         }
         var this_ = this;
 
@@ -412,6 +404,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     {
         this._currentShownDevice = this._deviceType;
 
+        // TODO: Check in List View?
         var payload = {
             start: g.getBeginTime('yyyy-MM-dd'),
             end: g.getEndTime('yyyy-MM-dd')
@@ -436,10 +429,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     },
 
     fillList: function(page, items, total) {
-
-        console.log(items);
         var params = this._dataListView.clearValues();
-        // items = items.reverse();
         for (var i in items) {
 
             var value = items[i];
@@ -472,21 +462,10 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             this.fetchData(payload, null);
         }
     },
-    /*
-    makeDataDict: function(items) {
-        var dict = [];
-        for (var i in items) {
-            var item = items[i];
-            var t = item['time'];
-            dict[t] = item;
-        }
-        this._dict = dict;
-        return this._dict;
-    },*/
 
     postOnTabChanged: function(tabItem) {
         this._onChartsPage = false;
-
+        this._onListPage = false;
         if (tabItem.hasClass('history')) {
             this.onDataStatisitcTabShown();
         } else if (tabItem.hasClass('charts')) {
@@ -495,6 +474,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             this.updateIntervalButtons2(this._chartInterval);
             this.postOnShowChartsTab();
         } else if (tabItem.hasClass('data')) {
+            this._onListPage = true;
             this.updateIntervalButtons1(this._chartInterval);
             this.updateIntervalButtons2(this._chartInterval);
             this.onShow();
@@ -513,9 +493,31 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     postOnShowChartsTab: function () {
         var payload = {
             start: g.getBeginTime('yyyy-MM-dd'),
-            end: g.getEndTime('yyyy-MM-dd')
+            end: g.getEndTime('yyyy-MM-dd'),
         };
         this.fetchData(payload, null/* No Paging */);
+    },
+
+    chartFilterData2: function(data, field, interval, step)
+    {
+        var datas = [];
+        var dict = [];
+        var endTime = g.getEndTime().getTime();
+        var beginTime = g.getBeginTime().getTime();
+
+        // Store data in a dict
+        for (var i in data) {
+            var item = data[i];
+            var t = Date.parse(item['time']).getTime();
+            dict[t] = item[field];
+        }
+
+        for (var i = beginTime; i <= endTime; i += interval)
+        {
+            datas.push( dict[i] );
+        }
+
+        return {'data': datas};
     },
 
     // 曲线依赖的只是this._items;

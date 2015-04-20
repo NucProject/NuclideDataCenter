@@ -29,6 +29,7 @@ $class("HpicDevice", [DeviceBase, SettingPane],
         var end = g.getEndTime().getTime();
 
         var interval =  this._chartInterval || 30 * 10000;
+        console.log("!",interval);
         this.showCharts(this._domNode,
             {
                 selector: "div.charts",
