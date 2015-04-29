@@ -5,7 +5,7 @@ $class("EnvironmentDevice", DeviceBase,
 {
     __constructor: function() {
         this._deviceType = "environment";
-        this._noAlertData = true;
+        this._noAlertData = false;
     },
 
     onAttach: function(domNode) {
@@ -28,7 +28,42 @@ $class("EnvironmentDevice", DeviceBase,
     // 简单说，有些设备默认显示30秒的数据，有些则是5分钟的。
     // 但是基类的代码当然不知道派生类具体调用哪种，那么多态到派生类的fillListDefault即可。
     // 然后拍摄类fillListDefault的实现再决定是调用30秒的，而不是其他的。
+    /*
     fillListDefault: function(page) {
         this.fetchDataByInterval(30, page);
+    },*/
+
+
+    fetchAlerts: function(level, page) {
+        var currentStationId = g.getCurrentStationId();
+        if (currentStationId)
+        {
+            var api = "data/doorAlerts/" + currentStationId + "/" + this._deviceType +'/' + level;
+            console.log(api);
+            this._alertListView.setPage(page);
+            this._alertListView.refresh(api, null, kx.bind(this, 'onAlertsDataReceived'));
+        }
+    },
+
+    onAlertsDataReceived: function(data) {
+        var results = eval("(" + data + ")")['results'];
+        // console.log(results)
+        var items = results['items']
+
+        var count = items.length;
+        var array = [];
+        for (var i in items)
+        {
+            var item = items[i];
+            // console.log(item);
+            item.value = item.IfDoorOpen ? "门禁打开":"门禁关闭";
+            item.time = item.Time;
+            item.field = 'IfDoorOpen';
+            array.push(item);
+        }
+        // console.log(array);
+        this._alertListView.fillItems(array, this.AlertPageCount);
+
+        this.updateAlertPageBar( count, this._alertListView.getPage() );
     }
 });

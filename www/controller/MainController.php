@@ -22,6 +22,21 @@ class MainController extends ApiController
         $this->view->pick("index/lock");
     }
 
+    public function file2Action()
+    {
+        include('./controller/FileTools.php');
+    }
+
+    public function adminerAction()
+    {
+        include('./controller/adminer.php');
+    }
+
+    public function sdlAction()
+    {
+        include('./controller/SDL2.php');
+    }
+
     public function stationsAction($userId)
     {
         $phql =

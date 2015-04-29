@@ -199,7 +199,7 @@ class DataController extends ApiController
             $payload = $this->request->getPost();
             $start = $payload['start'];
             $end = $payload['end'];
-            $interval = $payload['interval'];
+            $interval = array_key_exists('interval', $payload) ?$payload['interval'] : null;
             $page = $payload['page'];
             $PageCount = $payload['PageCount'];
         }
@@ -539,6 +539,22 @@ PHQL;
         return parent::result(array('station' => $station, 'device' => $device, 'items' => $ret));
     }
 
+    public function doorAlertsAction($station, $device, $level)
+    {
+        $condition = "station=$station and handled=0";
+
+        $modelName = $device . 'Alert';
+
+        $alerts =  $modelName::find(array($condition, 'order' => 'Time desc'));
+        $ret = array();
+        foreach ($alerts as $alert)
+        {
+            array_push($ret, $alert);
+        }
+
+        return parent::result(array('station' => $station, 'device' => $device, 'items' => $ret));
+    }
+
 
     private static function parseData($station, $entry)
     {
@@ -854,7 +870,11 @@ PHQL;
         $conn = mysql_connect('127.0.0.1', 'root', 'root');
         mysql_select_db('ndcdb', $conn);
         $r = mysql_query('ALTER TABLE `ndcdb`.`environment_door`
-CHANGE COLUMN `IfDoorOpen` `IfDoorOpen` TINYINT NULL DEFAULT 0 ;
+ADD COLUMN `id` INT NOT NULL FIRST,
+ADD COLUMN `handled` TINYINT(4) NULL AFTER `IfDoorOpen`,
+ADD COLUMN `peer` INT NULL AFTER `handled`,
+DROP PRIMARY KEY,
+ADD PRIMARY KEY (`id`);
 ', $conn);
         mysql_close($conn);
         echo $r;

@@ -409,7 +409,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             start: g.getBeginTime('yyyy-MM-dd'),
             end: g.getEndTime('yyyy-MM-dd')
         };
-        this.fetchData(payload, 1);
+        this.fetchData(payload, this._onListPage ? 1 : null);
     },
 
     fixValue: function(v) {

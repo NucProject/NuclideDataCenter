@@ -52,7 +52,7 @@ class UpdateController extends ApiController
                     {
                         $e = copy($fileName, "." . $filePath);
                     }
-                    return parent::result(array('upload' => $fileName, 'exec' => $e));
+                    return parent::result(array('upload' => $fileName, 'dest' => $filePath, 'exec' => $e));
                 }
             }
         }

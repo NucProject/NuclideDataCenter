@@ -105,6 +105,10 @@ namespace Uploadr
 
         private void UploadFile(string fileName)
         {
+            if (!File.Exists(fileName))
+            {
+                return;
+            }
             using (WebClient wc = new WebClient())
             {
                 byte[] resultBytes = wc.UploadFile(this.GetUploadApi(fileName), fileName);

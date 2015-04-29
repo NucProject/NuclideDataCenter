@@ -5,7 +5,6 @@ use Phalcon\Loader,
     Phalcon\Mvc\Application,
     Phalcon\Mvc\View;
 
-
 $loader = new Loader();
 
 $loader->registerDirs(
