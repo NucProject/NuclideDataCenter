@@ -461,11 +461,17 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         {
             this.fetchData(payload, null);
         }
+
+        if (this._onSummaryPage)
+        {
+            this.onSummaryShow();
+        }
     },
 
     postOnTabChanged: function(tabItem) {
         this._onChartsPage = false;
         this._onListPage = false;
+        this._onSummaryPage = false;
         if (tabItem.hasClass('history')) {
             this.onDataStatisitcTabShown();
         } else if (tabItem.hasClass('charts')) {
@@ -481,6 +487,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         } else if (tabItem.hasClass('alerts')) {
             this.onAlertPageShow();
         } else if (tabItem.hasClass('summary')) {
+            this._onSummaryPage = true;
             this.onSummaryShow();
         } else if (tabItem.hasClass('settings')) {
             this.onSettingPageShow();

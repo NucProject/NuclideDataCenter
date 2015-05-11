@@ -84,6 +84,10 @@ $class("CinderellaDevice", DeviceBase,
             return false;
         });
 
+        domNode.find('a.exp_data').click(function () {
+            this_.onExportData($(this));
+        });
+
         // Summary
         this._sumListView.setHeaders([
             {'key':'id', 'type': 'id'},
@@ -99,10 +103,13 @@ $class("CinderellaDevice", DeviceBase,
 
     onSummaryShow: function() {
         var this_ = this;
-        this.ajax('data/cinderellaSummary/' + g.getCurrentStationId(), null, function(data){
+        var payload = {
+            start: g.getBeginTime('yyyy-MM-dd'),
+            end: g.getEndTime('yyyy-MM-dd')
+        };
+        this.ajax('data/cinderellaSummary/' + g.getCurrentStationId(), payload, function(data){
             var r = eval("("+data+")");
             var items = r['results']['items'];
-
 
             this_.updateSummaryList(items);
         });
@@ -156,5 +163,21 @@ $class("CinderellaDevice", DeviceBase,
                 alert('删除记录失败');
             }
         });
+    },
+
+    onExportData: function() {
+        console.log(46);
+        var currentStationId = g.getCurrentStationId();
+        if (currentStationId)
+        {
+            var api = "data/downloadSummary/" + currentStationId;
+
+            var payload = {
+                start: g.getBeginTime('yyyy-MM-dd'),
+                end: g.getEndTime('yyyy-MM-dd')
+            };
+
+            $.download(api, payload, 'POST');
+        }
     }
 });

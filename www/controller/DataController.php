@@ -345,6 +345,47 @@ class DataController extends ApiController
         exit;
     }
 
+    //用户导出设备数据，存储为csv文件
+    public function downloadSummaryAction($station)
+    {
+        $start = $this->request->getPost('start');
+        $end = $this->request->getPost('end');
+
+        $fileName = "summary_{$start}_{$end}.csv";
+        Header("Content-type: application/octet-stream;charset=UTF-8");
+        Header("Accept-Ranges: bytes");
+        Header("Accept-Length:-1");
+        Header("Content-Disposition: attachment; filename=" . $fileName);
+        echo pack('H*','EFBBBF');   // 写入 BOM header for UTF8 files.
+
+        $headers = '采样ID,开始时间,结束时间,条码,累计流量,平均瞬时流量,工作时间';
+        if ($headers)
+        {
+            echo $headers, "\r\n";
+        }
+
+        $payload = $this->request->getPost();
+        $start = $payload['start'];
+        $end = $payload['end'];
+
+        $data = CinderellaSum::find(array("station=$station and endtime > '$start' and endtime < '$end'"));
+
+        foreach ($data as $i)
+        {
+            $sid = $i->sid;
+            $beginTime =$i->begintime;
+            $endTime =$i->endtime;
+            $barCode = $i->barcode;
+            $flow = $i->flow;
+            $flowPerHour =$i->flowPerHour;
+            $workTime=$i->worktime;
+
+            echo "$sid, $beginTime, $endTime, $barCode, $flow, $flowPerHour, $workTime\r\n";
+            //echo implode(',', $a), "\r\n";
+        }
+        exit;
+    }
+
     private static function adjustTime($time, $interval)
     {
         return $time;
@@ -669,11 +710,15 @@ PHQL;
 
     public function cinderellaSummaryAction($station)
     {
-        if (!$this->request->isGet())
+        if (!$this->request->isPost())
         {
             return parent::error(Error::BadHttpMethod, '');
         }
-        $data = CinderellaSum::find(array("station=$station"));
+        $payload = $this->request->getPost();
+        $start = $payload['start'];
+        $end = $payload['end'];
+
+        $data = CinderellaSum::find(array("station=$station and endtime > '$start' and endtime < '$end'"));
         $ret = array();
         foreach ($data as $item)
         {
