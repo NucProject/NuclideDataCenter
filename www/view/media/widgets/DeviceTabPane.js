@@ -290,7 +290,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
         var beginTime = new Date(payload['start'].replace(/-/g,"\/"));
         var endTime = new Date(payload['end'].replace(/-/g,"\/"));
-
+console.log(page, "@")
         if (page) {
             payload['page'] = page;
             payload['PageCount'] = this.PageCount;
@@ -409,7 +409,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             start: g.getBeginTime('yyyy-MM-dd'),
             end: g.getEndTime('yyyy-MM-dd')
         };
-        this.fetchData(payload, this._onListPage ? 1 : null);
+        this.fetchData(payload, (this._onListPage !== false) ? 1 : null);
     },
 
     fixValue: function(v) {
@@ -500,7 +500,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     postOnShowChartsTab: function () {
         var payload = {
             start: g.getBeginTime('yyyy-MM-dd'),
-            end: g.getEndTime('yyyy-MM-dd'),
+            end: g.getEndTime('yyyy-MM-dd')
         };
         this.fetchData(payload, null/* No Paging */);
     },

@@ -1,0 +1,47 @@
+<div class="span12" file="tab1.phtml" widget-class="AdminManagerPane" widget-id="admin-man-pane">
+	<div class="portlet box blue tabbable">
+		<div class="portlet-title">
+			<div class="caption"><i class="icon-reorder"></i>短信报警管理</div>
+		</div>
+		<div class="portlet-body">
+			<div class="tabbable portlet-tabs">
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#add_admin_tab" data-toggle="tab" tab="add">用户管理</a></li>
+                    <!--
+                    <li class="active"><a href="#man_admin_tab" data-toggle="tab" tab="man">自动站管理</a></li>
+                    -->
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane" id="man_admin_tab">
+						<div class="admin-list"></div>
+					</div>
+					<div class="tab-pane active" id="add_admin_tab">
+                        <span style="font-weight: bold">管理手机号码</span>
+                        <div class="users" style="max-width: 400px"></div>
+
+                        <span style="font-weight: bold">添加新手机号码</span>
+
+                        <table style="margin-top: 10px">
+                            <tr>
+                                <td>姓名</td><td><input class="name" type="text"/></td>
+                            </tr>
+                            <tr>
+                                <td>手机号码</td><td><input class="phone" type="text"/></td>
+                            </tr>
+
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <a class="btn add-admin blue">添加</a>
+                                </td>
+                            </tr>
+                        </table>
+
+					</div>
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

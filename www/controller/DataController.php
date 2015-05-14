@@ -971,4 +971,44 @@ ADD PRIMARY KEY (`id`);
     {
         $this->redis->flushdb();
     }
+
+    public function keysAction($p)
+    {
+        $keys = $this->redis->keys($p);
+        print_r($keys);
+    }
+
+    public function checkRedisAction($key, $operation = '')
+    {
+        $exists = $this->redis->exists($key);
+        if ($exists)
+        {
+            $type = $this->redis->type($key);
+            echo "Exists [$key]";
+            if ($type == Redis::REDIS_HASH)
+            {
+                $all = $this->redis->hGetAll($key);
+                $count = count($all);
+                echo "Hash size=($count)\n";
+
+                print_r($all);
+            }
+            else if ($type == Redis::REDIS_LIST)
+            {
+                $all = $this->redis->lRange($key, 0, -1);
+                $count = count($all);
+                echo "List size=($count)\n";
+                print_r($all);
+            }
+            else if ($type == Redis::REDIS_STRING)
+            {
+                echo "(", $this->redis->get($key), ")";
+            }
+
+            if ($operation == 'delete')
+            {
+                $this->redis->del($key);
+            }
+        }
+    }
 }

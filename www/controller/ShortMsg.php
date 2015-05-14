@@ -24,25 +24,4 @@ class ShortMsg
         return $r->Result == '1';
     }
 
-    public static function sendVerifyCode($target, $code)
-    {
-        if (Config::$env == 'PROD' || $_SERVER['CSCSSM'] == 'YES')
-        {
-            $message = "$code";
-            if (self::send($target, $message))
-            {
-                return array('verify' => 'Sent');
-            }
-            else
-            {
-                // Try to send but failed!
-                return false;
-            }
-        }
-        else
-        {
-            return array('verify' => 'Sent', 'env' => Config::$env);
-        }
-    }
-
 }

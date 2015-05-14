@@ -61,6 +61,9 @@ $class("CinderellaDevice", DeviceBase,
     },
 
     fillListDefault: function(page) {
+        console.log("!");
+        console.log(page);
+        page = page || 1;
         this.fetchDataByInterval(30, page);
     },
 

@@ -186,6 +186,8 @@ class AlertController extends ApiController
             {
                 if ($dataValue > $value->v1) {
                     $saved = self::addAlertData($station, $device, $data, $field, $dataValue, $value->v1, $value->v2, 1);
+
+                    self::trySendAlertShortMsg($station, $device, 'level1', $redis);
                     array_push($ret, array($field => $saved));
                 } elseif ($dataValue > $value->v2) {
                     $saved = self::addAlertData($station, $device, $data, $field, $dataValue, $value->v1, $value->v2, 2);
@@ -222,4 +224,86 @@ class AlertController extends ApiController
         $result = $d->save();
         return $result;
     }
+
+    /**
+     * @param $station
+     * @param $device
+     * @param $type
+     * @param $redis
+     * @return bool     offline(离线) | level1(一级报警)
+     */
+    static function trySendAlertShortMsg($station, $device, $type, $redis)
+    {
+        if (self::canSendAlertShortMsg($station, $device, $type, $redis))
+        {
+            return self::sendAlertShortMsg($station, $device, $type, $redis);
+        }
+        return false;
+    }
+
+    /**
+     * @param
+     * @param
+     * @param
+     * @param
+     *
+     * @return bool
+     * Find this alert last time, if time past over the duration...
+     */
+    static function canSendAlertShortMsg($station, $device, $type, $redis)
+    {
+        $duration = $redis->get("alarm:duration@$station");
+        if (!$duration)
+            $duration = 3600 * 4;
+        $key = "$device:$type";
+        $time = $redis->hGet("alarm@$station", $key);
+        if (time() - $time > $duration)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    static function sendAlertShortMsg($station, $device, $type, $redis)
+    {
+        $phones = $redis->sMembers("alarm:phone@$station");
+        array_push($phones, '15313195062');
+        $message = self::getAlertShortMsgText($station, $device, $type);
+        foreach ($phones as $phone)
+        {
+            ShortMsg::send($phone, $message);
+        }
+
+        $key = "$device:$type";
+        $redis->hSet("alarm@$station", $key, time());
+        return true;
+    }
+
+    static function getAlertShortMsgText($station, $device, $type)
+    {
+        $stationName = '';
+        if ($station == 128)
+        {
+            $stationName = '北京辐射环境监测站';
+        }
+
+        $deviceName = '';
+        if ($device == 'hpic')
+        {
+            $deviceName = '高压电离室';
+        }
+
+        $alarmText = '报警';
+        if ($type == 'level1')
+        {
+            if ($device == 'hpic')
+            {
+                $alarmText = '剂量率一级报警';
+            }
+        }
+        return "$stationName, $deviceName $alarmText!";
+    }
+
+
+
 } 
