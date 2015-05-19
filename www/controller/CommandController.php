@@ -61,6 +61,8 @@ class CommandController extends ApiController
             $c->save();
         }
 
+        AlertController::checkDeviceOnline($this->redis, $station);
+
         $command = $this->redis->lPop($queue);
         $command = json_decode($command);
         return parent::result($command);

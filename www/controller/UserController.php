@@ -159,4 +159,13 @@ class UserController extends ApiController
     {
         return md5($password);
     }
+
+    public function addPhoneAction()
+    {
+        $payload = $this->request->getPost();
+        $username = $payload['username'];
+        $phone = $payload['phone'];
+
+        echo "($username, $phone)";
+    }
 }

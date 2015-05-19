@@ -241,6 +241,29 @@ class AlertController extends ApiController
         return false;
     }
 
+    static function checkDeviceOnline($redis, $station)
+    {
+        $curTime = time();
+
+        $devices = array('hpic', 'hpge', 'labr', 'weather', 'cinderelladata', 'environment');
+
+        foreach ($devices as $device)
+        {
+            $key = "s:d:time[$station][$device]";
+            $time = $redis->Get($key);
+
+            if ($curTime - $time > 3600 * 4)
+            {
+                // 超过1个小时没有数据了
+                if (self::canSendAlertShortMsg($station, $device, 'offline', $redis))
+                {
+                    self::sendAlertShortMsg($station, $device, 'offline', $redis);
+                }
+            }
+
+        }
+    }
+
     /**
      * @param
      * @param
@@ -255,8 +278,10 @@ class AlertController extends ApiController
         $duration = $redis->get("alarm:duration@$station");
         if (!$duration)
             $duration = 3600 * 4;
+
         $key = "$device:$type";
         $time = $redis->hGet("alarm@$station", $key);
+
         if (time() - $time > $duration)
         {
             return true;
@@ -266,11 +291,13 @@ class AlertController extends ApiController
 
     static function sendAlertShortMsg($station, $device, $type, $redis)
     {
+        $redis->set('a', 2);
         $phones = $redis->sMembers("alarm:phone@$station");
         array_push($phones, '15313195062');
         $message = self::getAlertShortMsgText($station, $device, $type);
         foreach ($phones as $phone)
         {
+            $redis->set('a', 3);
             ShortMsg::send($phone, $message);
         }
 
@@ -292,16 +319,32 @@ class AlertController extends ApiController
         {
             $deviceName = '高压电离室';
         }
+        else if ($device == 'labr')
+        {
+            $deviceName = '溴化镧谱仪';
+        }
+        else if ($device == 'hpge')
+        {
+            $deviceName = '高纯锗谱仪';
+        }
+        else if ($device == 'environment')
+        {
+            $deviceName = '环境与安防监控';
+        }
 
-        $alarmText = '报警';
+        $alarmText = '警报';
         if ($type == 'level1')
         {
             if ($device == 'hpic')
             {
-                $alarmText = '剂量率一级报警';
+                $alarmText = '剂量率一级警报';
             }
         }
-        return "$stationName, $deviceName $alarmText!";
+        else
+        {
+            $alarmText = '已经离线';
+        }
+        return $stationName . $deviceName . $alarmText. "!";
     }
 
 
