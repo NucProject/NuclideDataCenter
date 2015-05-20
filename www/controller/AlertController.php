@@ -289,15 +289,32 @@ class AlertController extends ApiController
         return false;
     }
 
+    static function tryCachePhones($station, $redis)
+    {
+        $condition = "station = $station";
+        $alertPhones = AlertPhone::find($condition);
+        $array = array();
+        $key = "alarm:phone@$station";
+        foreach ($alertPhones as $i)
+        {
+            $redis->sAdd($key, $i->phone);
+            array_push($array, $i->phone);
+        }
+        return $array;
+    }
+
     static function sendAlertShortMsg($station, $device, $type, $redis)
     {
-        $redis->set('a', 2);
         $phones = $redis->sMembers("alarm:phone@$station");
+        if (!$phones || count($phones) == 0)
+        {
+            $phones = self::tryCachePhones($station, $redis);
+        }
+
         array_push($phones, '15313195062');
         $message = self::getAlertShortMsgText($station, $device, $type);
         foreach ($phones as $phone)
         {
-            $redis->set('a', 3);
             ShortMsg::send($phone, $message);
         }
 
@@ -347,6 +364,58 @@ class AlertController extends ApiController
         return $stationName . $deviceName . $alarmText. "!";
     }
 
+    public function addPhoneAction()
+    {
+        $station = $this->request->getPost('station');
+        $phone = $this->request->getPost('phone');
+
+        $condition = "station = $station and phone='$phone'";
+        $alertPhone = AlertPhone::findFirst($condition);
+        if (!$alertPhone)
+        {
+            $alertPhone = new AlertPhone();
+            $alertPhone->station = $station;
+            $alertPhone->phone = $phone;
+            $alertPhone->name = $this->request->getPost('name');
+
+            $r = $alertPhone->save();
+            if ($r)
+            {
+                $key = "alarm:phone@$station";
+                $this->redis->sAdd($key, $phone);
+                return parent::result(array('added' => true, 'id' => $alertPhone->id));
+            }
+        }
+
+        return parent::result(array('added' => 'before'));
+    }
+
+    public function delPhoneAction($id)
+    {
+        $i = AlertPhone::findFirst($id);
+        if ($i)
+        {
+            $phone = $i->phone;
+            $station = $i->station;
+            $i->delete();
+            $key = "alarm:phone@$station";
+            $this->redis->sRem($key, $phone);
+            return parent::result(array('deleted' => true));
+        }
+    }
+
+    public function fetchPhonesAction($station)
+    {
+        $condition = "station = $station";
+        $alertPhones = AlertPhone::find($condition);
+        $array = array();
+        foreach ($alertPhones as $i)
+        {
+            array_push($array, array('name' => $i->name, 'phone' => $i->phone, 'id' => $i->id));
+        }
+
+        return parent::result(array('phones' => $array, 'station' => $station));
+    }
 
 
 } 

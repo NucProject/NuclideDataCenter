@@ -24,27 +24,27 @@ $class("AdminSMPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
         this._userListView.setHeaders([
             {'key':'id', 'type': 'id'},
-            {'key':'username', 'name':'用户名'},
+            {'key':'name', 'name':'姓名'},
+            {'key':'phone', 'name':'手机号码'},
             {'key':'handle', 'name':'删除'},
 
         ]);
 
         var this_ = this;
-        var api = "user/fetchPhones/";
+        var api = "alert/fetchPhones/" + g.getCurrentStationId();
         this.ajax(api, null, function(data){
+
             var d = eval("(" + data + ")");
             if (d.errorCode == 0) {
-                var users = d.results;
-                for (var i in users) {
-                    var user = users[i];
-
-                    handle = '总管理员';
-                    if (user.username != 'admin')
-                        handle = "<a class='btn red del'>删除</a>";
+                var p = d.results.phones;
+                for (var i in p) {
+                    var user = p[i];
+                    handle = "<a class='btn red del'>删除</a>";
 
                     this_._userListView.addEntry({
-                        id: user.user_id,
-                        username: user.username,
+                        id: user.id,
+                        name: user.name,
+                        phone: user.phone,
                         handle: handle
 
                     });
@@ -54,14 +54,14 @@ $class("AdminSMPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
         this_._userListView._domNode.delegate('td a.del', 'click', function(){
             var tr = $(this).parent().parent();
-            var userId = tr.attr('data-id');
-            this_.deleteUser(userId, tr);
+            var id = tr.attr('data-id');
+            this_.deletePhone(id, tr);
         });
 
     },
 
-    deleteUser: function(userId, tr) {
-        this.ajax('user/del/' + userId, null, function(data){
+    deletePhone: function(id, tr) {
+        this.ajax('alert/delPhone/' + id, null, function(data){
                 var d = eval("(" + data + ")");
                 if (d.errorCode == 0) {
                     tr.find('td').css('background-color', 'yellow');
@@ -73,19 +73,29 @@ $class("AdminSMPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
     },
 
     addPhone: function() {
+        var phone = this.getPhone();
+
+        if (phone.length != 11 || parseInt(phone).toString() != phone)
+        {
+            alert('手机号码不正确');
+            return true;
+        }
+        var name = this.getUsername();
         var payload = {
-            "username": this.getUsername(),
-            "phone": this.getPhone()
+            "name": name,
+            "phone": phone,
+            'station': g.getCurrentStationId()
         };
         var this_ = this;
-        this.ajax("user/addPhone", payload, function(data){
+        this.ajax("alert/addPhone", payload, function(data){
             console.log(data);
             var d = eval("(" + data + ")");
             if (d.errorCode == 0) {
-                var user = d.results;
+                var r = d.results;
                 this_._userListView.addEntry({
-                    id: user.user_id,
-                    username: user.username,
+                    id: r.id,
+                    name: name,
+                    phone: phone,
                     handle: "<a class='btn red del'>删除</a>"
 
                 });

@@ -914,12 +914,14 @@ PHQL;
     {
         $conn = mysql_connect('127.0.0.1', 'root', 'root');
         mysql_select_db('ndcdb', $conn);
-        $r = mysql_query('ALTER TABLE `ndcdb`.`environment_door`
-ADD COLUMN `id` INT NOT NULL FIRST,
-ADD COLUMN `handled` TINYINT(4) NULL AFTER `IfDoorOpen`,
-ADD COLUMN `peer` INT NULL AFTER `handled`,
-DROP PRIMARY KEY,
-ADD PRIMARY KEY (`id`);
+        $r = mysql_query('CREATE TABLE `ndcdb`.`alert_phone` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `station` INT NOT NULL,
+  `phone` VARCHAR(45) NOT NULL,
+  `name` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`))
+ENGINE = MyISAM;
+
 ', $conn);
         mysql_close($conn);
         echo $r;
@@ -1003,6 +1005,13 @@ ADD PRIMARY KEY (`id`);
             else if ($type == Redis::REDIS_STRING)
             {
                 echo "(", $this->redis->get($key), ")";
+            }
+            else if ($type == Redis::REDIS_SET)
+            {
+                $all = $this->redis->sMembers($key);
+                $count = count($all);
+                echo "Set size=($count)\n";
+                print_r($all);
             }
 
             if ($operation == 'delete')
