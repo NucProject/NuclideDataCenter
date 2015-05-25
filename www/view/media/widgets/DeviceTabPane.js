@@ -491,6 +491,8 @@ console.log(page, "@")
             this.onSummaryShow();
         } else if (tabItem.hasClass('settings')) {
             this.onSettingPageShow();
+        } else {
+            this.onPageShow(tabItem);
         }
 
         // Device

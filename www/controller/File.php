@@ -29,7 +29,7 @@ class File
         $xml = simplexml_load_file($filePath);
 
         $data = ApiController::getN42Data($xml, $station, $redis);
-print_r($data);
+        //print_r($data);
         $n42Path = "/download/labr/$station/$month/$day/$fileName";
 
         $d = new Labr();

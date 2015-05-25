@@ -109,7 +109,10 @@ class DataController extends ApiController
                     Cache::updateLatestTime($this->redis, $station, 'hpge');
 
                     $p = explode(',', $folder2);
-                    self::doHpgeAlerts($filePath, $station, $p[2], $this->redis);
+                    if (strtoupper($p[3]) == 'RPT')
+                    {
+                        self::doHpgeAlerts($filePath, $station, $p[2], $this->redis, $folder);
+                    }
                 }
             }
 
@@ -120,11 +123,37 @@ class DataController extends ApiController
 
     public function hpgeParseAction()
     {
-        self::doHpgeAlerts('d:\\download\\samplereport24_2015_03_02T11_08_08.rpt', 128, '2015-03-26 10:10:10', $this->redis);
+        self::doHpgeAlerts('d:\\download\\samplereport24_2015_05_25T11_04_28.rpt', 128, '2015-03-26 10:10:10', $this->redis, 'AA11_20150523112100');
     }
 
-    private static function doHpgeAlerts($filePath, $station, $time, $redis)
+    private static function getFlowBySid($sid)
     {
+        $p = explode('_', $sid);
+        if (count($p) != 2)
+            return -1;
+        $d = substr($p[1], 0, 8);
+        $twoDaysAgo = date('Ymd', ApiController::parseTime2($d) - 3600 * 48);
+
+        $conn = mysql_connect('127.0.0.1', 'root', 'root');
+        mysql_select_db('ndcdb', $conn);
+        $r = mysql_query("select * from cinderella_sum where sid like '%_$twoDaysAgo%' limit 1", $conn);
+        $row = mysql_fetch_row($r);
+        mysql_close($conn);
+        // print_r($row);
+        return $row[7];
+
+    }
+    public function parseSidAction($sid)
+    {
+        echo self::getFlowBySid($sid);
+    }
+
+    private static function doHpgeAlerts($filePath, $station, $time, $redis, $sid)
+    {
+        $flow = self::getFlowBySid($sid);
+        if (!$flow)
+            $flow = 1.0;
+
         $a = file($filePath);
         $start1 = false;
         $start2 = false;
@@ -157,10 +186,22 @@ class DataController extends ApiController
                 if ($a[1] == '<')
                     continue;
 
+                $data = new HpgeData();
+                $data->station = $station;
+                $data->time = $time;
+                $data->nuclide = $a[0];
+                $value = $a[1] != '#' ? floatval($a[1]) : floatval($a[2]);
+                $cval = floatval( $value )/ floatval($flow);
+                $data->value = $value;
+                $data->cvalue = $cval;
+                $data->flow = $flow;
+                $data->percent = 0.0;
+                $data->save();
+
                 $data = new stdClass();
                 $data->time = $time;
                 $data->field = $a[0];
-                $data->value = $a[1] != '#' ? floatval($a[1]) : floatval($a[2]);
+                $data->value = $v;
                 $data->is_nuclide = true;
                 AlertController::checkAlertRule($redis, $station, 'hpge', $data);
             }
@@ -544,6 +585,29 @@ PHQL;
 
         //echo $condition;
         $data = Hpge::find(array($condition, 'order' => 'time desc'));
+
+        $items = array();
+        foreach ($data as $item)
+        {
+            array_push($items, $item);
+        }
+
+        return parent::result(array("items" => $items, 'count' => count($items)));
+    }
+
+    public function fetchHpgeData2Action($station)
+    {
+        if ($this->request->isPost())
+        {
+            $payload = $this->request->getPost();
+            $start = $payload['start'];
+            $end = $payload['end'];
+        }
+
+        $condition = "station=$station";
+        $condition .= " and time >= '$start' and time < '$end'";
+
+        $data = HpgeData::find(array($condition, 'order' => 'time desc'));
 
         $items = array();
         foreach ($data as $item)

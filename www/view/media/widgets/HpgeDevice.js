@@ -18,25 +18,25 @@ $class("HpgeDevice", DeviceBase,
             {'key':'endtime', 'name':'结束时间'},
             {'key':'path', 'name':'下载', 'type': 'url'}]);
 
+        this._dataListView2 = new ListView();
+        var dataPane2 = domNode.find("div.data-pane2");
+        var dataListViewDomNode = this._dataListView2.create();
+        dataListViewDomNode.appendTo(dataPane2);
+        this._dataListView2.setHeaders([
+            {'key':'time', 'name':'时间'},
+            {'key':'nuclide', 'name':'核素'},
+            {'key':'value', 'name':'活度'},
+            {'key':'flow', 'name':'总流量'},
+            {'key':'cvalue', 'name':'活度浓度'},
+            ]);
+
         this.createSummaryList(domNode);
 
     },
 
-    /*
-    // 特殊处理 Hpge的数据有文件时间一样的!
-    makeDataDict: function(items) {
-        var dict = [];
-        for (var i in items) {
-            var item = items[i];
-            var t = item['time']; // 不能以time为key，并且排序了.
-            t = t + i;
-            dict[t] = item;
-            // console.log(item)
-        }
-        this._dict = dict;
-        return this._dict;
+    getNuclideName: function(nuclide) {
+        return nuclide[0].toUpperCase() + nuclide.substring(1).toLowerCase();
     },
-    */
 
     createSummaryList: function(domNode) {
         var sumContainer = domNode.find('div.sum-container');
@@ -119,10 +119,35 @@ $class("HpgeDevice", DeviceBase,
         this.fillSummaryList(1, this._sumDict, this._sumListView);
     },
 
+    updateData2List: function(items) {
+
+        for (var i in items) {
+            var item = items[i];
+
+            item.nuclide = this.getNuclideName(item.nuclide);
+            this._dataListView2.addEntry(item);
+        }
+    },
 
     onChangeSumPage: function (page) {
         // console.log(page);
         this.fillSummaryList(page, this._sumDict, this._sumListView);
+    },
+
+    onPageShow: function( tabItem ) {
+        var this_ = this;
+        if (tabItem.hasClass('data2')) {
+            var payload = {
+                start: g.getBeginTime('yyyy-MM-dd'),
+                end: g.getEndTime('yyyy-MM-dd')
+            };
+            this.ajax('data/fetchHpgeData2/' + g.getCurrentStationId(), payload, function(data){
+                console.log(data)
+                var r = eval("(" + data + ")");
+                var items = r['results']['items'];
+                this_.updateData2List(items);
+            });
+        }
     },
 
     onSummaryShow: function() {
@@ -136,6 +161,7 @@ $class("HpgeDevice", DeviceBase,
     },
 
     fillListDefault: function(page) {
+        console.log(555)
         this.fillList(page);
     },
 
@@ -193,5 +219,20 @@ $class("HpgeDevice", DeviceBase,
 
         this.fetchAlerts(level, 1);
 
+    },
+
+    onAlertsDataReceived: function(data) {
+        var results = eval("(" + data + ")")['results'];
+        var items = results['items']
+
+        var count = items.length;
+        for (var i in items)
+        {
+            var item = items[i];
+            item.field = this.getNuclideName(item.field);
+        }
+        this._alertListView.fillItems(items, this.AlertPageCount);
+
+        this.updateAlertPageBar( count, this._alertListView.getPage() );
     }
 });
