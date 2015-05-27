@@ -201,7 +201,7 @@ class DataController extends ApiController
                 $data = new stdClass();
                 $data->time = $time;
                 $data->field = $a[0];
-                $data->value = $v;
+                $data->value = $cval;
                 $data->is_nuclide = true;
                 AlertController::checkAlertRule($redis, $station, 'hpge', $data);
             }

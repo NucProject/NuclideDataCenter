@@ -161,7 +161,7 @@ $class("HpgeDevice", DeviceBase,
     },
 
     fillListDefault: function(page) {
-        console.log(555)
+        // console.log(555)
         this.fillList(page);
     },
 
