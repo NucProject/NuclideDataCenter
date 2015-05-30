@@ -37,7 +37,7 @@
             // 
             // uploadButton
             // 
-            this.uploadButton.Location = new System.Drawing.Point(327, 40);
+            this.uploadButton.Location = new System.Drawing.Point(703, 40);
             this.uploadButton.Name = "uploadButton";
             this.uploadButton.Size = new System.Drawing.Size(75, 23);
             this.uploadButton.TabIndex = 0;
@@ -50,19 +50,19 @@
             this.rootPathText.BackColor = System.Drawing.SystemColors.Info;
             this.rootPathText.Location = new System.Drawing.Point(13, 13);
             this.rootPathText.Name = "rootPathText";
-            this.rootPathText.Size = new System.Drawing.Size(308, 21);
+            this.rootPathText.Size = new System.Drawing.Size(671, 21);
             this.rootPathText.TabIndex = 1;
             // 
             // filePathText
             // 
             this.filePathText.Location = new System.Drawing.Point(13, 40);
             this.filePathText.Name = "filePathText";
-            this.filePathText.Size = new System.Drawing.Size(308, 21);
+            this.filePathText.Size = new System.Drawing.Size(671, 21);
             this.filePathText.TabIndex = 1;
             // 
             // syncButton
             // 
-            this.syncButton.Location = new System.Drawing.Point(273, 451);
+            this.syncButton.Location = new System.Drawing.Point(754, 355);
             this.syncButton.Name = "syncButton";
             this.syncButton.Size = new System.Drawing.Size(129, 23);
             this.syncButton.TabIndex = 2;
@@ -76,14 +76,14 @@
             this.debugTextBox.ItemHeight = 12;
             this.debugTextBox.Location = new System.Drawing.Point(13, 81);
             this.debugTextBox.Name = "debugTextBox";
-            this.debugTextBox.Size = new System.Drawing.Size(386, 364);
+            this.debugTextBox.Size = new System.Drawing.Size(870, 268);
             this.debugTextBox.TabIndex = 4;
             // 
             // UploadForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(411, 491);
+            this.ClientSize = new System.Drawing.Size(895, 384);
             this.Controls.Add(this.debugTextBox);
             this.Controls.Add(this.syncButton);
             this.Controls.Add(this.filePathText);

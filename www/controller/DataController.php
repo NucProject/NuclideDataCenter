@@ -123,7 +123,41 @@ class DataController extends ApiController
 
     public function hpgeParseAction()
     {
-        self::doHpgeAlerts('d:\\download\\samplereport24_2015_05_25T11_04_28.rpt', 128, '2015-03-26 10:10:10', $this->redis, 'AA11_20150523112100');
+        self::doHpgeAlerts('./controller/samplereport24_2015_05_29T11_03_53.rpt', 128, '2015-03-26 10:10:10', $this->redis, 'AA11_20150523112100');
+    }
+
+    private function hasFile($url)
+    {
+        return @file_get_contents( $url, null, null, -1, 1) ? true: false;
+    }
+
+    public function recoverHpgeDataAction()
+    {
+        $s = Hpge::find(array("time>='2015-05-01' and mode='RPT'"));
+        foreach ($s as $i)
+        {
+           // echo $i->sid, " ", $i->path, " ";
+            $p = $i->path;
+            $q = explode('/', $p);
+            $station = $q[3];
+            $sid = $q[4];
+            $fileName = $q[5];
+
+            $url = 'http://127.0.0.1:8080' . "/file/$station/hpge/$sid/$fileName";
+
+            if ($this->hasFile($url))
+            {
+                $flow = self::getFlowBySid($sid);
+                if (!$flow)
+                    $flow = 1.0;
+                self::doHpgeData($url, $station, $flow, $i->time);
+            }
+            else
+            {
+                echo "No File {$url} <br>";
+            }
+
+        }
     }
 
     private static function getFlowBySid($sid)
@@ -148,6 +182,57 @@ class DataController extends ApiController
         echo self::getFlowBySid($sid);
     }
 
+    private static function doHpgeData($url, $station, $flow, $time)
+    {
+        $a = @file_get_contents($url);
+        if (!$a)
+            return;
+
+        $a = explode("\n", $a);
+        $start1 = false;
+        $start2 = false;
+        foreach($a as $content) {
+            if (strpos($content, 'S U M M A R Y   O F   N U C L I D E S   I N   S A M P L E') > 0) {
+                $start1 = true;
+                continue;
+            }
+
+            if ($start1) {
+                if (strpos($content, '___________________________________') > 0) {
+                    $start2 = true;
+                    continue;
+                }
+            }
+
+            if ($start2) {
+                $line = trim($content);
+                if ($line == '') {
+                    break;
+                }
+
+                $a = @split("[ ]+", $line);
+
+                if ($a[1] == '<')
+                    continue;
+
+                $data = new HpgeData();
+                $data->station = $station;
+                $data->time = $time;
+                $data->nuclide = $a[0];
+                $value = $a[1] != '#' ? floatval($a[1]) : floatval($a[2]);
+
+                $cval = floatval($value) / floatval($flow);
+                $data->value = $value;
+                $data->cvalue = $cval;
+                $data->flow = $flow;
+                $data->percent = 0.0;
+                $data->save();
+
+            }
+
+        }
+    }
+
     private static function doHpgeAlerts($filePath, $station, $time, $redis, $sid)
     {
         $flow = self::getFlowBySid($sid);
@@ -155,11 +240,11 @@ class DataController extends ApiController
             $flow = 1.0;
 
         $a = file($filePath);
+
         $start1 = false;
         $start2 = false;
         foreach($a as $line => $content)
         {
-            //echo $content;
             if (strpos($content, 'S U M M A R Y   O F   N U C L I D E S   I N   S A M P L E') > 0)
             {
                 $start1 = true; continue;
@@ -180,8 +265,8 @@ class DataController extends ApiController
                 {
                     break;
                 }
+
                 $a = @split("[ ]+", $line);
-                // print_r( $a );
 
                 if ($a[1] == '<')
                     continue;
@@ -191,6 +276,7 @@ class DataController extends ApiController
                 $data->time = $time;
                 $data->nuclide = $a[0];
                 $value = $a[1] != '#' ? floatval($a[1]) : floatval($a[2]);
+
                 $cval = floatval( $value )/ floatval($flow);
                 $data->value = $value;
                 $data->cvalue = $cval;

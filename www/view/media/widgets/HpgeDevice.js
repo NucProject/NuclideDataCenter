@@ -120,13 +120,21 @@ $class("HpgeDevice", DeviceBase,
     },
 
     updateData2List: function(items) {
-
+        this._dataListView2.clearValues();
         for (var i in items) {
             var item = items[i];
 
             item.nuclide = this.getNuclideName(item.nuclide);
+            item.value = this.num2e(item.value);
+            item.cvalue = this.num2e(item.cvalue);
             this._dataListView2.addEntry(item);
         }
+    },
+
+    num2e: function(num){
+        var p = Math.floor(Math.log(num)/Math.LN10);
+        var n = num * Math.pow(10, -p);
+        return n.toFixed(2) + 'e' + p;
     },
 
     onChangeSumPage: function (page) {
@@ -136,7 +144,9 @@ $class("HpgeDevice", DeviceBase,
 
     onPageShow: function( tabItem ) {
         var this_ = this;
-        if (tabItem.hasClass('data2')) {
+        if (this._onData2Page || tabItem.hasClass('data2')) {
+            console.log(334)
+            this._onData2Page = true;
             var payload = {
                 start: g.getBeginTime('yyyy-MM-dd'),
                 end: g.getEndTime('yyyy-MM-dd')

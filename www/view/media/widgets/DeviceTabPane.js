@@ -290,7 +290,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
         var beginTime = new Date(payload['start'].replace(/-/g,"\/"));
         var endTime = new Date(payload['end'].replace(/-/g,"\/"));
-console.log(page, "@")
+
         if (page) {
             payload['page'] = page;
             payload['PageCount'] = this.PageCount;
@@ -435,6 +435,10 @@ console.log(page, "@")
             var value = items[i];
             if (value)
             {
+                if (this.fixData)
+                {
+                    value = this.fixData(value);
+                }
                 this._dataListView.addValue(value, params);
             }
         }
@@ -466,12 +470,19 @@ console.log(page, "@")
         {
             this.onSummaryShow();
         }
+
+        if (this._onData2Page)
+        {
+            console.log(2222);
+            this.onPageShow();
+        }
     },
 
     postOnTabChanged: function(tabItem) {
         this._onChartsPage = false;
         this._onListPage = false;
         this._onSummaryPage = false;
+        this._onData2Page = false;
         if (tabItem.hasClass('history')) {
             this.onDataStatisitcTabShown();
         } else if (tabItem.hasClass('charts')) {
@@ -492,7 +503,10 @@ console.log(page, "@")
         } else if (tabItem.hasClass('settings')) {
             this.onSettingPageShow();
         } else {
-            this.onPageShow(tabItem);
+            if (this.onPageShow)
+            {
+                this.onPageShow(tabItem);
+            }
         }
 
         // Device

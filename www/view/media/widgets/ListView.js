@@ -113,6 +113,7 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
     },
 
     addValue: function(item, params) {
+        console.log(item);
         var tbody = params.tbody;
         var headers = params.headers;
 

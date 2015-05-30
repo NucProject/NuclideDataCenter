@@ -33,6 +33,11 @@ $class("WeatherDevice", DeviceBase,
         this.updateCharts();
     },
 
+    fixData: function(value) {
+        value.Direction = this.getDirStr(value.Direction);
+        return value;
+    },
+
     updateCharts: function() {
         var start = g.getBeginTime().getTime();
         var end = g.getEndTime().getTime();
@@ -92,5 +97,79 @@ $class("WeatherDevice", DeviceBase,
 
         this.updateCharts();
 
+    },
+
+    getDirStr: function(d) {
+        var direction = parseInt(d);
+        var strDirection = d + "°";
+            if (348 < direction && direction <= 360)
+            {
+                strDirection += " (N)";
+            }
+            else if (direction <= 11)
+            {
+                strDirection += " (N)";
+            }
+            else if (11 < direction && direction <= 33)
+            {
+                strDirection += " (NNE)";
+            }
+            else if (33 < direction && direction <= 56)
+            {
+                strDirection += " (NE)";
+            }
+            else if (56 < direction && direction <= 78)
+            {
+                strDirection += " (ENE)";
+            }
+            else if (78 < direction && direction <= 101)
+            {
+                strDirection += " (E)";
+            }
+            else if (101 < direction && direction <= 123)
+            {
+                strDirection += " (ESE)";
+            }
+            else if (123 < direction && direction <= 146)
+            {
+                strDirection += " (SE)";
+            }
+            else if (146 < direction && direction <= 168)
+            {
+                strDirection += " (SSE)";
+            }
+            else if (168 < direction && direction <= 191)
+            {
+                strDirection += " (S)";
+            }
+            else if (191 < direction && direction <= 213)
+            {
+                strDirection += " (SSW)";
+            }
+            else if (213 < direction && direction <= 236)
+            {
+                strDirection += " (SW)";
+            }
+            else if (236 < direction && direction <= 258)
+            {
+                strDirection += " (WSW)";
+            }
+            else if (258 < direction && direction <= 281)
+            {
+                strDirection += " (W)";
+            }
+            else if (281 < direction && direction <= 303)
+            {
+                strDirection += " (WNW)";
+            }
+            else if (303 < direction && direction <= 326)
+            {
+                strDirection += " (NW)";
+            }
+            else if (326 < direction && direction <= 348)
+            {
+                strDirection += " (NNW)";
+            }
+        return strDirection;
     }
 });
