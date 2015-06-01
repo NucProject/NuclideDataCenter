@@ -66,6 +66,7 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         $('#network-row').hide();
         $('#devices-row').hide();
         $('#admin-row').hide();
+        $('#admin-sm-row').hide();
 
         // TODO: different device for each station!
         if (currentStationId == 128)

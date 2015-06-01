@@ -58,6 +58,22 @@ $class("AdminSMPane", [kx.Widget, kx.ActionMixin, kx.EventMixin],
             this_.deletePhone(id, tr);
         });
 
+        this.ajax('alert/getDuration/' +g.getCurrentStationId(), null, function(data){
+            var d = eval('('+data+')');
+            if (!isNaN(d.results.hour))
+                $('#alert-hour-set-input').val(d.results.hour);
+            else
+                $('#alert-hour-set-input').val(4);
+        })
+
+
+        this._domNode.delegate('a.set-freq', 'click', function () {
+            var hour = $('#alert-hour-set-input').val();
+            this_.ajax('alert/setDuration/' + g.getCurrentStationId(), {'hour': hour}, function(data){
+                console.log(data);
+            })
+        });
+
     },
 
     deletePhone: function(id, tr) {

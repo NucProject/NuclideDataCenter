@@ -6,15 +6,20 @@
 		<div class="portlet-body">
 			<div class="tabbable portlet-tabs">
 				<ul class="nav nav-tabs">
+
+                    <li class=""><a href="#alert_freq_tab" data-toggle="tab" tab="man">报警时间</a></li>
+
 					<li class="active"><a href="#add_phone_tab" data-toggle="tab" tab="add">用户管理</a></li>
-                    <!--
-                    <li class="active"><a href="#man_admin_tab" data-toggle="tab" tab="man">自动站管理</a></li>
-                    -->
+
 				</ul>
 				<div class="tab-content">
-					<div class="tab-pane" id="man_admin_tab">
-						<div class="admin-list"></div>
+					<div class="tab-pane" id="alert_freq_tab">
+						<div >
+                            <span>短信报警间隔:</span><input type="text" value="4" id="alert-hour-set-input" /><span>小时</span>
+                            <a class="btn blue set-freq">设置</a>
+                        </div>
 					</div>
+
 					<div class="tab-pane active" id="add_phone_tab">
                         <span style="font-weight: bold">管理手机号码</span>
                         <div class="users" style="max-width: 400px"></div>

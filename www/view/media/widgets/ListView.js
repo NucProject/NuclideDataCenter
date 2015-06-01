@@ -113,7 +113,7 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
     },
 
     addValue: function(item, params) {
-        console.log(item);
+        // console.log(item);
         var tbody = params.tbody;
         var headers = params.headers;
 
@@ -243,6 +243,20 @@ $class("ListView", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
             {
                 var bindType = this._headers[j]['bind'];
                 cl.push("<a class='btn red mini' bind='" + item[bindType]+ "'>" + item[key] + "</a>");
+            }
+            else if (key == 'checkbox')
+            {
+                // console.log(item['checkbox'])
+                if (item['checkbox'])
+                {
+                    var cb = '<input type="checkbox" checked="true" class="check-one" item-id="' + item['id'] + '"/>';
+                    cl.push(cb);
+                }
+                else
+                {
+                    var cb = '<input type="checkbox" class="check-one" item-id="' + item['id'] + '"/>';
+                    cl.push(cb);
+                }
             }
             else
             {

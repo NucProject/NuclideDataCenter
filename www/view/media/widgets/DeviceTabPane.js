@@ -260,7 +260,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         if (currentStationId)
         {
             var api = "data/alerts/" + currentStationId + "/" + this._deviceType +'/' + level;
-            console.log(api);
+
             this._alertListView.setPage(page);
             this._alertListView.refresh(api, null, kx.bind(this, 'onAlertsDataReceived'));
         }
@@ -735,7 +735,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             {'key':'name', 'name':'报警字段名称'},
             {'key':'field', 'name':'报警字段', css:'field' },
             {'key':'value', 'name':'报警值', type: 'input', css:'list-input'},
-            {'key':'operator', 'name':'操作', type: 'button', bind: 'id'}
+            {'key':'operator', 'name':'操作', type: 'button', bind: 'id'},
+            {'key':'checkbox', 'name':'短信报警', type: 'checkbox', bind: 'id'}
         ]);
 
         for (var i in values)
@@ -748,14 +749,17 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
             if (d['config']['level'] == 2)
             {
+                console.log("1111", d);
                 var v1 = (!!d['value']['v1']) ? d['value']['v1'] : '未设置';
                 var v2 = (!!d['value']['v2']) ? d['value']['v2'] : '未设置';
-
+                var sm1 = (!!d['value']) ? d['value']['sm1'] : 0;
+                var sm2 = (!!d['value']) ? d['value']['sm2'] : 0;
                 var item1 = {
                     'field': i,
                     'name': d['config']['name'] + '(一级报警)',
                     'value': parseFloat(v1).toFixed(n),
-                    'operator': '修改'
+                    'operator': '修改',
+                    'checkbox': parseInt(sm1)
                 };
                 var entry = this._settingsListView.addEntry(item1);
                 entry.addClass('serious');
@@ -764,7 +768,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                     'field': i,
                     'name': d['config']['name'] + '(二级报警)',
                     'value': parseFloat(v2).toFixed(n),
-                    'operator': '修改'
+                    'operator': '修改',
+                    'checkbox':parseInt(sm2)
                 };
                 this._settingsListView.addEntry(item2);
 
@@ -772,11 +777,22 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             else
             {
                 var v2 = (!!d['value']['v2']) ? d['value']['v2'] : '未设置';
+                if (v2 != '未设置') {
+                    if (this.getValue) {
+                        v2 = this.getValue(v2);
+                    }
+                    else {
+                        v2 = parseFloat(v2).toFixed(n);
+                    }
+                }
+
+                var sm2 = (!!d['value']) ? d['value']['sm2'] : 0;
                 var item1 = {
                     'field': i,
                     'name': d['config']['name'] + '(二级报警)',
-                    'value': parseFloat(v2).toFixed(n),
-                    'operator': '修改'
+                    'value': v2,//
+                    'operator': '修改',
+                    'checkbox':parseInt(sm2)
                 };
                 this._settingsListView.addEntry(item1);
             }
@@ -798,6 +814,28 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                     alert('修改成功');
             });
         })
+
+        dataListViewDomNode.delegate('input[type=checkbox]', 'click', function(a){
+
+            var tr = $(a.target).parent().parent();
+            var fieldName = tr.find('td.field').text();
+            var level = tr.hasClass('serious') ? 1 : 2;
+            // console.log($(a.target).attr('checked') );
+            var sm = $(a.target).attr('checked')  ? 1:0;
+
+            this_.ajax('alert/setShortMsg/' + g.getCurrentStationId() + '/' + this_._deviceType, {
+                f: fieldName, sm: sm, l: level
+            }, function(data){
+                var d = eval('(' + data + ')');
+                console.log(d);
+                if (d['errorCode'] == 0)
+                    alert('修改成功');
+                else if (d['errorCode'] == 304)
+                {
+                    alert('请先设置报警阈值');
+                }
+            });
+        });
 
     },
 

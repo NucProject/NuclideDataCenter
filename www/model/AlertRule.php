@@ -8,6 +8,38 @@
 
 class AlertRule extends \Phalcon\Mvc\Model
 {
+    // 设置短信报警的数据库和Redis
+    // 并且情况Rule的Redis, 防止缓存过期的项目
+    public static function setAlertValueShortMsg($redis, $station, $device, $field, $sm, $level = 2)
+    {
+        $condition = "station=$station and device='$device' and field='$field'";
+        $alert = AlertRule::findFirst(array($condition));
+        if ($alert)
+        {
+            $key = Key::StationDeviceFieldRule . "[$station][$device]";
+            $redis->del($key);
+            if ($level == 1)
+            {
+                $alert->sm1 = $sm;
+                $redis->set("sm:$station:$device:$field:1", $sm);
+            }
+            else if ($level == 2)
+            {
+                $alert->sm2 = $sm;
+                $redis->set("sm:$station:$device:$field:2", $sm);
+            }
+
+
+            $alert->save();
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+
     public static function setAlertValue($redis, $station, $device, $field, $value, $level = 2)
     {
         $condition = "station=$station and device='$device' and field='$field'";

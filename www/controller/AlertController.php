@@ -31,6 +31,21 @@ class AlertController extends ApiController
         return parent::result(array('set' => true));
     }
 
+    public function setShortMsgAction($station, $device)
+    {
+        $field = $this->request->getPost("f");
+        $sm = $this->request->getPost("sm");
+        $level = $this->request->getPost("l");
+        if (AlertRule::setAlertValueShortMsg($this->redis, $station, $device, $field, $sm, $level)) {
+
+            return parent::result(array('set' => $sm));
+        }
+        else
+        {
+            return parent::error(304, 'No Entry');
+        }
+    }
+
     // TODO:
     public function configAction($device)
     {
@@ -187,10 +202,12 @@ class AlertController extends ApiController
                 if ($dataValue > $value->v1) {
                     $saved = self::addAlertData($station, $device, $data, $field, $dataValue, $value->v1, $value->v2, 1);
 
-                    self::trySendAlertShortMsg($station, $device, 'level1', $redis);
+                    self::trySendAlertShortMsg($station, $device, $field, 'level1', $redis);
                     array_push($ret, array($field => $saved));
                 } elseif ($dataValue > $value->v2) {
                     $saved = self::addAlertData($station, $device, $data, $field, $dataValue, $value->v1, $value->v2, 2);
+
+                    self::trySendAlertShortMsg($station, $device, $field, 'level2', $redis);
                     array_push($ret, array($field => $saved));
                 }
             }
@@ -198,6 +215,8 @@ class AlertController extends ApiController
                 if ($dataValue > $value->v2) {
 
                     $saved = self::addAlertData($station, $device, $data, $field, $dataValue, null, $value->v2, 2);
+
+                    self::trySendAlertShortMsg($station, $device, $field, 'level2', $redis);
                     array_push($ret, array($field => $saved));
                 }
             }
@@ -228,13 +247,15 @@ class AlertController extends ApiController
     /**
      * @param $station
      * @param $device
+     * @param $field
      * @param $type
      * @param $redis
      * @return bool     offline(离线) | level1(一级报警)
      */
-    static function trySendAlertShortMsg($station, $device, $type, $redis)
+    static function trySendAlertShortMsg($station, $device, $field, $type, $redis)
     {
-        if (self::canSendAlertShortMsg($station, $device, $type, $redis))
+        $field = strtoupper($field);
+        if (self::canSendAlertShortMsg($station, $device, $field, $type, $redis))
         {
             return self::sendAlertShortMsg($station, $device, $type, $redis);
         }
@@ -255,7 +276,7 @@ class AlertController extends ApiController
             if ($curTime - $time > 3600 * 4)
             {
                 // 超过1个小时没有数据了
-                if (self::canSendAlertShortMsg($station, $device, 'offline', $redis))
+                if (self::canSendAlertShortMsg($station, $device, '<NO-FIELD>', 'offline', $redis))
                 {
                     self::sendAlertShortMsg($station, $device, 'offline', $redis);
                 }
@@ -269,18 +290,35 @@ class AlertController extends ApiController
      * @param
      * @param
      * @param
+     * @param
      *
      * @return bool
      * Find this alert last time, if time past over the duration...
      */
-    static function canSendAlertShortMsg($station, $device, $type, $redis)
+    static function canSendAlertShortMsg($station, $device, $field, $type, $redis)
     {
         $duration = $redis->get("alarm:duration@$station");
         if (!$duration)
             $duration = 3600 * 4;
+        else
+            $duration = 3600 * $duration;
 
         $key = "$device:$type";
         $time = $redis->hGet("alarm@$station", $key);
+
+
+        if ($type == 'level1')
+        {
+            $sm = $redis->get("sm:$station:$device:$field:1");
+            if ($sm != 1)
+                return false;
+        }
+        else if ($type == 'level2')
+        {
+            $sm = $redis->get("sm:$station:$device:$field:2");
+            if ($sm != 1)
+                return false;
+        }
 
         if (time() - $time > $duration)
         {
@@ -357,11 +395,32 @@ class AlertController extends ApiController
                 $alarmText = '剂量率一级警报';
             }
         }
+        else if ($type == 'level2')
+        {
+            if ($device == 'hpic')
+            {
+                $alarmText = '剂量率二级警报';
+            }
+        }
         else
         {
             $alarmText = '已经离线';
         }
         return $stationName . $deviceName . $alarmText. "!";
+    }
+
+
+    public function getDurationAction($station)
+    {
+        $hour = $this->redis->get("alarm:duration@$station");
+        return parent::result(array('hour' => $hour));
+    }
+
+    public function setDurationAction($station)
+    {
+        $hour = $this->request->getPost('hour');
+        $this->redis->set("alarm:duration@$station", $hour);
+        return parent::result(array('hour' => $hour));
     }
 
     public function addPhoneAction()

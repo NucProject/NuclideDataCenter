@@ -25,9 +25,9 @@ $class("HpgeDevice", DeviceBase,
         this._dataListView2.setHeaders([
             {'key':'time', 'name':'时间'},
             {'key':'nuclide', 'name':'核素'},
-            {'key':'value', 'name':'活度'},
-            {'key':'flow', 'name':'总流量'},
-            {'key':'cvalue', 'name':'活度浓度'},
+            {'key':'value', 'name':'活度（Bq）'},
+            {'key':'flow', 'name':'总流量（m³）'},
+            {'key':'cvalue', 'name':'活度浓度（Bq/m³）'},
             ]);
 
         this.createSummaryList(domNode);
@@ -132,6 +132,7 @@ $class("HpgeDevice", DeviceBase,
     },
 
     num2e: function(num){
+        num = parseFloat(num);
         var p = Math.floor(Math.log(num)/Math.LN10);
         var n = num * Math.pow(10, -p);
         return n.toFixed(2) + 'e' + p;
@@ -140,6 +141,10 @@ $class("HpgeDevice", DeviceBase,
     onChangeSumPage: function (page) {
         // console.log(page);
         this.fillSummaryList(page, this._sumDict, this._sumListView);
+    },
+
+    getValue: function(n) {
+        return this.num2e(n)
     },
 
     onPageShow: function( tabItem ) {
@@ -171,12 +176,12 @@ $class("HpgeDevice", DeviceBase,
     },
 
     fillListDefault: function(page) {
-        // console.log(555)
         this.fillList(page);
     },
 
     onShow: function(params) {
-        //this.__super(DeviceBase.prototype.onShow, params);
+        this._onData2Page = true;
+        this.onPageShow();
 
         this._currentShownDevice = this._deviceType;
         console.log("On Show: " + this._currentShownDevice);
@@ -232,6 +237,7 @@ $class("HpgeDevice", DeviceBase,
     },
 
     onAlertsDataReceived: function(data) {
+        console.log(data)
         var results = eval("(" + data + ")")['results'];
         var items = results['items']
 
@@ -240,6 +246,7 @@ $class("HpgeDevice", DeviceBase,
         {
             var item = items[i];
             item.field = this.getNuclideName(item.field);
+            item.value = this.num2e(item.value);
         }
         this._alertListView.fillItems(items, this.AlertPageCount);
 

@@ -123,7 +123,7 @@ class DataController extends ApiController
 
     public function hpgeParseAction()
     {
-        self::doHpgeAlerts('./controller/samplereport24_2015_05_29T11_03_53.rpt', 128, '2015-03-26 10:10:10', $this->redis, 'AA11_20150523112100');
+        self::doHpgeAlerts('D:\\samplereport24_2015_05_31T11_04_00.rpt', 128, '2015-03-26 10:10:10', $this->redis, 'AA11_20150523112100');
     }
 
     private function hasFile($url)
@@ -133,7 +133,7 @@ class DataController extends ApiController
 
     public function recoverHpgeDataAction()
     {
-        $s = Hpge::find(array("time>='2015-05-01' and mode='RPT'"));
+        $s = Hpge::find(array("time>='2015-06-01' and mode='RPT'"));
         foreach ($s as $i)
         {
            // echo $i->sid, " ", $i->path, " ";
@@ -150,7 +150,9 @@ class DataController extends ApiController
                 $flow = self::getFlowBySid($sid);
                 if (!$flow)
                     $flow = 1.0;
-                self::doHpgeData($url, $station, $flow, $i->time);
+                // echo "($flow)<br>";
+                echo self::doHpgeData($url, $station, $flow, $i->time);
+                echo "<br>";
             }
             else
             {
@@ -186,32 +188,52 @@ class DataController extends ApiController
     {
         $a = @file_get_contents($url);
         if (!$a)
-            return;
+            return "No contents";
 
-        $a = explode("\n", $a);
+        $lines = explode("\n", $a);
+        $content = array();
+        foreach ($lines as $line)
+        {
+            array_push($content, $line);
+        }
+        unset($line);
         $start1 = false;
         $start2 = false;
-        foreach($a as $content) {
-            if (strpos($content, 'S U M M A R Y   O F   N U C L I D E S   I N   S A M P L E') > 0) {
+        $counter = 0;
+
+        foreach($content as $line) {
+            $counter++;
+            $line = trim($line);
+            if (strstr($line, 'S U M M A R Y   O F   N U C L I D E S   I N   S A M P L E') ) {
                 $start1 = true;
+
                 continue;
             }
 
             if ($start1) {
-                if (strpos($content, '___________________________________') > 0) {
+                //echo "F";
+                if (strstr($line, '__________') ) {
                     $start2 = true;
                     continue;
                 }
             }
 
             if ($start2) {
-                $line = trim($content);
-                if ($line == '') {
-                    break;
-                }
+                if ($line == '') continue;
+                echo 1;
+                if (strlen($line) < 5) continue;
+                echo 2;
+                if (strstr($line, 'sample') ) continue;
+                echo 3;
+                if (strstr($line, 'ORTEC') ) continue;
+                echo 4;
+                if (strstr($line, '- - - - - - - - - - - - - -') ) break;
+                echo 5;
 
                 $a = @split("[ ]+", $line);
 
+                if (strlen(trim($a[0])) == 0)
+                    continue;
                 if ($a[1] == '<')
                     continue;
 
@@ -227,10 +249,10 @@ class DataController extends ApiController
                 $data->flow = $flow;
                 $data->percent = 0.0;
                 $data->save();
-
             }
 
         }
+        return "C [$counter]";
     }
 
     private static function doHpgeAlerts($filePath, $station, $time, $redis, $sid)
@@ -243,28 +265,31 @@ class DataController extends ApiController
 
         $start1 = false;
         $start2 = false;
-        foreach($a as $line => $content)
+        foreach($a as $l => $content)
         {
-            if (strpos($content, 'S U M M A R Y   O F   N U C L I D E S   I N   S A M P L E') > 0)
+            if (strstr($content, 'S U M M A R Y   O F   N U C L I D E S   I N   S A M P L E') )
             {
-                $start1 = true; continue;
+                $start1 = true;
+                continue;
             }
 
             if ($start1)
             {
-                if (strpos($content, '___________________________________') > 0)
+                if (strstr($content, '___________________________________') )
                 {
-                    $start2 = true; continue;
+                    $start2 = true;
+                    continue;
                 }
             }
 
             if ($start2)
             {
                 $line = trim($content) ;
-                if ($line == '')
-                {
-                    break;
-                }
+                if ($line == '') continue;
+                if (strlen($line) < 5) continue;
+                if (strstr($line, 'sample') ) continue;
+                if (strstr($line, 'ORTEC') ) continue;
+                if (strstr($line, '- - - - - - - - - - - - - -') ) break;
 
                 $a = @split("[ ]+", $line);
 
@@ -1169,5 +1194,10 @@ ENGINE = MyISAM;
                 $this->redis->del($key);
             }
         }
+    }
+
+    public function delRedisMapAction($map, $key)
+    {
+        $this->redis->hDel($map, $key);
     }
 }
