@@ -749,7 +749,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
             if (d['config']['level'] == 2)
             {
-                console.log("1111", d);
                 var v1 = (!!d['value']['v1']) ? d['value']['v1'] : '未设置';
                 var v2 = (!!d['value']['v2']) ? d['value']['v2'] : '未设置';
                 var sm1 = (!!d['value']) ? d['value']['sm1'] : 0;
@@ -777,6 +776,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             else
             {
                 var v2 = (!!d['value']['v2']) ? d['value']['v2'] : '未设置';
+                console.log(v2);
                 if (v2 != '未设置') {
                     if (this.getValue) {
                         v2 = this.getValue(v2);
@@ -785,6 +785,8 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
                         v2 = parseFloat(v2).toFixed(n);
                     }
                 }
+                console.log(v2);
+
 
                 var sm2 = (!!d['value']) ? d['value']['sm2'] : 0;
                 var item1 = {

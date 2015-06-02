@@ -132,9 +132,14 @@ $class("HpgeDevice", DeviceBase,
     },
 
     num2e: function(num){
+
         num = parseFloat(num);
         var p = Math.floor(Math.log(num)/Math.LN10);
         var n = num * Math.pow(10, -p);
+        if (isNaN(n))
+        {
+            return num;
+        }
         return n.toFixed(2) + 'e' + p;
     },
 
@@ -157,7 +162,7 @@ $class("HpgeDevice", DeviceBase,
                 end: g.getEndTime('yyyy-MM-dd')
             };
             this.ajax('data/fetchHpgeData2/' + g.getCurrentStationId(), payload, function(data){
-                console.log(data)
+                // console.log(data)
                 var r = eval("(" + data + ")");
                 var items = r['results']['items'];
                 this_.updateData2List(items);
