@@ -3,9 +3,9 @@
 class ShortMsg
 {
     // For test only
-    const Username = 'bjyyhd-1';
+    const Username = 'bjzjwk-1';
 
-    const Password = 'c9bf87';
+    const Password = '5e0737';
 
     private static function query($target, $message)
     {

@@ -729,6 +729,39 @@ PHQL;
         return parent::result(array("items" => $items, 'count' => count($items)));
     }
 
+    public function downloadHpgeData2Action($station)
+    {
+        if ($this->request->isPost())
+        {
+            $payload = $this->request->getPost();
+            $start = $payload['start'];
+            $end = $payload['end'];
+        }
+
+        $condition = "station=$station";
+        $condition .= " and time >= '$start' and time < '$end'";
+
+        $fileName = "hpge_{$start}_{$end}.csv";
+        Header("Content-type: application/octet-stream;charset=UTF-8");
+        Header("Accept-Ranges: bytes");
+        Header("Accept-Length:-1");
+        Header("Content-Disposition: attachment; filename=" . $fileName);
+        echo pack('H*','EFBBBF');   // 写入 BOM header for UTF8 files.
+
+        echo "时间,核素,活度,总流量,活度浓度\r\n";
+        $data = HpgeData::find(array($condition, 'order' => 'time desc'));
+
+        foreach ($data as $i)
+        {
+            $nuclideName = ucfirst( strtolower($i->nuclide) );
+            $result1 = sprintf("%e", $i->value);
+            $result2 = sprintf("%e", $i->cvalue);
+            echo "{$i->time},{$nuclideName},{$result1},{$i->flow},{$result2}\r\n";
+        }
+
+        // return parent::result(array("items" => $items, 'count' => count($items)));
+    }
+
     // ZM: 界面取最新时间，看设备是否还在上传（设备运行，停止的依据）
     public function latestAction($station, $device)
     {

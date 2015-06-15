@@ -30,6 +30,22 @@ $class("HpgeDevice", DeviceBase,
             {'key':'cvalue', 'name':'活度浓度（Bq/m³）'},
             ]);
 
+        domNode.delegate('a.export', 'click', function(){
+            console.log(1);
+            var currentStationId = g.getCurrentStationId();
+            if (currentStationId)
+            {
+                var api = "data/downloadHpgeData2/" + currentStationId + "/" + this._deviceType;
+
+                var payload = {
+                    start: g.getBeginTime('yyyy-MM-dd'),
+                    end: g.getEndTime('yyyy-MM-dd')
+                };
+
+                $.download(api, payload, 'POST');
+            }
+        })
+
         this.createSummaryList(domNode);
 
     },
@@ -155,7 +171,7 @@ $class("HpgeDevice", DeviceBase,
     onPageShow: function( tabItem ) {
         var this_ = this;
         if (this._onData2Page || tabItem.hasClass('data2')) {
-            console.log(334)
+
             this._onData2Page = true;
             var payload = {
                 start: g.getBeginTime('yyyy-MM-dd'),
