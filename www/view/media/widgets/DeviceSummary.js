@@ -187,8 +187,8 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
 DeviceSummaryBase.showDevice = function(deviceType, params)
 {
-    var dt =  ["hpic", "weather", "labr", "environment", "hpge", "cinderella", "labrfilter"];
-
+    // var dt =  ["hpic", "weather", "labr", "environment", "hpge", "cinderella", "labrfilter"];
+    var dt = [ "environment", "hpge", "cinderella" ];
     console.log(deviceType);
     for (var i in dt)
     {

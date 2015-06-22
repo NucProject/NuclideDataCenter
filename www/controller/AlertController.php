@@ -371,7 +371,7 @@ class AlertController extends ApiController
         $stationName = '';
         if ($station == 128)
         {
-            $stationName = '北京辐射环境监测站';
+            $stationName = '辐射环境监测站';
         }
 
         $deviceName = '';
