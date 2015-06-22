@@ -143,13 +143,21 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
             var date = this.selectDate.clone();
             var start = date.toString('yyyy-MM-dd');
             var end = date.addHours(24).toString('yyyy-MM-dd');
-
+            console.log(start, end);
             this.ajax(
                 'data/check/' + g.getCurrentStationId() + '/' + this._deviceType,
                 {'start':start, 'end':end, 'expect':2880, 'set': 0}, function(data) {
+                    console.log(data);
                     var d = eval("(" + data + ")");
                     console.log(d);
-                    this_.setHistoryCommand(start, end, d['results']['times']);
+                    if (d.results.times.length > 0)
+                    {
+                        this_.setHistoryCommand(start, end, d['results']['times']);
+                    }
+                    else
+                    {
+                        alert('不需要补齐数据');
+                    }
                 });
         },
 

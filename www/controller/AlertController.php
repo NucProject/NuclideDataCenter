@@ -303,9 +303,14 @@ class AlertController extends ApiController
         else
             $duration = 3600 * $duration;
 
+
         $key = "$device:$type";
         $time = $redis->hGet("alarm@$station", $key);
 
+        if ($key === 'environment:offline')  // TODO: 临时加的
+        {
+            return false;
+        }
 
         if ($type == 'level1')
         {

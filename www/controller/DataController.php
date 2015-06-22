@@ -767,7 +767,7 @@ PHQL;
     {
         $status = Cache::getLatest($this->redis, $station, $device);
         if ($status === false) {
-            $status= 0;
+            $status = 0;
         }
         return parent::result(array('station' => $station, 'device' => $device, 'status' => $status));
     }
@@ -877,7 +877,7 @@ PHQL;
         $set = $payload['set'];
 
         $data = $device::find(array("station=$station and time >= '$start' and time < '$end'"));
-        if (count($data) < $expect)
+        if (count($data) != $expect)
         {
             $array = array();
             foreach ($data as $item)
@@ -907,7 +907,10 @@ PHQL;
 
             return parent::result(array('times' => array_values(array_diff($array2, $array)), 'count' => count($array)));
         }
-
+        else
+        {
+            return parent::result(array('times' => array(), 'count' => count($data)));
+        }
     }
 
     //test in browser

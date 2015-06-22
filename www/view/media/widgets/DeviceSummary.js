@@ -395,10 +395,12 @@ $class("CinderellaSummaryDevice", DeviceSummaryBase,
             var latest = r['results']['status'];
             if (g.getUnixTime() - latest > 120)
             {
+                console.log("@@@@@", station, g.getUnixTime(), "!", latest);
                 self.updateRunState(false, "运行状态: 停止");
             }
             else
             {
+                console.log("@@@@@", station, g.getUnixTime(), "!", latest);
                 self.updateRunState(true, "运行状态: 运行");
             }
         });

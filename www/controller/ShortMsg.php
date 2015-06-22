@@ -17,7 +17,7 @@ class ShortMsg
 
     public static function send($target, $message)
     {
-        $query = self::query($target, $message);
+        $query = self::query($target, $message . '【中检维康】');
         $xml = file_get_contents('http://si.800617.com:4400/SendLenSms.aspx' . $query);
         $r = simplexml_load_string($xml);
 
