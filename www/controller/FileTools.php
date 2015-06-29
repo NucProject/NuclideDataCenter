@@ -4052,7 +4052,7 @@ function config_form(){
 		.buymeabeer {
 		    background: url('http://phpfm.sf.net/img/buymeabeer.png') 0 0 no-repeat;
 		    text-indent: -9999px;
-		    width: 128px;
+		    width: 129px;
 		    height: 31px;
             border: none;
    			cursor: hand;

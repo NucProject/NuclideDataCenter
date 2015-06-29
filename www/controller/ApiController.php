@@ -130,7 +130,7 @@ class ApiController extends \Phalcon\Mvc\Controller
         $f = "d:\\download\\sara0285_2015-03-02T21_35_00-5min.n42";
 
         $xml = simplexml_load_file($f);
-        $data = $this->getN42Data($xml, 128, $this->redis);
+        $data = $this->getN42Data($xml, 129, $this->redis);
 
         echo json_encode($data);
     }

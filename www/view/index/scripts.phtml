@@ -130,7 +130,7 @@
                     else
                     {
                         $('body').css('display', '');
-                        g.showRow("#station-128-row");
+                        g.showRow("#station-129-row");
                     }
                 }
             }
@@ -156,16 +156,16 @@
 
         g = new Global();
         g.init();
-        g.setCurrentStationId(128);
+        g.setCurrentStationId(129);
 
         activeWeb();
-        //g.addRow("#network-row");
-        g.addRow("#station-128-row");
+        g.addRow("#network-row");
+        g.addRow("#station-129-row");
         g.addRow("#devices-row");
         g.addRow("#admin-row");
         g.addRow("#admin-sm-row");
 
-        // g.showRow("#station-128-row");
+        g.showRow("#station-129-row");
 
 
         jQuery.download = function(url, data, method){

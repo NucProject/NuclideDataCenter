@@ -25,7 +25,7 @@ $class("BaiduMap", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
         var this_ = this;
         this.addStation(map, gpsPoint1, "超大流量大气辐射环境自动监测站", function(){
-            this_.showStationRow(128);
+            this_.showStationRow(129);
         });
 
         map.centerAndZoom(gpsCenter, 11);

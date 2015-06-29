@@ -232,7 +232,7 @@ DeviceSummaryBase.showDevice = function(deviceType, params)
 $class("HpicSummaryDevice", DeviceSummaryBase,
 {
     __constructor: function() {
-        this._stationId = 128;
+        this._stationId = 129;
     },
 
     onAttach: function(domNode) {
@@ -271,7 +271,7 @@ $class("HpicSummaryDevice", DeviceSummaryBase,
 $class("WeatherSummaryDevice", DeviceSummaryBase,
 {
     __constructor: function() {
-        this._stationId = 128;
+        this._stationId = 129;
     },
 
     onAttach: function(domNode) {
@@ -296,7 +296,7 @@ $class("WeatherSummaryDevice", DeviceSummaryBase,
 $class("HpgeSummaryDevice", DeviceSummaryBase,
 {
     __constructor: function() {
-        this._stationId = 128;
+        this._stationId = 129;
     },
 
     onAttach: function(domNode) {
@@ -341,7 +341,7 @@ $class("HpgeSummaryDevice", DeviceSummaryBase,
 $class("LabrSummaryDevice", DeviceSummaryBase,
 {
     __constructor: function() {
-        this._stationId = 128;
+        this._stationId = 129;
     },
 
     onAttach: function(domNode) {
@@ -374,7 +374,7 @@ $class("LabrSummaryDevice", DeviceSummaryBase,
 $class("CinderellaSummaryDevice", DeviceSummaryBase,
 {
     __constructor: function() {
-        this._stationId = 128;
+        this._stationId = 129;
     },
 
     onAttach: function(domNode) {
@@ -656,7 +656,7 @@ $class("CinderellaSummaryDevice", DeviceSummaryBase,
 $class("EnvSummaryDevice", DeviceSummaryBase,
 {
     __constructor: function() {
-        this._stationId = 128;
+        this._stationId = 129;
     },
 
     onAttach: function(domNode) {
@@ -669,7 +669,7 @@ $class("EnvSummaryDevice", DeviceSummaryBase,
 $class("LabrFilterSummaryDevice", DeviceSummaryBase,
     {
         __constructor: function() {
-            this._stationId = 128;
+            this._stationId = 129;
         },
 
         onAttach: function(domNode) {

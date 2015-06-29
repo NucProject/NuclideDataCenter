@@ -123,7 +123,7 @@ class DataController extends ApiController
 
     public function hpgeParseAction()
     {
-        self::doHpgeAlerts('D:\\samplereport24_2015_05_31T11_04_00.rpt', 128, '2015-03-26 10:10:10', $this->redis, 'AA11_20150523112100');
+        self::doHpgeAlerts('D:\\samplereport24_2015_05_31T11_04_00.rpt', 129, '2015-03-26 10:10:10', $this->redis, 'AA11_20150523112100');
     }
 
     private function hasFile($url)
@@ -1176,7 +1176,7 @@ ENGINE = MyISAM;
 
     public function simLabrFileAction()
     {
-        File::recordN42File(128, "D:\\Projects\\NuclideDataCenter\\www\\view\\file\\128\\labr\\2015-03\\28\\sara0285_2015-03-28T22_10_00-5min.n42",
+        File::recordN42File(129, "D:\\Projects\\NuclideDataCenter\\www\\view\\file\\129\\labr\\2015-03\\28\\sara0285_2015-03-28T22_10_00-5min.n42",
             '2015-03', '28', 'sara0285_2015-03-28T22_10_00-5min.n42', $this->redis);
     }
 

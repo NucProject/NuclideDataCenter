@@ -369,7 +369,7 @@ class AlertController extends ApiController
     static function getAlertShortMsgText($station, $device, $type)
     {
         $stationName = '';
-        if ($station == 128)
+        if ($station == 129)
         {
             $stationName = '辐射环境监测站';
         }
