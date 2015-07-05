@@ -352,8 +352,15 @@ class DataController extends ApiController
             $start = $payload['start'];
             $end = $payload['end'];
             $interval = array_key_exists('interval', $payload) ?$payload['interval'] : null;
-            $page = $payload['page'];
-            $PageCount = $payload['PageCount'];
+            if ( array_key_exists('page', $payload) )
+            {
+                $page = $payload['page'];
+            }
+
+            if ( array_key_exists('PageCount', $payload) )
+            {
+                $PageCount = $payload['PageCount'];
+            }
         }
         else
         {
