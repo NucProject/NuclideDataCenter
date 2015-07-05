@@ -862,12 +862,62 @@ PHQL;
 
     }
 
+    private function checkLabr($station)
+    {
+        $payload = $this->request->getPost();
+        $start = $payload['start'];
+        $end = $payload['end'];
+        $expect = 288;
+        $set = $payload['set'];
+
+        $data = Labr::find(array("station=$station and time >= '$start' and time < '$end'"));
+        if (count($data) != $expect)
+        {
+            $array = array();
+            foreach ($data as $item)
+            {
+                $key = parent::parseTime2($item->time);
+                array_push($array, (int)$key);
+            }
+
+            $b = parent::parseTime2($start);
+            $e = parent::parseTime2($end);
+            $array2 = array();
+            for ($i = $b; $i < $e; $i += 300)
+            {
+                array_push($array2, (int)$i);
+            }
+
+            if ($set)
+            {
+                $times = array_values(array_diff($array2, $array));
+                $content = array(
+                    'start' => $start,
+                    'end' => $end,
+                    'times' => implode(',', $times));
+                CommandController::addCommand($this->redis, $station, 'history', 'labr', $content);
+                return parent::result(array('count' => count($array), 'c' => count($array2)));
+            }
+
+            return parent::result(array('times' => array_values(array_diff($array2, $array)), 'count' => count($array)));
+        }
+        else
+        {
+            return parent::result(array('times' => array(), 'count' => count($data)));
+        }
+    }
+
     //check lose history data
     public function checkAction($station, $device)
     {
         if (!$this->request->isPost())
         {
             return parent::error(Error::BadHttpMethod, '');
+        }
+
+        if ($device == 'labr')
+        {
+            return $this->checkLabr($station);
         }
 
         $payload = $this->request->getPost();

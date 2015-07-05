@@ -10,6 +10,11 @@ class Config
 {
     public static $mysqlHost;
 
+    public static $s = array(
+        128 => '北京辐射环境监测站',
+        129 => '江苏辐射环境监测站'
+    );
+
     public static $m = array(
 
         'hpic' => array(
