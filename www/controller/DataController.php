@@ -346,6 +346,8 @@ class DataController extends ApiController
     // Fetch data by { device, start, end, station }
     public function fetchAction($station, $device)
     {
+        $page = false;
+        $PageCount = false;
         if ($this->request->isPost())
         {
             $payload = $this->request->getPost();
