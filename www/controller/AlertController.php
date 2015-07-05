@@ -368,11 +368,7 @@ class AlertController extends ApiController
 
     static function getAlertShortMsgText($station, $device, $type)
     {
-        $stationName = '';
-        if ($station == 128)
-        {
-            $stationName = '北京辐射环境监测站';
-        }
+        $stationName = Config::$s[$station];
 
         $deviceName = '';
         if ($device == 'hpic')
