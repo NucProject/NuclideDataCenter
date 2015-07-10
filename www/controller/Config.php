@@ -15,6 +15,11 @@ class Config
         129 => '江苏辐射环境监测站'
     );
 
+    public static $soffline = array(
+        128 => array('hpic', 'hpge', 'labr', 'weather', 'cinderelladata', 'environment'),
+        129 => array('hpge', 'cinderelladata', 'environment')
+    );
+
     public static $m = array(
 
         'hpic' => array(
