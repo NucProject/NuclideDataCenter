@@ -862,7 +862,7 @@ PHQL;
 
     }
 
-    private function checkLabr($station)
+    private function checkLabr($station, $device)
     {
         $payload = $this->request->getPost();
         $start = $payload['start'];
@@ -870,7 +870,7 @@ PHQL;
         $expect = 288;
         $set = $payload['set'];
 
-        $data = Labr::find(array("station=$station and time >= '$start' and time < '$end'"));
+        $data = $device::find(array("station=$station and time >= '$start' and time < '$end'"));
         if (count($data) != $expect)
         {
             $array = array();
@@ -895,7 +895,7 @@ PHQL;
                     'start' => $start,
                     'end' => $end,
                     'times' => implode(',', $times));
-                CommandController::addCommand($this->redis, $station, 'history', 'labr', $content);
+                CommandController::addCommand($this->redis, $station, 'history', $device, $content);
                 return parent::result(array('count' => count($array), 'c' => count($array2)));
             }
 
