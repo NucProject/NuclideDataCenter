@@ -915,7 +915,7 @@ PHQL;
             return parent::error(Error::BadHttpMethod, '');
         }
 
-        if ($device == 'labr')
+        if ($device == 'labr' || $device == 'labrfilter')
         {
             return $this->checkLabr($station);
         }
