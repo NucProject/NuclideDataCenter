@@ -917,7 +917,7 @@ PHQL;
 
         if ($device == 'labr' || $device == 'labrfilter')
         {
-            return $this->checkLabr($station);
+            return $this->checkLabr($station, $device);
         }
 
         $payload = $this->request->getPost();
