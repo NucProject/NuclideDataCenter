@@ -295,8 +295,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             payload['page'] = page;
             payload['PageCount'] = this.PageCount;
 
-            if (this.defaultInterval)
-                payload['interval'] = this.defaultInterval;
         } else {
             var interval = 300;
             var diff = (endTime.getTime() - beginTime.getTime()) / 3600000 / 24;
@@ -389,7 +387,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         if (this._onChartsPage)
         {
             this._chartsItems = items;
-            console.log('this.updateCharts() + ', items.length);
+            // console.log('this.updateCharts() + ', items.length);
             this.updateCharts();
         }
         else
@@ -462,6 +460,9 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         }
         if (!this._onChartsPage)
         {
+            if (this.defaultInterval)
+                payload['interval'] = this.defaultInterval;
+            
             this.fetchData(payload, 1);
         }
         else
