@@ -157,7 +157,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         if (!domNode.hasClass('interval'))
             return false;
         var this_ = this;
-        domNode.delegate('a', 'click', function(){
+        domNode.delegate('a.interval', 'click', function(){
             var sender = $(this);
             // sender.siblings().removeClass('red');
             // sender.addClass('red');
