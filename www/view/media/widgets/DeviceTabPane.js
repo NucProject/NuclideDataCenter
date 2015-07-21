@@ -294,6 +294,9 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         if (page) {
             payload['page'] = page;
             payload['PageCount'] = this.PageCount;
+
+            if (this.defaultInterval)
+                payload['interval'] = this.defaultInterval;
         } else {
             var interval = 300;
             var diff = (endTime.getTime() - beginTime.getTime()) / 3600000 / 24;
