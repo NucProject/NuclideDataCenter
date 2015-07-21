@@ -462,7 +462,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         {
             if (this.defaultInterval)
                 payload['interval'] = this.defaultInterval;
-            
+
             this.fetchData(payload, 1);
         }
         else

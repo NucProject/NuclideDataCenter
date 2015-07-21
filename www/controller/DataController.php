@@ -398,6 +398,13 @@ class DataController extends ApiController
                 return parent::result(array("items" => $items, 'interval' => $interval, 'count' => $count ));
 
             }
+            else if ($device == 'labrfilter' && $interval != 300)
+            {
+                $items = $this->fetchLabrFilterData($station, $start, $end, $interval);
+                $count = count($items);
+                $items = self::getPagedData($items, $page, $PageCount);
+                return parent::result(array("items" => $items, 'interval' => $interval, 'count' => $count ));
+            }
 
             // HpGe and Labr don't follow this rule.
         }
@@ -477,6 +484,11 @@ class DataController extends ApiController
         {
             $headers = '时间, 剂量率, 高压, 温度';
             $items = $this->fetchLabrData($station, $start, $end, $interval);
+        }
+        else if ($device == 'labrfilter')
+        {
+            $headers = '时间, 剂量率, 温度, 高压, 本底相似度, cps';
+            $items = $this->fetchLabrFilterData($station, $start, $end, $interval);
         }
 
 
@@ -628,6 +640,36 @@ round(avg(d.temperature), 1) as temperature,
 d.time,
 FROM_UNIXTIME(FLOOR((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
 from labr as d
+where d.station=$station and d.time>'$start' and d.time<'$end' group by time2 order by time2 DESC
+PHQL;
+
+        $data = $this->modelsManager->executeQuery($phql);
+        $items = array();
+        foreach ($data as $i)
+        {
+            $time = self::adjustTime($i->time2, $interval);
+            array_push($items, array(
+                'time' => $time,
+                'doserate' => $i->doserate,
+                'highvoltage' => $i->highvoltage,
+                'temperature' => $i->temperature));
+        }
+        return $items;
+    }
+
+    private function fetchLabrFilterData($station, $start, $end, $interval)
+    {
+        $phql = <<<PHQL
+select
+FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2,
+round(avg(d.doserate * 1000), 1) as doserate,
+round(avg(d.highvoltage), 1) as highvoltage,
+round(avg(d.temperature), 1) as temperature,
+round(avg(d.bgsimilarity), 1) as bgsimilarity,
+round(avg(d.cps), 1) as cps,
+d.time,
+FROM_UNIXTIME(FLOOR((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2
+from labrfilter as d
 where d.station=$station and d.time>'$start' and d.time<'$end' group by time2 order by time2 DESC
 PHQL;
 
