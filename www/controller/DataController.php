@@ -682,7 +682,9 @@ PHQL;
                 'time' => $time,
                 'doserate' => $i->doserate,
                 'highvoltage' => $i->highvoltage,
-                'temperature' => $i->temperature));
+                'temperature' => $i->temperature,
+                'bgsimilarity' => $i->bgsimilarity,
+                'cps' => $i->cps));
         }
         return $items;
     }
