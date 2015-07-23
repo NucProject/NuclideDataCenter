@@ -364,8 +364,14 @@ class DataController extends ApiController
             $PageCount = $this->request->getQuery('PageCount');
         }
 
-        $interval = isset($interval) ? $interval : 30;
-
+        if ($device == 'labr' || $device == 'labrfilter')
+        {
+            $interval = isset($interval) ? $interval : 300;
+        }
+        else
+        {
+            $interval = isset($interval) ? $interval : 30;
+        }
         // ZM: BigData: 当interval不是30的时候的一种补充, 走最新的SQL（区分设备）
         if (true)
         {
