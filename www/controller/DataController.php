@@ -662,7 +662,7 @@ PHQL;
         $phql = <<<PHQL
 select
 FROM_UNIXTIME(CEILING((UNIX_TIMESTAMP(d.time) + 8 * 3600) / $interval) * $interval - 8 * 3600)  as time2,
-round(avg(d.doserate * 1000), 1) as doserate,
+round(avg(d.doserate), 1) as doserate,
 round(avg(d.highvoltage), 1) as highvoltage,
 round(avg(d.temperature), 1) as temperature,
 round(avg(d.bgsimilarity), 1) as bgsimilarity,
