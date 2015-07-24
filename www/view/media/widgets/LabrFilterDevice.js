@@ -126,7 +126,7 @@ $class("LabrFilterDevice", DeviceBase,
 
         decorateList: function ()
         {
-            var t = '<a class="btn blue show" style="word-break: keep-all;white-space: nowrap">显示能谱</a>';
+            var t = '<a class="btn blue mini show" style="word-break: keep-all;white-space: nowrap">显示</a>';
             this._dataListView.addColumnData('td:last', t);
         },
 
