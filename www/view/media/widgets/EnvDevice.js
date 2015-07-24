@@ -29,12 +29,16 @@ $class("EnvironmentDevice", DeviceBase,
     // 简单说，有些设备默认显示30秒的数据，有些则是5分钟的。
     // 但是基类的代码当然不知道派生类具体调用哪种，那么多态到派生类的fillListDefault即可。
     // 然后拍摄类fillListDefault的实现再决定是调用30秒的，而不是其他的。
-    
+
     fillListDefault: function(page) {
         page = page || 1;
         this.fetchDataByInterval(30, page);
     },
 
+    fixData: function(value) {
+        value.IfMainPowerOff = value.IfMainPowerOff ? "主电源" : "备用电源";
+        return value;
+    },
 
     fetchAlerts: function(level, page) {
         var currentStationId = g.getCurrentStationId();
