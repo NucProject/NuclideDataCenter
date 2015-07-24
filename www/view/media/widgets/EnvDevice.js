@@ -37,9 +37,9 @@ $class("EnvironmentDevice", DeviceBase,
 
     fixData: function(value) {
         value.IfMainPowerOff = value.IfMainPowerOff ? "主电源" : "备用电源";
-        value.IfSmoke = value.IfSmoke ? "异常" : "正常";
-        value.IfDoorOpen = value.IfDoorOpen ? "打开" : "关闭";
-        value.IfWater = value.IfWater ? "异常" : "正常";
+        value.IfSmoke = !value.IfSmoke ? "异常" : "正常";
+        value.IfDoorOpen = !value.IfDoorOpen ? "打开" : "关闭";
+        value.IfWater = !value.IfWater ? "异常" : "正常";
         return value;
     },
 
