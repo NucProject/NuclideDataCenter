@@ -17,10 +17,11 @@ $class("EnvironmentDevice", DeviceBase,
             {'key':'time', 'name':'时间'},
             {'key':'Temperature', 'name':'温度(℃)'},
             {'key':'Humidity', 'name':'湿度(%rh)'},
-            {'key':'BatteryHours', 'name':'电池时间'},
+            // {'key':'BatteryHours', 'name':'电池时间'},
             {'key':'IfMainPowerOff', 'name':"电源"},
             {'key':'IfSmoke', 'name':'烟感'},
-            {'key':'IfDoorOpen', 'name':'门禁'}]);
+            {'key':'IfDoorOpen', 'name':'门禁'},
+            {'key':'IfWater', 'name':'浸水'}]);
 
     },
 
@@ -28,10 +29,11 @@ $class("EnvironmentDevice", DeviceBase,
     // 简单说，有些设备默认显示30秒的数据，有些则是5分钟的。
     // 但是基类的代码当然不知道派生类具体调用哪种，那么多态到派生类的fillListDefault即可。
     // 然后拍摄类fillListDefault的实现再决定是调用30秒的，而不是其他的。
-    /*
+    
     fillListDefault: function(page) {
+        page = page || 1;
         this.fetchDataByInterval(30, page);
-    },*/
+    },
 
 
     fetchAlerts: function(level, page) {
