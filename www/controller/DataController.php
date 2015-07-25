@@ -1336,4 +1336,30 @@ ENGINE = MyISAM;
     {
         $this->redis->hDel($map, $key);
     }
+
+    /* set get ~~~ */
+    public function setValAction($k, $v = false)
+    {
+        if (!$v)
+        {
+            return parent::error(405, 'No value param');
+        }
+
+        if ($k[0] != '@')
+        {
+            return parent::error(405, 'Key should begin with @');
+        }
+        $val = $this->redis->set($k, $v);
+        return parent::result(array('set' => 'success', 'value' => $val));
+    }
+
+    public function getValAction($k)
+    {
+        $val = $this->redis->get($k);
+        if (!$val)
+        {
+            return parent::error(404, 'No this value');
+        }
+        return parent::result(array( 'value' => $val));
+    }
 }
