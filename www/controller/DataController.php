@@ -123,7 +123,7 @@ class DataController extends ApiController
 
     public function hpgeParseAction()
     {
-        self::doHpgeAlerts('D:\\samplereport24_2015_05_31T11_04_00.rpt', 129, '2015-03-26 10:10:10', $this->redis, 'AA11_20150523112100');
+        self::doHpgeAlerts('D:\\samplereport24_2015_11_17T11_11_13.rpt', 129, '2015-11-17 10:10:10', $this->redis, 'RN55_20151116103100');
     }
 
     private function hasFile($url)
@@ -167,16 +167,15 @@ class DataController extends ApiController
         $p = explode('_', $sid);
         if (count($p) != 2)
             return -1;
+        
         $d = substr($p[1], 0, 8);
         $twoDaysAgo = date('Ymd', ApiController::parseTime2($d) - 3600 * 48);
-
-        $conn = mysql_connect('127.0.0.1', 'root', 'root');
-        mysql_select_db('ndcdb', $conn);
-        $r = mysql_query("select * from cinderella_sum where sid like '%_$twoDaysAgo%' limit 1", $conn);
-        $row = mysql_fetch_row($r);
-        mysql_close($conn);
-        // print_r($row);
-        return $row[7];
+        $conn = mysqli_connect('127.0.0.1', 'root', 'root');
+        mysqli_select_db($conn, 'ndcdb');
+        $r = mysqli_query($conn, "select * from cinderella_sum where sid like '%_$twoDaysAgo%' limit 1");
+        $row = mysqli_fetch_array($r, MYSQLI_ASSOC);
+        mysqli_close($conn);
+        return $row['flow'];
 
     }
     public function parseSidAction($sid)
