@@ -170,15 +170,16 @@ class DataController extends ApiController
         $d = substr($p[1], 0, 8);
         $twoDaysAgo = date('Ymd', ApiController::parseTime2($d) - 3600 * 48);
 
-        $conn = mysql_connect('127.0.0.1', 'root', 'root');
-        mysql_select_db('ndcdb', $conn);
-        $r = mysql_query("select * from cinderella_sum where sid like '%_$twoDaysAgo%' limit 1", $conn);
-        $row = mysql_fetch_row($r);
-        mysql_close($conn);
+        $conn = mysqli_connect('127.0.0.1', 'root', 'root');
+        mysqli_select_db($conn, 'ndcdb');
+        $r = mysqli_query($conn, "select * from cinderella_sum where sid like '%_$twoDaysAgo%' limit 1");
+        $row = mysqli_fetch_array($r, MYSQLI_ASSOC);
+        mysqli_close($conn);
         // print_r($row);
         return $row[7];
 
     }
+
     public function parseSidAction($sid)
     {
         echo self::getFlowBySid($sid);
