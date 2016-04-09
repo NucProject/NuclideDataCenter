@@ -16,7 +16,6 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         // TODO: 1 is the user id.
         this.ajax("main/stations/1", null, function(data) {
 
-
             var ul = domNode.find('ul.stations');
             var res = eval("(" + data + ")");
             var stations = res['results']['items'];
@@ -69,9 +68,9 @@ $class("Sidebar", [kx.Widget, kx.ActionMixin, kx.EventMixin],
         $('#admin-sm-row').hide();
 
         // TODO: different device for each station!
-        if (currentStationId == 128)
+        if (currentStationId == 129)
         {
-            $('#station-128-row').show();
+            $('#station-129-row').show();
         }
 
 

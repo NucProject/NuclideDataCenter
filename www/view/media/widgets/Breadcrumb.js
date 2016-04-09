@@ -54,6 +54,7 @@ $class("Breadcrumb", [kx.Widget, kx.EventMixin],
         }
         else if (type == "station")
         {
+            // console.log(stationId);
             g.showRow("#station-" + stationId + "-row");
         }
         else if (type == "device")

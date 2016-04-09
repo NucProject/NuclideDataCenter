@@ -187,7 +187,7 @@ $class("DeviceSummaryBase", [kx.Widget, kx.ActionMixin, kx.EventMixin],
 
 DeviceSummaryBase.showDevice = function(deviceType, params)
 {
-    var dt =  ["hpic", "weather", "labr", "environment", "hpge", "cinderella", "labrfilter"];
+    var dt =  ["hpic", "bai9850", "environment", "hpge", "cinderella"];
 
     console.log(deviceType);
     for (var i in dt)
@@ -667,20 +667,20 @@ $class("EnvSummaryDevice", DeviceSummaryBase,
 });
 
 $class("LabrFilterSummaryDevice", DeviceSummaryBase,
+{
+    __constructor: function() {
+        this._stationId = 128;
+    },
+
+    onAttach: function(domNode) {
+        this._deviceType = "labrfilter";
+        this.onAttached(domNode);
+    },
+
+    onSettingPaneShow: function(fieldConfig)
     {
-        __constructor: function() {
-            this._stationId = 128;
-        },
+        console.log(fieldConfig);
 
-        onAttach: function(domNode) {
-            this._deviceType = "labrfilter";
-            this.onAttached(domNode);
-        },
+    }
 
-        onSettingPaneShow: function(fieldConfig)
-        {
-            console.log(fieldConfig);
-
-        }
-
-    });
+});
