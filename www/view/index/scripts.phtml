@@ -130,7 +130,7 @@
                     else
                     {
                         $('body').css('display', '');
-                        g.showRow("#station-128-row");
+                        g.showRow("#station-129-row");
                     }
                 }
             }
@@ -143,7 +143,7 @@
                 data: {},
 
                 success: function(data){
-                    var d = eval("(" + data + ")")
+                    var d = eval("(" + data + ")");
                     if(d.errorCode == 0){
                         location.href = "/main/lock";
                     }
@@ -152,20 +152,17 @@
             });
         });
 
-
-
         g = new Global();
         g.init();
         g.setCurrentStationId(129);
 
         activeWeb();
-        //g.addRow("#network-row");
+
         g.addRow("#station-129-row");
         g.addRow("#devices-row");
         g.addRow("#admin-row");
         g.addRow("#admin-sm-row");
 
-        // g.showRow("#station-128-row");
 
 
         jQuery.download = function(url, data, method){

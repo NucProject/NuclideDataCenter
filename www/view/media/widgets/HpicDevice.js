@@ -14,7 +14,9 @@ $class("HpicDevice", [DeviceBase, SettingPane],
         this._dataListView.setHeaders([
             {'key':'time', 'name':'时间'},
             {'key':'doserate', 'name':'剂量率(nGy/h)', type: 'num'},
+            /*
             {'key':'battery', 'name':'电池电压(V)', type: 'num'},
+            */
             {'key':'highvoltage', 'name':'探头电压(V)', type: 'num'},
             {'key':'temperature', 'name':'探头温度(℃)', type: 'num'}]);
 
