@@ -19,7 +19,6 @@ class Config
 
         'hpic' => array(
             '0102060301' => 'doserate',
-            '0102069901' => 'battery',
             '0102069902' => 'highvoltage',
             '0102069903' =>	'temperature',
             'time' => 'time'
