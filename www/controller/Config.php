@@ -12,7 +12,8 @@ class Config
 
     public static $s = array(
         128 => '北京辐射环境监测站',
-        129 => '江苏辐射环境监测站'
+        //129 => '江苏辐射环境监测站',
+        129 => '浙江辐射环境监测站',
     );
 
     public static $m = array(

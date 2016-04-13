@@ -7,7 +7,7 @@
 $class("Bai9850SummaryDevice", DeviceSummaryBase,
     {
         __constructor: function() {
-            this._stationId = 128;
+            this._stationId = 129;
         },
 
         onAttach: function(domNode) {
