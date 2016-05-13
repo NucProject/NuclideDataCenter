@@ -175,7 +175,6 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
 
             sender.siblings().removeClass('red');
             sender.addClass('red');
-
             this_.onChartIntervalChanged && this_.onChartIntervalChanged($(this));
         });
     },
@@ -326,7 +325,9 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
             var api = "data/fetch/" + currentStationId + "/" + this._deviceType;
             // console.log(payload);
             this.ajax(api, payload, function(data){
+                console.log(data)
                 var $r = eval("(" + data + ")");
+                console.log(data)
                 var items = $r.results.items;
                 var total = $r.results.count;
 
