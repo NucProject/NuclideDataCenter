@@ -188,16 +188,19 @@ class Config
             'XE-133' => array('level' => 1, 'name' => 'XE-133'),
             'BA-133' => array('level' => 1, 'name' => 'BA-133'),
         ),
-        /*
+
         'weather' => array(
-           'Temperature' => array('rule' => 0, 'level' => 2),
-           'Humidity' => array('rule' => 0, 'level' => 2),
-           'Pressure' => array('rule' => 0, 'level' => 2),
-           'Windspeed' => array('rule' => 0, 'level' => 2),
-           'Direction' => array('rule' => 0, 'level' => 2),
-           'Rainspeed' => array('rule' => 0, 'level' => 2),
-           'IfRain' => array('rule' => 1, 'level' => 1)
+            'Temperature' => array('rule' => 0, 'level' => 2),
+            'Humidity' => array('rule' => 0, 'level' => 2),
+            'Pressure' => array('rule' => 0, 'level' => 2),
+            'Windspeed' => array('rule' => 0, 'level' => 2),
+            'Direction' => array('rule' => 0, 'level' => 2),
+            'Rainspeed' => array('rule' => 0, 'level' => 2),
+            'IfRain' => array('rule' => 1, 'level' => 1)
         ),
+        
+        /*
+
 
         'environment' => array(
             'IfMainPowerOff' => array('rule' => 1, 'level' => 1),
