@@ -198,7 +198,7 @@ class Config
             'Rainspeed' => array('rule' => 0, 'level' => 2),
             'IfRain' => array('rule' => 1, 'level' => 1)
         ),
-        
+
         /*
 
 
