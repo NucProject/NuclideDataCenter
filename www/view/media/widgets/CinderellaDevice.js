@@ -42,7 +42,7 @@ $class("CinderellaDevice", DeviceBase,
             {
                 selector: "div.charts",
                 title: "瞬时流量",
-                ytitle: "nGy/h",
+                ytitle: "m³/h",
                 start: start,
                 end: end,
                 max:150, min:40,
