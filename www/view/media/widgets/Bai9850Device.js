@@ -63,8 +63,10 @@ $class("Bai9850Device", DeviceBase,
                 /* 只有珠海有，浙江的设备没有这个数据
                 {'key':'i131activity', 'name':'碘131活度(Bq)'},
                 {'key':'i131', 'name':'碘131比活度(Bq/m^3)'},
-                */
-                {'key':'doserate', 'name':'相对剂量率(μSv/h)'}]);
+
+                {'key':'doserate', 'name':'相对剂量率(μSv/h)'}
+                 */
+            ]);
         },
 
         fillListDefault: function(page) {
