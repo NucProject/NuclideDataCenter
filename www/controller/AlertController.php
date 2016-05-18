@@ -266,7 +266,7 @@ class AlertController extends ApiController
     {
         $curTime = time();
 
-        $devices = array('hpic', 'hpge', 'labr', 'weather', 'cinderelladata', 'environment');
+        $devices = array('hpic', 'hpge', 'weather', 'cinderelladata', 'environment');
 
         foreach ($devices as $device)
         {
