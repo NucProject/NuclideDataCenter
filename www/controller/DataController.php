@@ -176,7 +176,7 @@ class DataController extends ApiController
         $row = mysqli_fetch_array($r, MYSQLI_ASSOC);
         mysqli_close($conn);
         // print_r($row);
-        return $row[7];
+        return $row['flow'];
 
     }
 
