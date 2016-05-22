@@ -164,20 +164,35 @@ class DataController extends ApiController
 
     private static function getFlowBySid($sid)
     {
+        /*
         $p = explode('_', $sid);
         if (count($p) != 2)
             return -1;
         $d = substr($p[1], 0, 8);
         $twoDaysAgo = date('Ymd', ApiController::parseTime2($d) - 3600 * 48);
+        */
 
         $conn = mysqli_connect('127.0.0.1', 'root', 'root');
         mysqli_select_db($conn, 'ndcdb');
-        $r = mysqli_query($conn, "select * from cinderella_sum where sid like '%_$twoDaysAgo%' limit 1");
+        $r = mysqli_query($conn, "select * from cinderella_sum where sid='{$sid}' limit 1");
         $row = mysqli_fetch_array($r, MYSQLI_ASSOC);
-        mysqli_close($conn);
-        // print_r($row);
-        return $row['flow'];
+        $id = $row['id'];
+        if ($id > 0)
+        {
+            $stationId = $row['station'];
+            //echo "SELECT * FROM `cinderella_sum` where station=$stationId and id<$id order by id desc limit 3;";
+            $r = mysqli_query($conn, "SELECT * FROM `cinderella_sum` where station=$stationId and id<$id order by id desc limit 3;");
 
+            $r1 = mysqli_fetch_array($r, MYSQLI_ASSOC);
+            $r2 = mysqli_fetch_array($r, MYSQLI_ASSOC);
+            $r3 = mysqli_fetch_array($r, MYSQLI_ASSOC);
+
+            // var_dump($r3);
+            mysqli_close($conn);
+            if ($r3) {
+                return $r3['flow'];
+            }
+        }
     }
 
     public function parseSidAction($sid)
