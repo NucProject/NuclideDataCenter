@@ -174,6 +174,7 @@ class DataController extends ApiController
             $stationId = $row['station'];
             //echo "SELECT * FROM `cinderella_sum` where station=$stationId and id<$id order by id desc limit 3;";
             $r = mysqli_query($conn, "SELECT * FROM `cinderella_sum` where station=$stationId and id<$id order by id desc limit 3;");
+            
             $r1 = mysqli_fetch_array($r, MYSQLI_ASSOC);
             $r2 = mysqli_fetch_array($r, MYSQLI_ASSOC);
             $r3 = mysqli_fetch_array($r, MYSQLI_ASSOC);
