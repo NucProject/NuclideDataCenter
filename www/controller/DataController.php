@@ -238,7 +238,8 @@ class DataController extends ApiController
                 echo 5;
 
                 $a = @split("[ ]+", $line);
-
+                if ($a[0] == '<' || $a[0] =='#' || $a[0] == '*' || $a[0] == '&')
+                    break;
                 if (strlen(trim($a[0])) == 0)
                     continue;
                 if ($a[1] == '<')
