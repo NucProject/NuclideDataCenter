@@ -121,10 +121,18 @@
                     {
                         g.showRow("#devices-row");
                         var sid = url.substr(url.indexOf('hpge/') + 5);
+                        var theDate = sid.substr( sid.indexOf('_') + 1, 8);
+                        theDate = theDate.substr(0, 4) + "-" + theDate.substr(4, 2) + '-' + theDate.substr(6, 2);
                         DeviceSummaryBase.showDevice('hpge', sid);
                         setTimeout(function(){
                             $('body').css('display', '');
                             g.showRow("#devices-row");
+                            var d1 = Date.parse(theDate, 'YYYY-MM-DD');
+                            var d2 = Date.parse(theDate, 'YYYY-MM-DD');
+                            d2 = d2.addDays(1);
+                            var time = { 'start': d1.clone() , 'end': d2.clone()  };
+                            $('#dashboard-report-range').html("&nbsp;&nbsp;" + d1.toString('yyyy年MM月dd日') + "&nbsp;&nbsp;");
+                            $('body').trigger("transfer-selected-time", time);
                         }, 500);
                     }
                     else
