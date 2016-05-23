@@ -90,7 +90,7 @@ $class("LabrDevice", DeviceBase,
         this.showCharts(this._domNode, {
             selector: "div.charts",
             title: "剂量率",
-            ytitle: "剂量率",
+            ytitle: "剂量率 （nSv/h）",
             start: start,
             end: end,
             max:max,
