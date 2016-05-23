@@ -6,6 +6,7 @@ $class("LabrFilterDevice", DeviceBase,
             this._deviceType = "labrfilter";
             this._noAlertData = true;
             this._exceptTotal = 288;
+            this._alertValueUnit = '(nSv/h)';
         },
 
         onAttach: function(domNode) {

@@ -6,6 +6,7 @@ $class("HpgeDevice", DeviceBase,
 {
     __constructor: function() {
         this._deviceType = "hpge";
+        this._alertValueUnit = '（Bq/m³）';
     },
 
     onAttach: function(domNode) {

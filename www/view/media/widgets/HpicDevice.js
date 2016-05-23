@@ -5,6 +5,7 @@ $class("HpicDevice", [DeviceBase, SettingPane],
 {
     __constructor: function() {
         this._deviceType = "hpic";
+        this._alertValueUnit = '(nGy/h)';
     },
 
     onAttach: function(domNode) {
