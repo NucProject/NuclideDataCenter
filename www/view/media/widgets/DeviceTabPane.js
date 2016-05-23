@@ -34,6 +34,7 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
     __constructor: function() {
         // the date picker show today as default.
         this._today = true;
+        this._alertValueUnit = '';
     },
 
     getPageEvent: function() {
@@ -58,11 +59,12 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         alertListViewDomNode.appendTo(domNode.find("div.alert-pane"));
 
         var this_ = this;
+        var alertValue = '报警值' + this._alertValueUnit;
         this._alertListView.setHeaders([
             {'key':'id', 'type': 'id', 'checkbox': true},
             {'key':'time', 'name':'时间'},
             {'key':'field', 'name':'报警字段'},
-            {'key':'value', 'name':'报警值'},
+            {'key':'value', 'name':alertValue},
             // {'key':'handled', 'name':'处理结果'},
 
         ]);
@@ -730,11 +732,12 @@ $class("DeviceBase", [kx.Widget, Charts, kx.ActionMixin, kx.EventMixin],
         var dataListViewDomNode = this._settingsListView.create();
         dataListViewDomNode.appendTo(domNode);
 
+        var alertValue = '报警值' + this._alertValueUnit;
         this._settingsListView.setHeaders([
             {'key':'id', 'type': 'id'},
             {'key':'name', 'name':'报警字段名称'},
             {'key':'field', 'name':'报警字段', css:'field' },
-            {'key':'value', 'name':'报警值', type: 'input', css:'list-input'},
+            {'key':'value', 'name':alertValue, type: 'input', css:'list-input'},
             {'key':'operator', 'name':'操作', type: 'button', bind: 'id'},
             {'key':'checkbox', 'name':'短信报警', type: 'checkbox', bind: 'id'}
         ]);

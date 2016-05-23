@@ -8,6 +8,9 @@ $class("LabrDevice", DeviceBase,
     __constructor: function() {
         this._deviceType = "labr";
         this._exceptTotal = 288;
+
+        this.defaultInterval = 300;
+        this._alertValueUnit = '(nSv/h)';
     },
 
     onAttach: function(domNode) {
