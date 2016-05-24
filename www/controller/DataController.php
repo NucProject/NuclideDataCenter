@@ -151,7 +151,7 @@ class DataController extends ApiController
                 if (!$flow)
                     $flow = 1.0;
                 echo "($flow)<br>";
-                echo self::doHpgeData($url, $station, $flow, $i->time);
+                var_dump( self::doHpgeData($url, $station, $flow, $i->time) );
                 echo "<br>";
             }
             else
@@ -277,6 +277,7 @@ class DataController extends ApiController
             $data->percent = 0.0;
             $data->save();
         }
+        return $results;
     }
 
     private static function doHpgeAlerts($filePath, $station, $time, $redis, $sid)
@@ -299,7 +300,7 @@ class DataController extends ApiController
             $data = new HpgeData();
             $data->station = $station;
             $data->time = $time;
-            $data->nuclide = $$item[0];
+            $data->nuclide = $item[0];
             $value = $item[1];
 
             $cval = floatval( $value )/ floatval($flow);
