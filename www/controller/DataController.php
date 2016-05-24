@@ -133,7 +133,7 @@ class DataController extends ApiController
 
     public function recoverHpgeDataAction()
     {
-        $s = Hpge::find(array("time>='2015-06-01' and mode='RPT'"));
+        $s = Hpge::find(array("time>='2016-05-20' and mode='RPT'"));
         foreach ($s as $i)
         {
            // echo $i->sid, " ", $i->path, " ";
@@ -150,7 +150,7 @@ class DataController extends ApiController
                 $flow = self::getFlowBySid($sid);
                 if (!$flow)
                     $flow = 1.0;
-                // echo "($flow)<br>";
+                echo "($flow)<br>";
                 echo self::doHpgeData($url, $station, $flow, $i->time);
                 echo "<br>";
             }
@@ -200,6 +200,53 @@ class DataController extends ApiController
         echo self::getFlowBySid($sid);
     }
 
+    public static function parseRptLines($lines)
+    {
+        $start1 = false;
+        $start2 = false;
+        $counter = 0;
+        $results = array();
+        foreach($lines as $line) {
+            $counter++;
+            $line = trim($line);
+            if (strstr($line, 'S U M M A R Y   O F   N U C L I D E S   I N   S A M P L E') ) {
+                $start1 = true;
+                continue;
+            }
+
+            if ($start1) {
+                if (strstr($line, '__________') ) {
+                    $start2 = true;
+                    continue;
+                }
+            }
+
+            if ($start2) {
+                if (strstr($line, 'S U M M A R Y') )
+                    break;
+
+                if ($line == '')
+                    continue;
+                if (strlen($line) < 5)
+                    continue;
+                if (strstr($line, 'sample') )
+                    continue;
+                if (strstr($line, 'ORTEC') )
+                    continue;
+
+                $line = str_replace('#', '', $line);    #带有#的支持
+                $a = preg_split("/[\\s]+/", $line);
+
+                if (count($a) == 4) {
+                    if (is_numeric($a[1]) && is_numeric($a[2]) && is_numeric($a[3])) {
+                        array_push($results, array($a[0], $a[1]));
+                    }
+                }
+            }
+        }
+        return $results;
+    }
+
     private static function doHpgeData($url, $station, $flow, $time)
     {
         $a = @file_get_contents($url);
@@ -213,63 +260,23 @@ class DataController extends ApiController
             array_push($content, $line);
         }
         unset($line);
-        $start1 = false;
-        $start2 = false;
-        $counter = 0;
 
-        foreach($content as $line) {
-            $counter++;
-            $line = trim($line);
-            if (strstr($line, 'S U M M A R Y   O F   N U C L I D E S   I N   S A M P L E') ) {
-                $start1 = true;
+        $results = self::parseRptLines($content);
+        foreach ($results as $item)
+        {
+            $data = new HpgeData();
+            $data->station = $station;
+            $data->time = $time;
+            $data->nuclide = $item[0];
+            $value = $item[1];
 
-                continue;
-            }
-
-            if ($start1) {
-                //echo "F";
-                if (strstr($line, '__________') ) {
-                    $start2 = true;
-                    continue;
-                }
-            }
-
-            if ($start2) {
-                if ($line == '') continue;
-                echo 1;
-                if (strlen($line) < 5) continue;
-                echo 2;
-                if (strstr($line, 'sample') ) continue;
-                echo 3;
-                if (strstr($line, 'ORTEC') ) continue;
-                echo 4;
-                if (strstr($line, '- - - - - - - - - - - - - -') ) break;
-                echo 5;
-
-                $a = @split("[ ]+", $line);
-                if ($a[0] == '<' || $a[0] =='#' || $a[0] == '*' || $a[0] == '&')
-                    break;
-                if (strlen(trim($a[0])) == 0)
-                    continue;
-                if ($a[1] == '<')
-                    continue;
-
-                $data = new HpgeData();
-                $data->station = $station;
-                $data->time = $time;
-                $data->nuclide = $a[0];
-                $value = $a[1] != '#' ? floatval($a[1]) : floatval($a[2]);
-
-                $cval = floatval($value) / floatval($flow);
-                $data->value = $value;
-                $data->cvalue = $cval;
-                $data->flow = $flow;
-                $data->percent = 0.0;
-                $data->save();
-            }
-
+            $cval = floatval($value) / floatval($flow);
+            $data->value = $value;
+            $data->cvalue = $cval;
+            $data->flow = $flow;
+            $data->percent = 0.0;
+            $data->save();
         }
-        return "C [$counter]";
     }
 
     private static function doHpgeAlerts($filePath, $station, $time, $redis, $sid)
@@ -279,61 +286,35 @@ class DataController extends ApiController
             $flow = 1.0;
 
         $a = file($filePath);
-
-        $start1 = false;
-        $start2 = false;
-        foreach($a as $l => $content)
+        $content = array();
+        foreach($a as $l => $line)
         {
-            if (strstr($content, 'S U M M A R Y   O F   N U C L I D E S   I N   S A M P L E') )
-            {
-                $start1 = true;
-                continue;
-            }
+            array_push($content, $line);
+        }
 
-            if ($start1)
-            {
-                if (strstr($content, '___________________________________') )
-                {
-                    $start2 = true;
-                    continue;
-                }
-            }
+        $results = self::parseRptLines($content);
 
-            if ($start2)
-            {
-                $line = trim($content) ;
-                if ($line == '') continue;
-                if (strlen($line) < 5) continue;
-                if (strstr($line, 'sample') ) continue;
-                if (strstr($line, 'ORTEC') ) continue;
-                if (strstr($line, '- - - - - - - - - - - - - -') ) break;
+        foreach($results as $item)
+        {
+            $data = new HpgeData();
+            $data->station = $station;
+            $data->time = $time;
+            $data->nuclide = $$item[0];
+            $value = $item[1];
 
-                $a = @split("[ ]+", $line);
-                if ($a[0] == '<' || $a[0] =='#' || $a[0] == '*' || $a[0] == '&')
-                    break;
-                if ($a[1] == '<')
-                    continue;
+            $cval = floatval( $value )/ floatval($flow);
+            $data->value = $value;
+            $data->cvalue = $cval;
+            $data->flow = $flow;
+            $data->percent = 0.0;
+            $data->save();
 
-                $data = new HpgeData();
-                $data->station = $station;
-                $data->time = $time;
-                $data->nuclide = $a[0];
-                $value = $a[1] != '#' ? floatval($a[1]) : floatval($a[2]);
-
-                $cval = floatval( $value )/ floatval($flow);
-                $data->value = $value;
-                $data->cvalue = $cval;
-                $data->flow = $flow;
-                $data->percent = 0.0;
-                $data->save();
-
-                $data = new stdClass();
-                $data->time = $time;
-                $data->field = $a[0];
-                $data->value = $cval;
-                $data->is_nuclide = true;
-                AlertController::checkAlertRule($redis, $station, 'hpge', $data);
-            }
+            $data = new stdClass();
+            $data->time = $time;
+            $data->field = $item[0];
+            $data->value = $cval;
+            $data->is_nuclide = true;
+            AlertController::checkAlertRule($redis, $station, 'hpge', $data);
         }
     }
 
