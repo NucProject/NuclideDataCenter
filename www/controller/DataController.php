@@ -133,7 +133,7 @@ class DataController extends ApiController
 
     public function recoverHpgeDataAction()
     {
-        $s = Hpge::find(array("time>='2016-05-20' and mode='RPT'"));
+        $s = Hpge::find(array("time>='2016-03-01' and mode='RPT'"));
         foreach ($s as $i)
         {
            // echo $i->sid, " ", $i->path, " ";
@@ -147,7 +147,7 @@ class DataController extends ApiController
 
             if ($this->hasFile($url))
             {
-                $flow = self::getFlowBySid($sid);
+                $flow = self::getFlowBySid($sid, $station);
                 if (!$flow)
                     $flow = 1.0;
                 echo "($flow)<br>";
@@ -162,32 +162,38 @@ class DataController extends ApiController
         }
     }
 
-    private static function getFlowBySid($sid)
+    private static function getFlowBySid($sid, $station)
     {
-        /*
-        $p = explode('_', $sid);
-        if (count($p) != 2)
-            return -1;
-        $d = substr($p[1], 0, 8);
-        $twoDaysAgo = date('Ymd', ApiController::parseTime2($d) - 3600 * 48);
-        */
-
         $conn = mysqli_connect('127.0.0.1', 'root', 'root');
         mysqli_select_db($conn, 'ndcdb');
-        $r = mysqli_query($conn, "select * from cinderella_sum where sid='{$sid}' limit 1");
+        $r = mysqli_query($conn, "select * from cinderella_sum where sid='{$sid}' and station={$station} limit 1");
         $row = mysqli_fetch_array($r, MYSQLI_ASSOC);
         $id = $row['id'];
+
+        if (!$id)
+        {
+            $r = mysqli_query($conn, "select * from cinderella_data where station={$station} and sid='{$sid}' order by id desc limit 1");
+            $row = mysqli_fetch_array($r, MYSQLI_ASSOC);
+            $id = $row['id'];
+            // 得到上一个SID
+            $r = mysqli_query($conn, "select * from cinderella_data where station={$station} and sid!='{$sid}' and id<{$id} order by id desc limit 1");
+            $row = mysqli_fetch_array($r, MYSQLI_ASSOC);
+            $sid = $row['Sid'];
+
+            $r = mysqli_query($conn, "select * from cinderella_sum where sid='{$sid}' and station={$station} limit 1");
+            $row = mysqli_fetch_array($r, MYSQLI_ASSOC);
+            $id = $row['id'];
+        }
+
         if ($id > 0)
         {
-            $stationId = $row['station'];
             //echo "SELECT * FROM `cinderella_sum` where station=$stationId and id<$id order by id desc limit 3;";
-            $r = mysqli_query($conn, "SELECT * FROM `cinderella_sum` where station=$stationId and id<$id order by id desc limit 3;");
+            $r = mysqli_query($conn, "SELECT * FROM `cinderella_sum` where station={$station} and id<$id order by id desc limit 3;");
 
             $r1 = mysqli_fetch_array($r, MYSQLI_ASSOC);
             $r2 = mysqli_fetch_array($r, MYSQLI_ASSOC);
             $r3 = mysqli_fetch_array($r, MYSQLI_ASSOC);
 
-            // var_dump($r3);
             mysqli_close($conn);
             if ($r3) {
                 return $r3['flow'];
@@ -195,9 +201,9 @@ class DataController extends ApiController
         }
     }
 
-    public function parseSidAction($sid)
+    public function parseSidAction($sid, $station)
     {
-        echo self::getFlowBySid($sid);
+        echo self::getFlowBySid($sid, $station);
     }
 
     public static function parseRptLines($lines)
@@ -282,7 +288,7 @@ class DataController extends ApiController
 
     private static function doHpgeAlerts($filePath, $station, $time, $redis, $sid)
     {
-        $flow = self::getFlowBySid($sid);
+        $flow = self::getFlowBySid($sid, $station);
         if (!$flow)
             $flow = 1.0;
 
