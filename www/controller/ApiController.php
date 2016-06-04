@@ -269,7 +269,6 @@ class ApiController extends \Phalcon\Mvc\Controller
     public static function parseTime2($time)
     {
         $parsed = date_parse_from_format("Y-m-d H:i:s", $time);
-        var_dump($parsed);
         $ret = mktime(
             $parsed['hour'],
             $parsed['minute'],

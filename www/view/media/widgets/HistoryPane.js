@@ -171,7 +171,9 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
                     'start': start, 'end': end, 'times': times.join(',')
                 }
             };
+            console.log(111);
             this.ajax('command/post', payload, function(data){
+                console.log(222);
                 g.showTip('已发送成功获取历史数据的指令');
             });
         }
