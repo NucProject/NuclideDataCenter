@@ -229,13 +229,24 @@ class DataController extends ApiController
                 $a = preg_split("/[\\s]+/", $line);
 
                 if (count($a) == 4) {
-                    if (is_numeric($a[1]) && is_numeric($a[2]) && is_numeric($a[3])) {
+                    if (self::isNumeric($a[1]) &&
+                        self::isNumeric($a[2]) &&
+                        self::isNumeric($a[3])) {
                         array_push($results, array($a[0], $a[1]));
                     }
                 }
             }
         }
         return $results;
+    }
+
+    public static function  isNumeric($n) {
+        if (is_numeric($n)) {
+            return true;
+        }
+        if (substr($n, -1) == '%')
+            return is_numeric(substr($n, 0, -1));
+        return false;
     }
 
     private static function doHpgeData($url, $station, $flow, $time)
