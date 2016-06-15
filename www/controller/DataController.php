@@ -232,7 +232,7 @@ class DataController extends ApiController
                     if (self::isNumeric($a[1]) &&
                         self::isNumeric($a[2]) &&
                         self::isNumeric($a[3])) {
-                        array_push($results, array(self::getNumber($a[0]), self::getNumber($a[1])));
+                        array_push($results, array($a[0], self::getNumber($a[1])));
                     }
                 }
             }
