@@ -136,7 +136,6 @@ class DataController extends ApiController
         $s = Hpge::find(array("time>='2016-05-01' and mode='RPT'"));
         foreach ($s as $i)
         {
-            echo $i->sid, " $station ", $i->path, " <br>";
             $p = $i->path;
             $q = explode('/', $p);
             $station = $q[3];
@@ -147,11 +146,11 @@ class DataController extends ApiController
 
             if ($this->hasFile($url))
             {
-                echo "[$url]<br>";
+                echo "Has File {$url} <br>";
                 $flow = self::getFlowBySid($sid);
                 if (!$flow)
                     $flow = 1.0;
-                echo "($flow)<br>";
+                echo "(FLOW=$flow)<br>";
                 var_dump( self::doHpgeData($url, $station, $flow, $i->time) );
                 echo "<br>";
             }
