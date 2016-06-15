@@ -142,7 +142,7 @@ class DataController extends ApiController
             $sid = $q[4];
             $fileName = $q[5];
 
-            $url = 'http://127.0.0.1:8080' . "/file/$station/hpge/$sid/$fileName";
+            $url = 'http://127.0.0.1:9815' . "/file/$station/hpge/$sid/$fileName";
 
             if ($this->hasFile($url))
             {
@@ -156,7 +156,7 @@ class DataController extends ApiController
             }
             else
             {
-                echo "No File {$url} <br>";
+                echo "No this File {$url} <br>";
             }
 
         }
