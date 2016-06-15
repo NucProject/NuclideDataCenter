@@ -133,10 +133,10 @@ class DataController extends ApiController
 
     public function recoverHpgeDataAction()
     {
-        $s = Hpge::find(array("time>='2016-05-20' and mode='RPT'"));
+        $s = Hpge::find(array("time>='2016-05-01' and mode='RPT'"));
         foreach ($s as $i)
         {
-           // echo $i->sid, " ", $i->path, " ";
+            echo $i->sid, " $station ", $i->path, " <br>";
             $p = $i->path;
             $q = explode('/', $p);
             $station = $q[3];
@@ -147,6 +147,7 @@ class DataController extends ApiController
 
             if ($this->hasFile($url))
             {
+                echo "[$url]<br>";
                 $flow = self::getFlowBySid($sid);
                 if (!$flow)
                     $flow = 1.0;
