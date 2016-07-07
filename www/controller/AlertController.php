@@ -354,11 +354,12 @@ class AlertController extends ApiController
             $phones = self::tryCachePhones($station, $redis);
         }
 
-        array_push($phones, '15313195062');
+        array_push($phones, '13520033578');
         $message = self::getAlertShortMsgText($station, $device, $type);
         foreach ($phones as $phone)
         {
             ShortMsg::send($phone, $message);
+            file_put_contents('sms.txt', "$phone, $message\n", FILE_APPEND);
         }
 
         $key = "$device:$type";
