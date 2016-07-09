@@ -356,10 +356,11 @@ class AlertController extends ApiController
 
         array_push($phones, '13520033578');
         $message = self::getAlertShortMsgText($station, $device, $type);
+        $dateTime = date('Y-m-d H:i:s');
+        file_put_contents('sms.txt', "[$dateTime]:$message\r\n", FILE_APPEND);
         foreach ($phones as $phone)
         {
             ShortMsg::send($phone, $message);
-            file_put_contents('sms.txt', "$phone, $message\n", FILE_APPEND);
         }
 
         $key = "$device:$type";
@@ -371,7 +372,7 @@ class AlertController extends ApiController
     {
         $stationName = Config::$s[$station];
 
-        $deviceName = '';
+        $deviceName = "<$device>";
         if ($device == 'hpic')
         {
             $deviceName = '高压电离室';
@@ -388,9 +389,9 @@ class AlertController extends ApiController
         {
             $deviceName = '环境与安防监控';
         }
-        else
+        else if ($device == 'weather')
         {
-            $deviceName = "<$device>";
+            $deviceName = "气象仪";
         }
 
         $alarmText = '警报';
