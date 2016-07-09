@@ -388,6 +388,10 @@ class AlertController extends ApiController
         {
             $deviceName = '环境与安防监控';
         }
+        else
+        {
+            $deviceName = "<$device>";
+        }
 
         $alarmText = '警报';
         if ($type == 'level1')
