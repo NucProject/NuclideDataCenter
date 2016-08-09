@@ -163,10 +163,15 @@ $class("HistoryPane", [kx.Weblet, kx.ActionMixin, kx.EventMixin],
 
         setHistoryCommand: function(start, end, times)
         {
+            var deviceType = this._deviceType;
+            if (deviceType == 'hpic') {
+                // 浙江处理new131, 目前只在这里历史数据这里修改
+                deviceType = 'new131';
+            }
             var payload = {
                 'type': 'history',
                 'station': g.getCurrentStationId(),
-                'device': this._deviceType,
+                'device': deviceType,
                 'content': {
                     'start': start, 'end': end, 'times': times.join(',')
                 }

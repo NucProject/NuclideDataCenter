@@ -5,6 +5,7 @@ $class("HpicDevice", [DeviceBase, SettingPane],
 {
     __constructor: function() {
         this._deviceType = "hpic";
+        // this._deviceType = "new131";
         this._alertValueUnit = '(nGy/h)';
     },
 
