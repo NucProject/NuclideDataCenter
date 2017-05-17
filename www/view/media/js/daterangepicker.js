@@ -11,7 +11,7 @@
     var DateRangePicker = function (element, options, cb) {
         var hasOptions = typeof options == 'object'
         var localeObject;
-
+        options.maxDate = "12/31/2029";
         //state
         this.startDate = Date.today();
         this.endDate = Date.today();
